@@ -4,6 +4,8 @@ Secret Santa con sabor: letters to Santa, piñata reveals, and the La Posada gam
 
 Static site on Vercel and Supabase (project `posada-santa`) for letters and the live family leaderboard.
 
+Live at https://posadaxmas.com (www redirects to the apex).
+
 | Page | Path |
 | --- | --- |
 | Landing | `/` |
