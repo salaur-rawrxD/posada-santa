@@ -60,13 +60,29 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offse
 .tams{display:flex;gap:3px;padding:6px 9px;border-radius:99px;background:rgba(16,24,56,.78);border:1px solid var(--line)}
 .tams i{width:12px;height:22px;border-radius:6px;background:linear-gradient(90deg,#e9c46a,#f4d98b 50%,#d9a84e);box-shadow:inset 0 -3px 0 #b8862e}.tams i.off{opacity:.18}
 .timer{font-family:var(--display);font-size:22px}
+.hud .land{flex:1;max-width:260px;display:grid;gap:4px;padding:7px 12px 9px;border-radius:16px;background:rgba(16,24,56,.8);border:1px solid var(--line);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
+.land .lt{display:flex;justify-content:space-between;align-items:baseline;gap:6px;font-weight:900;font-size:12px;color:var(--muted);white-space:nowrap}
+.land .lt b{font-family:var(--display);font-weight:400;font-size:19px;color:var(--cream)}.land .lt b.won{color:#8ff0ac}
+.landbar{position:relative;height:12px;border-radius:7px;background:repeating-linear-gradient(90deg,#5a3a26 0 10px,#6b4226 10px 20px);overflow:visible}
+.landbar i{position:absolute;left:0;top:0;bottom:0;border-radius:7px;background:linear-gradient(180deg,#7cd36a,#3e9a4a);box-shadow:inset 0 -2px 0 rgba(0,0,0,.18);transition:width .25s}
+.landbar s{position:absolute;top:-6px;transform:translateX(-50%);text-decoration:none;font-size:13px;line-height:1;filter:grayscale(1) brightness(.8);transition:filter .3s}
+.landbar s.on{filter:none}.landbar s.goal{top:-8px;font-size:15px}
+.mid{flex:1;display:flex;justify-content:center}
+.lvls{display:grid;gap:7px}
+.lvl{font:inherit;display:grid;grid-template-columns:40px 1fr auto;gap:10px;align-items:center;text-align:left;padding:9px 12px;border-radius:14px;border:1px solid var(--line);background:rgba(255,255,255,.05);color:var(--cream);cursor:pointer}
+.lvl .n{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;font-family:var(--display);font-size:20px;background:rgba(245,165,36,.16);color:var(--gold)}
+.lvl b{display:block;font-size:15px}.lvl small{font-size:12px;font-weight:800;color:var(--muted)}.lvl .st{font-size:14px;letter-spacing:1px;white-space:nowrap}
+.lvl[disabled]{opacity:.45;cursor:not-allowed}.lvl.next{border-color:var(--gold);background:rgba(245,165,36,.12)}
+.ostars{font-size:34px;letter-spacing:4px;line-height:1}
 .timer.low{color:#ff8a7a}
 </style>
 </head>
 <body data-game="tamalazo">
 <canvas id="cv" aria-label="Tamalazo: throw tamales at the targets"></canvas>
 <div class="hud">
-  <div class="col"><span class="chip">🏡 <b id="hScore">0</b> m²</span><span class="chip mult" id="hMult" hidden></span></div>
+  <div class="col"><span class="chip mult" id="hMult" hidden></span></div>
+  <div class="mid"><div class="land" aria-live="off"><div class="lt"><span id="lvName">🏡 El solar</span><span><b id="hScore">0</b> / <span id="hGoal">500</span> m²</span></div>
+    <div class="landbar"><i id="landFill" style="width:0%"></i><s id="mk1" class="goal" style="left:55.6%">🏡</s><s id="mk2" style="left:77.8%">⭐</s><s id="mk3" style="left:99%">⭐</s></div></div></div>
   <div class="col r"><span class="chip">⏱️ <b class="timer" id="hTime">60</b></span></div>
 </div>
 <div class="ammo"><button class="olla" id="olla" type="button" aria-label="Grab more tamales">🫕</button><div class="tams" id="tams" aria-hidden="true"></div></div>
@@ -86,20 +102,23 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offse
       <div><span>👵</span><b data-t="how3">Never hit Abuelita. She has the escrituras.</b></div>
       <div><span>🎯</span><b data-t="how4">Tamales take a moment to fly, so aim ahead</b></div>
     </div>
-    <p class="best" id="startBest"></p>
     <button class="cta" id="go" type="button" data-t="go">🫔 ¡A ganar los terrenos!</button>
+    <div class="lvls" id="lvls"></div>
     <nav class="crumbs" data-crumbs aria-label="Breadcrumbs"></nav>
   </div>
 </div>
 <div class="overlay" id="paused" hidden><div class="card"><h2 data-t="pausedT">Paused</h2><button class="cta" id="resume" type="button" data-t="resume">▶ Keep throwing</button><button class="ghost" id="quit" type="button" data-t="quit">Restart</button><div class="gamesrow"></div><nav class="crumbs" data-crumbs aria-label="Breadcrumbs"></nav></div></div>
 <div class="overlay" id="over" hidden>
   <div class="card">
-    <span class="kicker" data-t="overK">¡Se acabó la posada!</span>
+    <span class="kicker" id="overK"></span>
+    <div class="ostars" id="oStars"></div>
     <h1 id="overT"></h1>
     <div class="stats"><div><b id="oScore">0</b><small data-t="sScore">m² won</small></div><div><b id="oAcc">0%</b><small data-t="sAcc">aim</small></div><div><b id="oCombo">×1</b><small data-t="sCombo">best combo</small></div></div>
     <p id="oLine"></p>
     <p class="best" id="oBest"></p>
+    <button class="cta" id="nextLv" type="button" hidden></button>
     <button class="cta" id="again" type="button" data-t="again">🔄 Throw again</button>
+    <button class="ghost" id="toLvls" type="button" data-t="toLvls">All levels</button>
     <a class="cta wa" id="oShare" target="_blank" rel="noopener" data-t="share">📣 Challenge the family</a>
     <a class="ghost" id="moreLink2" data-t="more" hidden>← More posada games</a>
     <div class="gamesrow"></div>
@@ -112,19 +131,25 @@ const WORDS={
   en:{kick:"La guerra de los terrenos",title:"¡Tamalazo!",intro:"Your tíos and tías want to keep the family land. Grab the olla of tamales and <b>win los terrenos back</b> before the posada's over. Every hit wins you more m².",
     how1:"Knock down the cans and break the piñatas",how2:"Bonk the tíos and tías fighting over the land",how3:"Never hit Abuelita. She has the escrituras.",how4:"Tamales take a moment to fly, so aim ahead",
     go:"🫔 ¡A ganar los terrenos!",more:"← More posada games",pausedT:"Paused",resume:"▶ Keep throwing",quit:"Restart",
+    goN:(n,name)=>`🫔 Play level ${n}: ${name}`,lvlGoal:(g,s)=>`Win ${g} m² in ${s} s`,locked:"🔒 Win the level before",toLvls:"All levels",nextLv:n=>`▶ Next: ${n}`,
+    won:"¡Terreno ganado! 🏡",wonK:n=>`Level ${n} won`,lostK:n=>`Level ${n}`,lostT:"¡Los tíos se quedaron con el terreno!",need:(g,s)=>`You needed ${g} m². You won ${s}.`,allDone:"¡Eres el dueño de todo! 🏆",
+    star2:"⭐ ¡Más terreno!",star3:"⭐⭐ ¡Todo el terreno!",wonT:["¡Ganaste el terreno!","¡La parcela es tuya!","¡Te quedaste con todo el rancho!"],
     overK:"¡Se acabó la posada!",sScore:"m² won",sAcc:"aim",sCombo:"best combo",again:"🔄 Fight for more land",share:"📣 Challenge the family",best:n=>`Your record: ${n} m²`,newBest:"🏆 New record!",
     titles:[[3000,"¡Te quedaste con todo el rancho!"],[1800,"¡La parcela es tuya!"],[900,"¡Ganaste un buen pedazo!"],[0,"¡Los tíos se quedaron con todo!"]],
     line:(c,p,r)=>`${c} cans · ${p} piñatas · ${r} relatives sent to court`,reload:"¡Más tamales!",chuza:"¡CHUZA! +50 m²",abuela:"¡A la abuela no! She has the escrituras −50",cucuy:"¡Le quitaste las escrituras al licenciado! +150",pin:"¡Piñata rota! +60",
     oye:["¡Ta' bueno, quédatelo!","¡Te veo en el juzgado!","¡Ay, mi sombrero!","¡Grosero!","¡Le voy a decir a tu mamá!","¡Ese terreno era mío!"],miss:"¡Plaf!",go2:"¡Por los terrenos!",last:"¡Últimos 10!",unit:"m²",
-    msg:(s,url)=>`🫔 I won ${s} m² of the family land from my tíos in ¡Tamalazo! Think you can win more? 👇\n${url}`},
+    msg:(s,url)=>`🫔 I won ${s} m² of ${(LEVELS[curLv-1]||{}).name||"the family land"} from my tíos in ¡Tamalazo! Think you can win more? 👇\n${url}`},
   es:{kick:"La guerra de los terrenos",title:"¡Tamalazo!",intro:"Tus tíos y tías se quieren quedar con los terrenos de la familia. Agarra la olla de tamales y <b>¡gánale los terrenos a tus tías y tíos!</b> Cada tamalazo te gana más m².",
     how1:"Tumba las latas y rompe las piñatas",how2:"Pégale a los tíos y tías que se pelean el terreno",how3:"Nunca le pegues a la Abuelita. Ella tiene las escrituras.",how4:"Los tamales tardan en llegar, apunta adelantado",
     go:"🫔 ¡A ganar los terrenos!",more:"← Más juegos de la posada",pausedT:"En pausa",resume:"▶ Seguir aventando",quit:"Empezar otra vez",
+    goN:(n,name)=>`🫔 Jugar nivel ${n}: ${name}`,lvlGoal:(g,s)=>`Gana ${g} m² en ${s} s`,locked:"🔒 Gana el nivel anterior",toLvls:"Todos los niveles",nextLv:n=>`▶ Sigue: ${n}`,
+    won:"¡Terreno ganado! 🏡",wonK:n=>`Nivel ${n} ganado`,lostK:n=>`Nivel ${n}`,lostT:"¡Los tíos se quedaron con el terreno!",need:(g,s)=>`Necesitabas ${g} m². Ganaste ${s}.`,allDone:"¡Eres el dueño de todo! 🏆",
+    star2:"⭐ ¡Más terreno!",star3:"⭐⭐ ¡Todo el terreno!",wonT:["¡Ganaste el terreno!","¡La parcela es tuya!","¡Te quedaste con todo el rancho!"],
     overK:"¡Se acabó la posada!",sScore:"m² ganados",sAcc:"puntería",sCombo:"mejor combo",again:"🔄 Pelear más terreno",share:"📣 Reta a la familia",best:n=>`Tu récord: ${n} m²`,newBest:"🏆 ¡Nuevo récord!",
     titles:[[3000,"¡Te quedaste con todo el rancho!"],[1800,"¡La parcela es tuya!"],[900,"¡Ganaste un buen pedazo!"],[0,"¡Los tíos se quedaron con todo!"]],
     line:(c,p,r)=>`${c} latas · ${p} piñatas · ${r} parientes al juzgado`,reload:"¡Más tamales!",chuza:"¡CHUZA! +50 m²",abuela:"¡A la abuela no! Ella tiene las escrituras −50",cucuy:"¡Le quitaste las escrituras al licenciado! +150",pin:"¡Piñata rota! +60",
     oye:["¡Ta' bueno, quédatelo!","¡Te veo en el juzgado!","¡Ay, mi sombrero!","¡Grosero!","¡Le voy a decir a tu mamá!","¡Ese terreno era mío!"],miss:"¡Plaf!",go2:"¡Por los terrenos!",last:"¡Últimos 10!",unit:"m²",
-    msg:(s,url)=>`🫔 ¡Le gané ${s} m² de terreno a mis tíos en ¡Tamalazo! ¿A que no ganas más? 👇\n${url}`}};
+    msg:(s,url)=>`🫔 ¡Le gané ${s} m² de ${(LEVELS[curLv-1]||{}).name||"terreno"} a mis tíos en ¡Tamalazo! ¿A que no ganas más? 👇\n${url}`}};
 const JUICIOS={en:["That land is MINE!","Dad left it to me!","I paid the predial!","I already got a lawyer!","I'm building there!","Where are the escrituras?","You don't even visit!"],
   es:["¡Ese terreno es MÍO!","¡Mi papá me lo dejó a mí!","¡Yo pagué el predial!","¡Ya tengo abogado!","¡Ahí voy a construir!","¿Y las escrituras qué?","¡Ni nos visitas!"]};
 /* shared bits for the posada mini games: language, sound, best scores, sharing */
@@ -189,10 +214,24 @@ addEventListener("resize",resize); resize();
 const rnd=(a,b)=>a+Math.random()*(b-a), pick=a=>a[Math.floor(Math.random()*a.length)];
 const WIN=[{x:80,y:214},{x:195,y:214},{x:310,y:214}], ROOF=128, ROPE=330, FENCE=590;
 
-let S=null, state="start", last=0, shake=0;
-function newRound(){ S={t:0,left:60,score:0,ammo:6,reload:0,combo:0,bestCombo:0,throws:0,hits:0,cans:0,pins:0,rels:0,
-  tams:[],parts:[],splats:[],floats:[],cansList:[],pinatas:[],wins:WIN.map(w=>({...w,who:null,t:0,dur:0,hit:0,cool:rnd(.3,1.4)})),cucuy:null,cucuyT:rnd(9,14),canRespawn:0,ticked:-1};
-  makeCans(); S.pinatas=[{x:120,ph:0,hp:3,max:3,shake:0,dead:0,len:62},{x:270,ph:2.2,hp:3,max:3,shake:0,dead:0,len:88}]; renderAmmo(); }
+/* five plots of family land, each fought over a little harder */
+const LEVELS=[
+  {n:1,name:"El solar",goal:500,time:60,speed:.8,abu:.12,lic:null,pin:2},
+  {n:2,name:"La parcela",goal:900,time:60,speed:1,abu:.18,lic:[14,18],pin:3},
+  {n:3,name:"La milpa",goal:1300,time:55,speed:1.15,abu:.22,lic:[11,14],pin:3},
+  {n:4,name:"El rancho",goal:1800,time:55,speed:1.3,abu:.26,lic:[9,12],pin:4},
+  {n:5,name:"La hacienda",goal:2400,time:60,speed:1.45,abu:.3,lic:[7,10],pin:4}];
+const PKEY="tamalazo-progress";
+const prog=(()=>{ try{ const v=JSON.parse(localStorage.getItem(PKEY)||"null"); if(v&&v.unlocked) return v; }catch(e){} return {unlocked:1,stars:{},best:{}}; })();
+const saveProg=()=>{ try{ localStorage.setItem(PKEY,JSON.stringify(prog)); }catch(e){} };
+const starsFor=(sc,goal)=>sc>=goal*1.8?3:sc>=goal*1.4?2:sc>=goal?1:0;
+let S=null, state="start", last=0, shake=0, curLv=1;
+function newRound(n){ curLv=n||curLv; const cfg=LEVELS[curLv-1]; S={lv:curLv,cfg,goal:cfg.goal,won:false,starMark:1,t:0,left:cfg.time,score:0,ammo:6,reload:0,combo:0,bestCombo:0,throws:0,hits:0,cans:0,pins:0,rels:0,
+  tams:[],parts:[],splats:[],floats:[],cansList:[],pinatas:[],wins:WIN.map(w=>({...w,who:null,t:0,dur:0,hit:0,cool:rnd(.3,1.4)})),cucuy:null,cucuyT:cfg.lic?rnd(cfg.lic[0],cfg.lic[1]):1e9,canRespawn:0,ticked:-1};
+  makeCans(); S.pinatas=[{x:120,ph:0,hp:cfg.pin,max:cfg.pin,shake:0,dead:0,len:62},{x:270,ph:2.2,hp:cfg.pin,max:cfg.pin,shake:0,dead:0,len:88}]; renderAmmo(); renderLand(); }
+function renderLand(){ if(!S) return; const cap=S.goal*1.8, pct=Math.min(100,S.score/cap*100); $("landFill").style.width=pct.toFixed(1)+"%"; $("hScore").textContent=S.score.toLocaleString(); $("hGoal").textContent=S.goal.toLocaleString();
+  $("hScore").classList.toggle("won",S.score>=S.goal); $("lvName").textContent="🏡 "+S.cfg.name; [[1,1],[2,1.4],[3,1.8]].forEach(([i,k])=>$("mk"+i).classList.toggle("on",S.score>=S.goal*k));
+  if(state==="play"){ const st=starsFor(S.score,S.goal); if(st>=S.starMark){ S.starMark=st+1; if(st===1){ S.won=true; toast(t("won")); const t0=now(); [523,659,784,1047].forEach((f,i)=>tone("square",f,t0+i*.08,.18,.07)); } else toast(st===2?t("star2"):t("star3")); } } }
 function makeCans(){ const cx=rnd(90,300); S.cansList=[]; const rows=[[0,3],[1,2],[2,1]]; rows.forEach(([r,n])=>{ for(let i=0;i<n;i++) S.cansList.push({x:cx+(i-(n-1)/2)*28,y:FENCE-17-r*34,vx:0,vy:0,rot:0,vr:0,down:false,c:pick(["#d7372f","#2f8f4e","#f5a524","#22a9c4"])}); }); }
 
 function drawNaranjo(c,x,gy,k){ c.save(); c.translate(x,gy); c.scale(k,k);
@@ -227,7 +266,7 @@ function land(tm){ const x=tm.x, y=tm.y;
 function gain(pts,x,y,col){ S.hits++; S.combo++; S.bestCombo=Math.max(S.bestCombo,S.combo); const m=mult(); const v=pts*m; S.score+=v; floatTxt("+"+v+" m²",x,y-18,col||"#ffd34d");
   if(S.combo>0&&S.combo%3===0&&m<=4){ const t0=now(); [660,880,1100].forEach((f,i)=>tone("square",f,t0+i*.05,.09,.06)); } updMult(); }
 const mult=()=>1+Math.min(3,Math.floor(S.combo/3));
-function updMult(){ const m=mult(), el=$("hMult"); el.hidden=m<2; el.textContent="🔥 ×"+m; $("hScore").textContent=S.score.toLocaleString(); }
+function updMult(){ const m=mult(), el=$("hMult"); el.hidden=m<2; el.textContent="🔥 ×"+m; renderLand(); }
 function hitCan(c,x){ c.down=true; c.vx=(c.x-x)*10+rnd(-60,60); c.vy=-rnd(260,380); c.vr=rnd(-14,14); S.cans++; gain(10,c.x,c.y); burst(c.x,c.y,8,"#e9c46a");
   const t0=now(); tone("square",1600,t0,.06,.05,900); noise(t0,.12,.15,"highpass",3500); shake=3;
   if(S.cansList.every(k=>k.down)){ S.score+=50*mult(); toast(t("chuza")); updMult(); S.canRespawn=1.4; } }
@@ -246,10 +285,10 @@ function floatTxt(txt,x,y,c){ S.floats.push({txt,x,y,c,t:0}); }
 /* ---------- the window parade ---------- */
 const RELS=["tio","tia","tio2","tia2"];
 function stepWins(dt){ const fast=Math.min(1,S.t/55);
-  S.wins.forEach(w=>{ if(w.who){ w.t+=dt; if(w.hit){ w.hit-=dt; if(w.hit<=0){ w.who=null; w.cool=rnd(.4,1.1); } } else if(w.t>w.dur){ w.who=null; w.cool=rnd(.3,1.2)*(1-fast*.5); } if(w.who&&w.who.hatV){ const h=w.who.hatV; h.px+=h.x*dt; h.py+=h.y*dt; h.y+=900*dt; h.a+=h.r*dt; } }
-    else { w.cool-=dt; if(w.cool<=0&&S.left>.8){ const abu=Math.random()<.22+fast*.06&&!S.wins.some(o=>o.who&&o.who.k==="abuela"); w.who={k:abu?"abuela":pick(RELS),line:abu?null:(Math.random()<.75?pick(JUICIOS[LANG]||JUICIOS.en):null)}; w.t=0; w.dur=rnd(1.5,2.3)*(1-fast*.35); w.hit=0;
+  S.wins.forEach(w=>{ if(w.who){ w.t+=dt; if(w.hit){ w.hit-=dt; if(w.hit<=0){ w.who=null; w.cool=rnd(.4,1.1); } } else if(w.t>w.dur){ w.who=null; w.cool=rnd(.3,1.2)*(1-fast*.5)/S.cfg.speed; } if(w.who&&w.who.hatV){ const h=w.who.hatV; h.px+=h.x*dt; h.py+=h.y*dt; h.y+=900*dt; h.a+=h.r*dt; } }
+    else { w.cool-=dt; if(w.cool<=0&&S.left>.8){ const abu=Math.random()<S.cfg.abu+fast*.06&&!S.wins.some(o=>o.who&&o.who.k==="abuela"); w.who={k:abu?"abuela":pick(RELS),line:abu?null:(Math.random()<.75?pick(JUICIOS[LANG]||JUICIOS.en):null)}; w.t=0; w.dur=rnd(1.5,2.3)*(1-fast*.35)/S.cfg.speed; w.hit=0;
       const t0=now(); if(!abu) tone("triangle",pick([330,392,440]),t0,.08,.04); } } }); }
-function stepCucuy(dt){ if(!S.cucuy){ S.cucuyT-=dt; if(S.cucuyT<=0&&S.left>3){ const dir=Math.random()<.5?1:-1; S.cucuy={x:dir>0?-40:VW+40,dir,v:rnd(110,150)*(1+S.t/120),hit:0}; S.cucuyT=rnd(10,15); const t0=now(); tone("sawtooth",110,t0,.5,.08,80); } return; }
+function stepCucuy(dt){ if(!S.cucuy){ S.cucuyT-=dt; if(S.cucuyT<=0&&S.left>3){ const dir=Math.random()<.5?1:-1; S.cucuy={x:dir>0?-40:VW+40,dir,v:rnd(110,150)*(1+S.t/120)*S.cfg.speed,hit:0}; S.cucuyT=S.cfg.lic?rnd(S.cfg.lic[0],S.cfg.lic[1]):1e9; const t0=now(); tone("sawtooth",110,t0,.5,.08,80); } return; }
   const c=S.cucuy; if(c.hit){ c.hit+=dt; if(c.hit>1.1) S.cucuy=null; return; } c.x+=c.dir*c.v*dt; if(c.x<-60||c.x>VW+60) S.cucuy=null; }
 
 /* ---------- drawing (virtual 390×760 space) ---------- */
@@ -350,7 +389,7 @@ function update(dt){ S.t+=dt; if(shake>0) shake=Math.max(0,shake-dt*30);
   S.tams.forEach(m=>{ m.t+=dt; if(m.t>=m.T&&!m.done){ m.done=true; land(m); } }); S.tams=S.tams.filter(m=>!m.done);
   S.cansList.forEach(c=>{ if(!c.down) return; c.vy+=900*dt; c.x+=c.vx*dt; c.y+=c.vy*dt; c.rot+=c.vr*dt; });
   if(S.canRespawn>0){ S.canRespawn-=dt; if(S.canRespawn<=0) makeCans(); }
-  S.pinatas.forEach(p=>{ if(p.shake>0) p.shake-=dt; if(p.dead){ p.dead-=dt; if(p.dead<=0){ p.dead=0; p.hp=p.max=Math.min(5,p.max+1); p.len=rnd(55,95); p.x=rnd(80,310); } } });
+  S.pinatas.forEach(p=>{ if(p.shake>0) p.shake-=dt; if(p.dead){ p.dead-=dt; if(p.dead<=0){ p.dead=0; p.hp=p.max=Math.min(S.cfg.pin+2,p.max+1); p.len=rnd(55,95); p.x=rnd(80,310); } } });
   stepWins(dt); stepCucuy(dt);
   if(S.left<=0&&!S.tams.length) endRound(); }
 
@@ -358,20 +397,29 @@ function update(dt){ S.t+=dt; if(shake>0) shake=Math.max(0,shake-dt*30);
 function loop(ts){ const dt=Math.min(.05,(ts-(last||ts))/1000); last=ts; if(state==="play") update(dt); else if(state==="start"&&S){ S.t+=dt; stepWins(dt); } if(S) draw(dt); requestAnimationFrame(loop); }
 const SONG=[[7,.5,0],[7,.5,null],[9,.5,7],[7,.5,null],[12,.5,0],[11,1,null],[null,.5,7],[7,.5,0],[7,.5,null],[9,.5,7],[7,.5,null],[14,.5,2],[12,1,null],[null,.5,7],
   [7,.5,0],[19,.5,null],[16,.5,7],[12,.5,null],[11,.5,5],[9,1,null],[null,.5,5],[17,.5,5],[16,.5,null],[12,.5,7],[14,.5,null],[12,1.5,0],[null,.5,null]];
-function begin(){ newRound(); state="play"; ["start","over","paused"].forEach(id=>$(id).hidden=true); unlock(); startMusic(SONG,168); last=0; updMult(); toast(t("go2")); }
-function endRound(){ state="over"; stopMusic(); const t0=now(); tone("square",392,t0,.2,.08); tone("square",523,t0+.2,.2,.08); tone("square",659,t0+.4,.45,.08);
-  const sc=S.score, b=best.get("tamalazo-best"), nb=sc>b; if(nb) best.set("tamalazo-best",sc);
-  $("overT").textContent=t("titles").find(([m])=>sc>=m)[1]; $("oScore").textContent=sc.toLocaleString(); $("oAcc").textContent=(S.throws?Math.round(S.hits/S.throws*100):0)+"%"; $("oCombo").textContent="×"+(1+Math.min(3,Math.floor(S.bestCombo/3)))+" · "+S.bestCombo;
-  $("oLine").textContent=t("line",S.cans,S.pins,S.rels); $("oBest").textContent=nb?t("newBest"):t("best",b.toLocaleString());
-  $("oShare").href=shareLinks(t("msg",sc.toLocaleString(),location.href.split("#")[0])).wa; setTimeout(()=>{ $("over").hidden=false; },500); }
+function begin(n){ newRound(n); state="play"; ["start","over","paused"].forEach(id=>$(id).hidden=true); unlock(); startMusic(SONG,168); last=0; updMult(); toast(t("go2")); }
+function endRound(){ state="over"; stopMusic(); const sc=S.score, n=S.lv, st=starsFor(sc,S.goal), won=st>0, t0=now();
+  if(won){ [392,523,659,784].forEach((f,i)=>tone("square",f,t0+i*.15,.25,.08)); } else { [392,370,349,330].forEach((f,i)=>tone("sawtooth",f,t0+i*.28,i===3?.8:.26,.06)); }
+  const prevBest=prog.best[n]||0; if(sc>prevBest) prog.best[n]=sc; if(st>(prog.stars[n]||0)) prog.stars[n]=st; if(won&&n>=prog.unlocked&&n<LEVELS.length) prog.unlocked=n+1; saveProg();
+  $("overK").textContent=won?t("wonK",n):t("lostK",n); $("oStars").textContent=won?"⭐".repeat(st)+"☆".repeat(3-st):"";
+  $("overT").textContent=won?(n===LEVELS.length?t("allDone"):t("wonT")[st-1]):t("lostT");
+  $("oScore").textContent=sc.toLocaleString(); $("oAcc").textContent=(S.throws?Math.round(S.hits/S.throws*100):0)+"%"; $("oCombo").textContent="×"+(1+Math.min(3,Math.floor(S.bestCombo/3)))+" · "+S.bestCombo;
+  $("oLine").textContent=(won?"":t("need",S.goal.toLocaleString(),sc.toLocaleString())+" ")+t("line",S.cans,S.pins,S.rels);
+  $("oBest").textContent=sc>prevBest&&prevBest?t("newBest"):prevBest?t("best",Math.max(prevBest,sc).toLocaleString()):"";
+  const nx=$("nextLv"), hasNext=won&&n<LEVELS.length; nx.hidden=!hasNext; if(hasNext) nx.textContent=t("nextLv",LEVELS[n].name); $("again").className=hasNext?"cta alt":"cta";
+  $("oShare").href=shareLinks(t("msg",sc.toLocaleString(),location.href.split("#")[0])).wa; renderLvls(); setTimeout(()=>{ $("over").hidden=false; },500); }
+function renderLvls(){ const box=$("lvls"); box.innerHTML=LEVELS.map(L=>{ const lock=L.n>prog.unlocked, st=prog.stars[L.n]||0, nxt=L.n===Math.min(prog.unlocked,LEVELS.length)&&!st;
+    return `<button class="lvl${nxt?" next":""}" data-lv="${L.n}" ${lock?"disabled":""}><span class="n">${lock?"🔒":L.n}</span><span><b>${L.name}</b><small>${lock?t("locked"):t("lvlGoal",L.goal.toLocaleString(),L.time)}</small></span><span class="st">${"⭐".repeat(st)}${"☆".repeat(3-st)}</span></button>`; }).join("");
+  box.querySelectorAll("[data-lv]").forEach(b=>b.onclick=()=>begin(+b.dataset.lv));
+  const cont=Math.min(prog.unlocked,LEVELS.length); $("go").textContent=t("goN",cont,LEVELS[cont-1].name); $("go").onclick=()=>begin(cont); }
 function pause(on){ if(on&&state==="play"){ state="paused"; $("paused").hidden=false; stopMusic(); } else if(!on&&state==="paused"){ state="play"; $("paused").hidden=true; startMusic(SONG,168); last=0; } }
 function onSound(on){ if(!on) stopMusic(); else if(state==="play") startMusic(SONG,168); }
-$("go").addEventListener("click",begin); $("again").addEventListener("click",begin);
-$("pause").addEventListener("click",e=>{ e.stopPropagation(); pause(state==="play"); }); $("resume").addEventListener("click",()=>pause(false)); $("quit").addEventListener("click",begin);
+$("again").addEventListener("click",()=>begin(curLv)); $("nextLv").addEventListener("click",()=>begin(curLv+1)); $("toLvls").addEventListener("click",()=>{ $("over").hidden=true; state="start"; renderLvls(); $("start").hidden=false; });
+$("pause").addEventListener("click",e=>{ e.stopPropagation(); pause(state==="play"); }); $("resume").addEventListener("click",()=>pause(false)); $("quit").addEventListener("click",()=>begin(curLv));
 document.addEventListener("visibilitychange",()=>{ if(document.hidden) pause(true); });
 ["moreLink2"].forEach(id=>{ if($(id)) $(id).href=LINK.play; });
-function onLang(){ const b=best.get("tamalazo-best"); $("startBest").textContent=b?t("best",b.toLocaleString()):""; }
-applyWords(); newRound(); requestAnimationFrame(loop);
+function onLang(){ renderLvls(); if(S) renderLand(); }
+applyWords(); newRound(Math.min(prog.unlocked,LEVELS.length)); renderLvls(); requestAnimationFrame(loop);
 </script>
 </body>
 </html>

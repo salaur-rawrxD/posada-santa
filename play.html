@@ -2219,7 +2219,7 @@ const _spawnArc=spawn; spawn=function(){ if(ARC.bossOn) return; _spawnArc(); };
 /* ---------- bosses ---------- */
 const BOSSES=[
   {name:"Don Gruñón",title:{en:"the grumpy neighbor",es:"el vecino gruñón"},taunt:{en:"¡Oye! Get off my lawn!",es:"¡Oye! ¡Fuera de mi jardín!"},hp:3,atk:["lob","roll","lob"],shot:"snow",draw:drawGrunon},
-  {name:"La Marchanta",title:{en:"queen of the mercado",es:"reina del mercado"},taunt:{en:"¡Pásele, pásele! Fresh fruit… to the face!",es:"¡Pásele, pásele! Fruta fresca… ¡a la cara!"},hp:3,atk:["line","lob","line"],shot:"fruit",draw:drawMarchanta},
+  {name:"La Verdulera",title:{en:"queen of the veggie stand",es:"la reina de las verduras"},taunt:{en:"¡Pásele, pásele! Fresh fruit… to the face!",es:"¡Pásele, pásele! Fruta fresca… ¡a la cara!"},hp:3,atk:["line","lob","line"],shot:"fruit",draw:drawVerdulera},
   {name:"El Cohetero",title:{en:"master of fireworks",es:"el maestro de los cohetes"},taunt:{en:"¡Ahí les van los cohetes!",es:"¡Ahí les van los cohetes!"},hp:4,atk:["wall","line","wall","lob"],shot:"cohete",draw:drawCohetero},
   {name:"La Piñatota",title:{en:"the piñata that fights back",es:"la piñata que se defiende"},taunt:{en:"You want candy? Come and get it!",es:"¿Quieres dulces? ¡Ven por ellos!"},hp:4,atk:["rain","swoop","line","rain"],shot:"candy",draw:drawPinatota},
   {name:"El Cucuy Navideño",title:{en:"the gift thief",es:"el roba regalos"},taunt:{en:"Your letter will never reach Santa…",es:"Tu carta nunca llegará con Santa…"},hp:5,atk:["lob","wall","rain","line","swoop"],shot:"coal",draw:drawCucuy}];
@@ -2291,7 +2291,7 @@ function drawGrunon(b){ const s=bossBase(b), y=s.bob;
   ctx.strokeStyle="#5a3a26"; ctx.lineWidth=6; ctx.lineCap="round"; ctx.beginPath(); ctx.moveTo(-14,-40+y); ctx.lineTo(s.arm?-26:-22,s.arm?-66:-28); ctx.stroke(); ctx.lineCap="butt";
   ctx.fillStyle="#f4f7ff"; ctx.beginPath(); ctx.arc(s.arm?-27:-23,s.arm?-70:-25,6,0,6.283); ctx.fill();
   ctx.strokeStyle="#8d5a34"; ctx.lineWidth=3; ctx.beginPath(); ctx.moveTo(16,-36+y); ctx.lineTo(26,4); ctx.stroke(); ctx.fillStyle="#9aa3b5"; ctx.fillRect(20,0,14,5); ctx.restore(); }
-function drawMarchanta(b){ const s=bossBase(b), y=s.bob;
+function drawVerdulera(b){ const s=bossBase(b), y=s.bob;
   ctx.fillStyle="#e2337f"; ctx.beginPath(); ctx.moveTo(-22,0); ctx.quadraticCurveTo(-18,-30+y,-13,-48+y); ctx.lineTo(13,-48+y); ctx.quadraticCurveTo(18,-30+y,22,0); ctx.closePath(); ctx.fill();
   ctx.fillStyle="#fff8ec"; ctx.beginPath(); ctx.moveTo(-12,-2); ctx.lineTo(-10,-34+y); ctx.lineTo(10,-34+y); ctx.lineTo(12,-2); ctx.closePath(); ctx.fill(); ctx.fillStyle="#22a9c4"; for(let i=0;i<4;i++) ctx.fillRect(-10,-28+y+i*7,20,2);
   ctx.fillStyle="#22a9c4"; ctx.beginPath(); ctx.moveTo(-16,-48+y); ctx.lineTo(16,-48+y); ctx.lineTo(20,-38+y); ctx.lineTo(-20,-38+y); ctx.closePath(); ctx.fill();
