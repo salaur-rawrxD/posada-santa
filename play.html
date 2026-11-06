@@ -157,6 +157,10 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--marigold);outline-o
 .who-row .wn{display:grid}.who-row small{font-size:10px;font-weight:800;letter-spacing:.1em;white-space:nowrap;text-transform:uppercase;color:#8f9cc8}.who-row b{font-size:18px;font-weight:800;color:#fff8ec}
 .pillbtn{font:inherit;font-weight:800;font-size:13px;height:34px;padding:0 14px;border-radius:99px;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.06);color:#fff8ec;cursor:pointer}
 .levels{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.minis{display:grid;gap:6px;margin-top:4px}.minis-k{font-size:11px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:#f5c66a;text-align:left}
+.minis-row{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.mini{display:grid;grid-template-columns:auto 1fr;grid-template-rows:auto auto;column-gap:8px;align-items:center;text-align:left;padding:9px 11px;border-radius:14px;background:linear-gradient(150deg,rgba(226,51,127,.22),rgba(34,169,196,.14));border:1px solid rgba(245,198,106,.35);color:#fff8ec;text-decoration:none}
+.mini span{grid-row:1/3;font-size:24px}.mini b{font-size:14px;line-height:1.1}.mini small{font-size:11px;font-weight:700;color:#cfd6f0}
 .lvl{font:inherit;width:100%;display:grid;grid-template-columns:38px 1fr auto;gap:12px;align-items:center;text-align:left;padding:10px 12px;border-radius:16px;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.05);color:#fff8ec;cursor:pointer;transition:background .2s,transform .12s}
 .lvl:hover{background:rgba(255,255,255,.09)}.lvl:active{transform:scale(.99)}
 .lvl .num{width:38px;height:38px;border-radius:12px;display:grid;place-items:center;font-weight:800;font-size:17px;background:linear-gradient(180deg,#ffc95e,#f5a524);color:#1c1430}
@@ -287,6 +291,7 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--marigold);outline-o
     <p class="note" id="handoffNote" hidden></p>
     <div class="who-row"><canvas class="ico" data-ico="kid"></canvas><span class="wn"><small data-t="playingAs">Playing as</small><b id="whoName">—</b></span><button class="pillbtn" id="outfitBtn" type="button">Customize</button><button class="pillbtn" id="whoChange" type="button" data-t="change">Change</button></div>
     <ul class="levels" id="levelList"></ul>
+    <div class="minis"><span class="minis-k" id="minisK">Mini games</span><div class="minis-row"><a class="mini" id="miniTr" target="_blank" rel="noopener"><span>🛷</span><b>El Trineo</b><small id="miniTrS">Sled run</small></a><a class="mini" id="miniTm" target="_blank" rel="noopener"><span>🫔</span><b>¡Tamalazo!</b><small id="miniTmS">Tamale toss</small></a></div></div>
     <div class="stack tight">
       <button class="cta alt" id="tipsBtn" type="button" hidden><span>🧝 <span data-t="tipsBtn">Elf tips for your giftee</span></span></button>
       <button class="cta alt" id="boardBtn" type="button"><span>🏆 <span data-t="board">Family leaderboard</span></span></button>
@@ -2037,6 +2042,11 @@ requestAnimationFrame(frame);
    Arcade layer: hearts and checkpoints, combo multiplier, near misses,
    hand-built tramos with chispas to chain, and a boss at the end of every level
    ========================================================= */
+/* links to the mini games: site paths on the web, artifact links inside Claude */
+(function(){ const inClaude=/claude|anthropic/.test(location.hostname)||location.protocol==="file:";
+  $("miniTr").href=inClaude?"/trineo":"/trineo"; $("miniTm").href=inClaude?"/tamalazo":"/tamalazo";
+  const set=()=>{ const es=LANG==="es"; $("minisK").textContent=es?"Minijuegos":"Mini games"; $("miniTrS").textContent=es?"Bájate en trineo":"Sled run"; $("miniTmS").textContent=es?"Avienta tamales":"Tamale toss"; };
+  const _al=applyLang; applyLang=function(){ _al(); set(); }; set(); })();
 const ARC={hearts:3,max:3,invul:0,flash:0,cp:null,cpHalf:false,comboT:0,callout:null,bossOn:false,bossDone:false,boss:null,proj:[],tokens:[],flying:[],warns:[],
   bossPending:0,chispas:[],hearts_:[],failed:false,sinceHeart:0,tramoI:0,nm:0,bestM:1,lost:0};
 const COMBO_T=3.2;

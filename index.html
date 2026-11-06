@@ -62,6 +62,10 @@ section{padding:56px 0}
 .game{display:grid;grid-template-columns:1fr 1fr;gap:36px;align-items:center;padding:30px;border-radius:32px;background:linear-gradient(150deg,rgba(226,51,127,.2),rgba(34,169,196,.12) 60%,rgba(47,143,78,.14));border:1px solid rgba(245,198,106,.3)}
 .game img{width:100%;border-radius:22px;box-shadow:0 20px 50px rgba(0,0,0,.4);display:block}
 .bosses{display:flex;flex-wrap:wrap;gap:8px;margin:16px 0 22px}.bosses span{font-weight:800;font-size:14px;padding:7px 12px;border-radius:99px;background:rgba(0,0,0,.22);border:1px solid var(--line)}
+.minis{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:28px}
+.minicard{display:grid;gap:8px;align-content:start;padding:22px;border-radius:24px;text-decoration:none;background:linear-gradient(160deg,rgba(226,51,127,.18),rgba(34,169,196,.12));border:1px solid rgba(245,198,106,.3);transition:transform .15s}
+.minicard:hover{transform:translateY(-3px)}.minicard .mi{font-size:40px}.minicard b{color:var(--gold);font-weight:900}
+@media (max-width:860px){.minis{grid-template-columns:1fr}}
 .final{padding:44px 24px;border-radius:32px;text-align:center;display:grid;justify-items:center;gap:14px;background:radial-gradient(80% 120% at 50% 0%,rgba(245,165,36,.22),rgba(22,34,74,.4));border:1px solid rgba(245,198,106,.35)}
 footer{padding:30px 0 50px;display:flex;flex-wrap:wrap;gap:10px 22px;justify-content:space-between;color:var(--muted);font-size:14px;font-weight:700}
 footer a{color:var(--muted)}
@@ -117,6 +121,15 @@ footer a{color:var(--muted)}
     </div>
   </section>
 
+  <section>
+    <div class="center"><span class="kicker" data-t="mK">Mini games</span><h2 data-t="mT">Quick games for the whole familia</h2></div>
+    <div class="minis">
+      <a class="minicard" href="/trineo"><span class="mi">🛷</span><h3>El Trineo</h3><p data-t="m1">Race down the hill. Dodge pines and burros, hit the ramps, grab the regalos.</p><b data-t="mGo">Play →</b></a>
+      <a class="minicard" href="/tamalazo"><span class="mi">🫔</span><h3>¡Tamalazo!</h3><p data-t="m2">60 seconds, an olla of tamales. Bonk the judgy tíos. Never hit Abuelita.</p><b data-t="mGo">Play →</b></a>
+      <a class="minicard" href="/play"><span class="mi">🏠</span><h3>La Posada</h3><p data-t="m3">Five levels, five bosses and a live family leaderboard.</p><b data-t="mGo">Play →</b></a>
+    </div>
+  </section>
+
   <section><div class="final"><span class="kicker" data-t="endK">¡Ándale!</span><h2 data-t="endT">Your posada is waiting</h2><p data-t="endP">Start in five minutes. No accounts, no downloads, no cost.</p><a class="cta" href="/host" data-t="cta">🎄 Start your Secret Santa</a></div></section>
 
   <footer><span>© 2026 Posada Santa</span><span><a href="/privacy" data-t="priv">Privacy & terms</a></span></footer>
@@ -133,6 +146,7 @@ const ES={kick:"Gratis · Sin cuentas · Español e inglés",h1:"Secret Santa, <
   f2t:"Piñatas sorpresa",f2p:"Pégale hasta que se rompa y guarda tu Secret Santa y su lista como imagen.",f3t:"Tabla familiar",f3p:"Puntos en vivo solo para tu grupo. A Tío Beto no le va a gustar perder.",
   f4t:"Bilingüe desde el principio",f4p:"Cada persona recibe mensajes y páginas en su idioma, español o inglés.",
   gK:"El juego",gT:"La Posada",gP:"Cinco niveles de puro relajo posadero. Esquiva chanclas voladoras, humo de chile y tías criticonas, arma combos hasta ×5 y vence a un jefe al final de cada nivel.",gCta:"🎮 Jugar ahora",
+  mK:"Minijuegos",mT:"Juegos rápidos para toda la familia",m1:"Bájate la colina a toda velocidad. Esquiva pinos y burros, usa las rampas y junta regalos.",m2:"60 segundos y una olla de tamales. Pégale a los tíos criticones. Nunca a la Abuelita.",m3:"Cinco niveles, cinco jefes y una tabla familiar en vivo.",mGo:"Jugar →",
   endK:"¡Ándale!",endT:"Tu posada te espera",endP:"Empieza en cinco minutos. Sin cuentas, sin descargas, sin costo.",priv:"Privacidad y términos"};
 const EN={}; document.querySelectorAll("[data-t]").forEach(el=>{ if(!(el.dataset.t in EN)) EN[el.dataset.t]=el.innerHTML; });
 function setLang(l){ document.documentElement.lang=l; const D=l==="es"?ES:EN; document.querySelectorAll("[data-t]").forEach(el=>{ const v=D[el.dataset.t]; if(v!=null) el.innerHTML=v; });
