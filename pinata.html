@@ -56,6 +56,17 @@ h1{font-family:var(--display);font-weight:400;font-size:clamp(28px,8vw,36px);lin
 .shout.pop{animation:shout .35s cubic-bezier(.3,1.8,.5,1)}
 @keyframes shout{from{transform:scale(.6) rotate(-6deg)}to{transform:none}}
 .hint{font-weight:600;font-size:14px;color:#aab4d6}
+.phud{position:absolute;left:50%;bottom:6px;transform:translateX(-50%);display:flex;align-items:center;gap:10px;padding:6px 12px;border-radius:99px;background:rgba(22,34,74,.82);color:var(--cream);font-weight:800;font-size:13px;white-space:nowrap;pointer-events:none;z-index:2}
+.phud .hp{display:flex;gap:2px}.phud .hp i{width:9px;height:10px;border-radius:3px;background:linear-gradient(180deg,#ff8ab8,#e2337f)}.phud .hp i.off{background:rgba(255,255,255,.18)}
+.phud .cmb{color:var(--marigold);min-width:62px;text-align:right}
+.skipbtn{font:inherit;font-weight:800;font-size:15px;color:var(--cream);background:rgba(255,248,236,.1);border:1.5px solid rgba(245,165,36,.65);border-radius:99px;min-height:44px;padding:0 18px;cursor:pointer;margin-top:8px}
+.grab{position:absolute;inset:0;z-index:3;cursor:pointer;touch-action:manipulation}
+.grab span{position:absolute;left:0;top:0;font-size:30px;line-height:1;will-change:transform;filter:drop-shadow(0 3px 4px rgba(0,0,0,.35))}
+.grabct{position:absolute;top:8px;left:50%;transform:translateX(-50%);z-index:4;padding:6px 14px;border-radius:99px;background:var(--marigold);color:#2a1d14;font-family:var(--display);font-size:20px;pointer-events:none}
+.pstats{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:2px 0 4px}
+.pstats div{background:#fff;border:2px solid #efe2cc;border-radius:12px;padding:8px 4px;display:grid;gap:1px}
+.pstats b{font-family:var(--display);font-size:20px;color:var(--red);line-height:1.1}.pstats small{font-size:10px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.pbest{font-weight:800;font-size:13px;color:#2f8f4e}
 .snd{position:absolute;top:4px;left:0;width:40px;height:40px;border-radius:50%;border:0;background:rgba(255,248,236,.12);color:var(--cream);font-size:18px;cursor:pointer;display:grid;place-items:center}
 .snd[data-on="1"]{background:var(--marigold)}
 .snd:focus-visible{outline:3px solid var(--marigold);outline-offset:2px}
@@ -179,6 +190,7 @@ ol li::before{content:"★";color:var(--marigold);font-size:16px;line-height:1.4
           </g>
         </g>
       </g>
+      <g id="zone" opacity=".85"><circle id="zoneRing" cx="282" cy="144" r="15" fill="none" stroke="#ffd34d" stroke-width="2.5" stroke-dasharray="4 4"/><path d="M282 134 l3 6.5 7 .8 -5.2 4.7 1.5 7 -6.3-3.6 -6.3 3.6 1.5-7 -5.2-4.7 7-.8z" fill="#ffd34d" opacity=".9"/></g>
       <!-- original big-head toy kid, blindfolded, with a ribboned stick -->
       <g id="kid" transform="translate(24,58) scale(.85)">
         <rect x="92" y="244" width="22" height="34" rx="8" fill="#2b3a7a"/>
@@ -225,15 +237,18 @@ ol li::before{content:"★";color:var(--marigold);font-size:16px;line-height:1.4
       </g>
     </svg>
     <div class="pile" id="pile" aria-hidden="true"></div>
+    <div class="phud" id="phud" aria-hidden="true"><span>🪅</span><span class="hp" id="hpBar"></span><span class="cmb" id="cmb"></span></div>
   </div>
 
   <div class="play" id="play">
     <div class="shout" id="shout">Tap anywhere to swing</div>
     <div class="hint" id="hint">¡Dale, dale, dale! 🎶</div>
+    <button class="skipbtn" id="skipBtn" type="button" data-t="skip">Skip to my match →</button>
   </div>
 
   <div class="tag" id="result" hidden>
     <div class="ribbon"></div>
+    <div id="pinRes" hidden><div class="pstats"><div><b id="pSw">0</b><small data-t="pSw">swings</small></div><div><b id="pPf">0</b><small data-t="pPf">perfect</small></div><div><b id="pCd">0</b><small data-t="pCd">candy</small></div><div><b id="pSc">0</b><small data-t="pSc">points</small></div></div><div class="pbest" id="pBest"></div></div>
     <svg class="bow" viewBox="0 0 76 40" aria-hidden="true">
       <path d="M38 20 C26 2 4 4 8 18 C11 28 28 26 38 20 Z" fill="#d7372f"/><path d="M38 20 C50 2 72 4 68 18 C65 28 48 26 38 20 Z" fill="#d7372f"/>
       <path d="M38 20 C30 10 16 9 15 16" stroke="#a8241f" stroke-width="2" fill="none"/><path d="M38 20 C46 10 60 9 61 16" stroke="#a8241f" stroke-width="2" fill="none"/>
@@ -275,6 +290,7 @@ ol li::before{content:"★";color:var(--marigold);font-size:16px;line-height:1.4
       <button id="shotBtn" type="button" class="saveimg" data-t="shot">📸 Save as image</button>
       <div id="famBoard" class="famboard" hidden><div class="label" id="famLabel"></div><ol id="famList"></ol></div>
       <a id="playTips" class="saveimg play" href=ORIGIN+"/play" target="_blank" rel="noopener" data-t="playTips">🎮 Play for elf tips</a>
+      <button id="rematch" type="button" class="saveimg" data-t="rematch">🪅 Play the piñata again</button>
       <button id="again" type="button" class="again" data-t="again">🎺 Play the song again</button>
     </div>
   </div>
@@ -363,6 +379,8 @@ function renderFam(){ famLiveLoad(); if(!sbData||!rawCode) return; const e=(sbDa
 const T={
   en:{title:"Your Secret Santa Match",hello:"Break the piñata!",helloN:n=>`${n}, break the piñata!`,sub:"Your Secret Santa match is hiding inside 🎁",tap:"Tap anywhere to swing",keep:"Keep swinging!",below:"Your match is below 👇",
     stage:"Swing at the piñata",shopping:"You're shopping for",sizes:"Their sizes",shirt:"Shirt",pants:"Pants",shoes:"Shoes",wishes:"Their top 3 wishes",hints:"Gift hints ✨",noIdeas:"No ideas listed",
+    skip:"Skip to my match →",aim:"Swing when the piñata passes the ⭐",perfect:"¡PERFECTO! 💥",good:"¡Bien! 👊",miss:"¡Aire! 💨 Missed",yank:"¡El tío la jaló! He yanked it ⬆️",blind:"They spun you around! Listen for the beeps 👂",grab:"Grab the candy! 🍬",
+    rematch:"🪅 Play the piñata again",pSw:"swings",pPf:"perfect",pCd:"candy",pSc:"points",best:"New best! 🏆",bestWas:n=>`Your best: ${n} points`,combo:"Combo",
     hush:"Shhh, it's top secret 🤫 Keep this text so you can check back while you shop.",shot:"📸 Save as image",playTips:"🎮 Play for elf tips",making:"Making your picture…",again:"🎺 Play the song again",
     bad1:"Almost there! Your secret code didn't come through.",bad2:"Go back to your text, copy the whole message (or just the link), and paste it here.",badLabel:"Your Secret Santa text",paste:"Paste here",go:"Let's break it! 🪅",
     pasteErr:"That doesn't look like your Secret Santa link. Copy the whole text message and try again.",shotHelp:"Press and hold the picture, then tap <b>Save to Photos</b> 📲",shotSave:"⬇️ Save image",close:"Close",
@@ -372,6 +390,8 @@ const T={
       tr:"Favorite treats",rd:"Likes to read",gm:"Plays or uses",sp:"Their sport or workout",tm:"Their team",st:"Stores or brands they love",gc:"Gift cards",no:"Please, no…"}},
   es:{title:"Tu Secret Santa",hello:"¡Rompe la piñata!",helloN:n=>`¡${n}, rompe la piñata!`,sub:"Tu Secret Santa está escondido adentro 🎁",tap:"Toca donde sea para pegarle",keep:"¡Sigue pegándole!",below:"Tu Secret Santa está abajo 👇",
     stage:"Pégale a la piñata",shopping:"Le vas a regalar a",sizes:"Sus tallas",shirt:"Camisa",pants:"Pantalón",shoes:"Zapato",wishes:"Sus 3 deseos favoritos",hints:"Pistas para el regalo ✨",noIdeas:"No puso ideas",
+    skip:"Ir directo a mi Secret Santa →",aim:"Pégale cuando la piñata pase por la ⭐",perfect:"¡PERFECTO! 💥",good:"¡Bien! 👊",miss:"¡Aire! 💨",yank:"¡El tío la jaló! ⬆️",blind:"¡Te dieron vueltas! Escucha los bips 👂",grab:"¡Agarra los dulces! 🍬",
+    rematch:"🪅 Jugar la piñata otra vez",pSw:"golpes",pPf:"perfectos",pCd:"dulces",pSc:"puntos",best:"¡Nuevo récord! 🏆",bestWas:n=>`Tu récord: ${n} puntos`,combo:"Combo",
     hush:"Shhh, es top secret 🤫 Guarda este mensaje para revisarlo mientras compras.",shot:"📸 Guardar como imagen",playTips:"🎮 Juega por tips",making:"Haciendo tu imagen…",again:"🎺 Tocar la canción otra vez",
     bad1:"¡Ya casi! Tu código secreto no llegó.",bad2:"Regresa a tu mensaje, copia todo el texto (o solo el link) y pégalo aquí.",badLabel:"Tu mensaje del Secret Santa",paste:"Pega aquí",go:"¡A romperla! 🪅",
     pasteErr:"Ese no parece tu link del Secret Santa. Copia todo el mensaje y vuelve a intentar.",shotHelp:"Mantén presionada la imagen y toca <b>Guardar en Fotos</b> 📲",shotSave:"⬇️ Guardar imagen",close:"Cerrar",
@@ -408,7 +428,7 @@ function applyLang(){
   $("hello").textContent=data&&data.n?t("helloN")(data.n):t("hello");
   $("paste").placeholder=t("paste"); $("stage").setAttribute("aria-label",t("stage")); $("shot").setAttribute("aria-label",t("shotAria"));
   $("shotHelp").innerHTML=t("shotHelp");
-  if(!hits) $("shout").textContent=t("tap");
+  if(!hits){ $("shout").textContent=t("tap"); hintKey=hintKey||"aim"; }
   if(hintKey) $("hint").textContent=t(hintKey);
   if(!$("result").hidden){ fillResult(); renderFam(); }
 }
@@ -534,43 +554,107 @@ function playSong(){
 }
 function stopSong(){ songNodes.forEach(n=>{ try{ n.stop(); }catch(e){} }); songNodes=[]; }
 
-/* ---------- game state & animation loop ---------- */
+/* ---------- the piñata mini game ----------
+   The tío pulls the rope, so the piñata swings back and forth. Your stick always lands on the ⭐:
+   swing when the piñata is over it. Dead center is a PERFECTO (2 damage), close is a hit (1), else ¡aire!
+   Later on he yanks it up out of reach, and they spin you around so you can only hear it coming. */
 const stick=$("stick"), pin=$("pin");
-const REST=-150, HIT=-38;
-let stickA=REST, pinA=0, pinV=0, hits=0, broken=false, swingT=-1, queued=false, hitDone=false, last=performance.now();
+const REST=-150, HIT=-38, ZX=282, ZY=144;
+let stickA=REST, pinA=0, pinV=0, hits=0, broken=false, swingT=-1, hitDone=false, last=performance.now();
+let G0=null, skipMode=false;
+function newGame(){ G0={hp:10+Math.floor(Math.random()*3),max:0,dmg:0,ph:Math.random()*6,dx:0,dy:0,yank:0,yankT:3.5+Math.random()*2,wob:0,blind:0,blindT:0,combo:0,best:0,perfect:0,good:0,miss:0,score:0,t0:0,t:0,beepT:0,candy:0,started:false}; G0.max=G0.hp; renderHud(); }
+function renderHud(){ if(!G0) return; const left=Math.max(0,G0.hp-G0.dmg); $("hpBar").innerHTML=Array.from({length:G0.max},(_,i)=>`<i class="${i<left?"":"off"}"></i>`).join("");
+  $("cmb").textContent=G0.combo>=2?`${t("combo")} ×${G0.combo}`:""; }
+const pinXY=()=>({x:275+G0.dx,y:150+G0.dy});
 function frame(now){
   const dt=Math.min(0.05,(now-last)/1000); last=now;
   if(swingT>=0){
     swingT+=dt; const D=0.11;
     if(swingT<D){ stickA=REST+(HIT-REST)*(swingT/D); }
     else { if(!hitDone){ hitDone=true; onHit(); } stickA=HIT+(REST-HIT)*Math.min(1,(swingT-D)/0.16); }
-    if(swingT>=D+0.16){ swingT=-1; stickA=broken?-120:REST; if(queued&&!broken){ queued=false; startSwing(); } }
+    if(swingT>=D+0.16){ swingT=-1; stickA=broken?-120:REST; }
   }
-  // piñata: damped spring plus a gentle idle sway
-  if(!broken){
+  if(G0&&!broken){
+    const prog=G0.dmg/G0.max;
+    if(G0.started){ G0.t+=dt;
+      // the tío pulls the rope: slow at first, faster as it cracks
+      G0.ph+=dt*(RM?1.1:(1.5+prog*1.7));
+      // later on he yanks it up out of reach (with a little wobble first)
+      G0.yankT-=dt; if(prog>.25&&G0.yankT<=0&&G0.yank<=0&&G0.wob<=0){ G0.wob=.45; }
+      if(G0.wob>0){ G0.wob-=dt; if(G0.wob<=0){ G0.yank=.75; ropeZip(); say("yank"); } }
+      if(G0.yank>0){ G0.yank-=dt; if(G0.yank<=0) G0.yankT=2.6+Math.random()*2.6; }
+      // and they spin you around: the piñata fades, but the beeps speed up as it gets close
+      G0.blindT-=dt; if(prog>.45&&G0.blind<=0&&G0.blindT<=0&&Math.random()<dt*.35){ G0.blind=2.4; G0.blindT=5; say("blind"); }
+      if(G0.blind>0) G0.blind-=dt;
+    }
+    G0.dx=Math.sin(G0.ph)*56+Math.sin(G0.ph*2.3)*6-10;
+    const up=G0.yank>0?Math.sin(Math.min(1,(0.75-G0.yank)/0.15)*Math.PI/2)*72*(G0.yank<0.15?G0.yank/0.15:1):0;
+    G0.dy+=(-up-G0.dy)*Math.min(1,dt*18);
+    const wob=G0.wob>0?Math.sin(now/25)*5:0;
     const acc=-60*pinA-4*pinV; pinV+=acc*dt; pinA+=pinV*dt;
-    pin.setAttribute("transform",`rotate(${(pinA+Math.sin(now/900)*3).toFixed(2)} 275 0)`);
+    pin.setAttribute("transform",`translate(${G0.dx.toFixed(1)} ${G0.dy.toFixed(1)}) rotate(${(pinA+wob-G0.dx*.12).toFixed(2)} 275 0)`);
+    const bl=G0.blind; pin.style.opacity=bl<=0?"1":(bl>2.1?1-(2.4-bl)/.3*.92:bl<.3?.08+(1-bl/.3)*.92:.08).toFixed(2);
+    const q=pinXY(), d=Math.hypot(q.x-ZX,q.y-ZY), on=d<12;
+    $("zoneRing").setAttribute("stroke",on?"#7dff9a":d<30?"#ffd34d":"rgba(255,211,77,.5)"); $("zoneRing").setAttribute("stroke-width",on?"4":"2.5");
+    if(G0.blind>0&&G0.started){ G0.beepT-=dt; if(G0.beepT<=0){ G0.beepT=Math.max(.07,d/260); beep(d); } }
   }
   stick.setAttribute("transform",`rotate(${stickA.toFixed(1)} 150 220)`);
+  stepGrab(dt);
   requestAnimationFrame(frame);
 }
+function say(k){ const h=$("hint"); hintKey=k; h.textContent=t(k); }
 function startSwing(){ swingT=0; hitDone=false; whoosh(); }
 function swing(){
-  if(broken||!data) return;
-  unlock();
-  if(swingT>=0){ queued=true; return; }
+  if(broken||!data||!G0) return;
+  unlock(); if(!G0.started){ G0.started=true; G0.t0=performance.now(); }
+  if(swingT>=0) return;        // no queued swings: timing matters
   startSwing();
 }
+function pop(text,hot){ const s=$("shout"); s.textContent=text; s.classList.toggle("hot",!!hot); s.classList.remove("pop"); void s.offsetWidth; s.classList.add("pop"); }
 function onHit(){
-  hits++; bonk();
-  pinV -= 160 + Math.random()*60;
-  document.querySelectorAll(".crack").forEach((c,i)=>{ if(hits/HITS > (i+0.5)/4) c.setAttribute("opacity","1"); });
-  const s=$("shout"); s.textContent=SHOUTS[Math.floor(Math.random()*SHOUTS.length)]; s.classList.add("hot"); s.classList.remove("pop"); void s.offsetWidth; s.classList.add("pop");
-  if(hits===1){ hintKey="keep"; $("hint").textContent=t("keep"); }
-  if(navigator.vibrate) try{ navigator.vibrate(25); }catch(e){}
-  if(hits>=3) burst(2+Math.floor(hits/2), 0.6);
-  if(hits>=HITS) breakPinata();
+  hits++; const q=pinXY(), d=Math.hypot(q.x-ZX,q.y-ZY);
+  if(d<13||(d<30)){ const perfect=d<13, dmg=perfect?2:1; G0.dmg+=dmg; G0.combo++; G0.best=Math.max(G0.best,G0.combo);
+    const mult=1+Math.min(4,Math.floor(G0.combo/3))*.5; G0.score+=Math.round((perfect?150:80)*mult);
+    if(perfect){ G0.perfect++; } else G0.good++;
+    bonk(); if(perfect) chime(); pinV-=perfect?240:160+Math.random()*50;
+    pop(perfect?t("perfect"):SHOUTS[Math.floor(Math.random()*SHOUTS.length)],perfect);
+    document.querySelectorAll(".crack").forEach((c,i)=>{ if(G0.dmg/G0.max > (i+0.5)/4) c.setAttribute("opacity","1"); });
+    if(navigator.vibrate) try{ navigator.vibrate(perfect?[20,30,40]:25); }catch(e){}
+    if(G0.dmg>=3) burst(perfect?4:2, 0.6);
+    if(hintKey==="aim"||hintKey==="yank"||hintKey==="blind") say("keep");
+    renderHud(); if(G0.dmg>=G0.max) breakPinata();
+  } else { G0.miss++; G0.combo=0; pop(t("miss")); renderHud(); }
 }
+function chime(){ const t0=now(); [880,1175,1568].forEach((f,i)=>osc("triangle",f,t0+i*.05,.14,.18)); }
+function beep(d){ const t0=now(); osc("square",d<14?1320:d<30?990:660,t0,.05,d<14?.12:.06); }
+function ropeZip(){ const t0=now(); noise(t0,.22,.3,"bandpass",600,2400); }
+
+/* ---------- candy grab: after it breaks you get a few seconds to catch the candy ---------- */
+let GR=null;
+function startGrab(){ const st=$("stage"), box=document.createElement("div"); box.className="grab"; box.id="grab"; st.appendChild(box);
+  const ct=document.createElement("div"); ct.className="grabct"; ct.id="grabct"; ct.textContent="🍬 0"; st.appendChild(ct);
+  GR={box,t:0,len:RM?3:5,list:[],spawn:0,n:0}; say("grab"); pop(t("grab"),true);
+  box.addEventListener("pointerdown",e=>{ e.stopPropagation(); e.preventDefault(); const r=box.getBoundingClientRect(), x=e.clientX-r.left, y=e.clientY-r.top;
+    let best=null, bd=48; GR.list.forEach(c=>{ if(c.got) return; const dd=Math.hypot(c.x-x,c.y-y); if(dd<bd){ bd=dd; best=c; } });
+    if(best){ best.got=true; best.el.animate([{transform:`translate(${best.x-15}px,${best.y-15}px) scale(1)`,opacity:1},{transform:`translate(${best.x-15}px,${best.y-60}px) scale(1.6)`,opacity:0}],{duration:350,fill:"forwards"}).onfinish=()=>best.el.remove();
+      G0.candy++; G0.score+=15; $("grabct").textContent="🍬 "+G0.candy; const t0=now(); osc("triangle",700+Math.min(12,G0.candy)*60,t0,.08,.15); if(navigator.vibrate) try{ navigator.vibrate(10); }catch(_){} } }); }
+function stepGrab(dt){ if(!GR) return; GR.t+=dt; const w=GR.box.clientWidth, h=GR.box.clientHeight;
+  GR.spawn-=dt; if(GR.t<GR.len-.6&&GR.spawn<=0){ GR.spawn=RM?.35:.16; const el=document.createElement("span"); el.textContent=CANDY[Math.floor(Math.random()*CANDY.length)]; GR.box.appendChild(el);
+    GR.list.push({el,x:w*(.15+Math.random()*.75),y:-20,vy:60+Math.random()*80,vx:(Math.random()*2-1)*30,r:(Math.random()*2-1)*200,a:0,got:false}); }
+  GR.list.forEach(c=>{ if(c.got) return; c.vy+=180*dt; c.y+=c.vy*dt; c.x+=c.vx*dt; c.a+=c.r*dt; c.el.style.transform=`translate(${(c.x-15).toFixed(1)}px,${(c.y-15).toFixed(1)}px) rotate(${c.a.toFixed(0)}deg)`; if(c.y>h+30){ c.got=true; c.el.remove(); } });
+  if(GR.t>=GR.len){ const g=GR; GR=null; g.box.remove(); setTimeout(()=>{ const c=$("grabct"); if(c) c.remove(); },900); finishGame(); } }
+function finishGame(){ const secs=(performance.now()-(G0.t0||performance.now()))/1000; G0.score+=Math.max(0,Math.round(600-secs*25))-G0.miss*40; G0.score=Math.max(100,G0.score);
+  let prev=0; try{ prev=+localStorage.getItem("pinata-best")||0; if(G0.score>prev) localStorage.setItem("pinata-best",String(G0.score)); }catch(e){}
+  $("pSw").textContent=hits; $("pPf").textContent=G0.perfect; $("pCd").textContent=G0.candy; $("pSc").textContent=G0.score.toLocaleString();
+  $("pBest").textContent=G0.score>prev?t("best"):t("bestWas")(prev.toLocaleString()); $("pinRes").hidden=false;
+  flood(); banner(); setTimeout(reveal, RM?200:900); }
+function skipGame(){ if(broken) { if(GR){ GR.t=GR.len; } return; } skipMode=true; breakPinata(); }
+function resetGame(){ broken=false; skipMode=false; hits=0; stickA=REST;
+  ["cTop","cRight","cLeft","cBR","cBL","core"].forEach(id=>{ const el=$(id); el.getAnimations().forEach(a=>a.cancel()); el.style.opacity=""; });
+  document.querySelectorAll(".crack").forEach(c=>c.setAttribute("opacity","0")); $("pile").innerHTML=""; piled=0;
+  $("blindfold").setAttribute("opacity","1"); $("eyes").setAttribute("opacity","0"); $("mouth").setAttribute("d","M110 160 Q120 168 130 160"); $("mouth").setAttribute("fill","none");
+  $("skipBtn").hidden=false; $("phud").hidden=false; $("zone").style.display=""; newGame(); pop(t("tap")); say("aim");
+  try{ $("stage").scrollIntoView({behavior:RM?"auto":"smooth",block:"center"}); }catch(e){} }
 
 /* ---------- particles ---------- */
 const CANDY=["🍬","🍭","🍊","🥜","🍬","🍫","⭐","🍬"];
@@ -627,7 +711,7 @@ function banner(){
 /* ---------- the big moment ---------- */
 function breakPinata(){
   broken=true;
-  pin.setAttribute("transform","rotate(0 275 0)");
+  pin.setAttribute("transform",`translate(${G0?G0.dx.toFixed(1):0} ${G0?G0.dy.toFixed(1):0})`);
   const dirs={cTop:[0,-160],cRight:[200,-60],cLeft:[-200,-60],cBR:[140,170],cBL:[-140,170],core:[0,260]};
   Object.entries(dirs).forEach(([id,[dx,dy]])=>{
     const el=$(id); el.style.transformBox="fill-box"; el.style.transformOrigin="center";
@@ -637,9 +721,10 @@ function breakPinata(){
   $("blindfold").setAttribute("opacity","0"); $("eyes").setAttribute("opacity","1");
   $("mouth").setAttribute("d","M106 158 Q120 178 134 158 Z"); $("mouth").setAttribute("fill","#7a2a1f");
   stickA=-120;
-  burst(55, 1.2); smash(); setTimeout(playSong, 350); flood(); banner();
+  burst(skipMode?30:55, skipMode?1:1.2); smash(); setTimeout(playSong, 350); if(skipMode){ flood(); }
   $("shout").textContent="¡La rompiste! ¡Ajúa! 🎉"; hintKey="below"; $("hint").textContent=t("below");
-  setTimeout(reveal, RM?300:1900);
+  $("skipBtn").hidden=true; $("phud").hidden=true; $("zone").style.display="none"; pin.style.opacity="1";
+  if(skipMode){ setTimeout(reveal, 250); } else setTimeout(startGrab, RM?300:1300);
 }
 function fillResult(){
   $("rName").textContent=(data.r||"")+"!";
@@ -763,12 +848,14 @@ $("snd").addEventListener("click", ()=>{
 let started=false;
 function startGame(){
   if(started) return; started=true;
-  $("bad").hidden=true; $("play").hidden=false;
+  $("bad").hidden=true; $("play").hidden=false; newGame(); hintKey="aim";
   applyLang();
   document.addEventListener("pointerdown", e=>{ if(e.button>0) return; if(e.target.closest("textarea,button,a")) return; swing(); });
   $("stage").addEventListener("keydown", e=>{ if(e.target!==$("stage")) return; if(e.key===" "||e.key==="Enter"){ e.preventDefault(); swing(); } });
   try{ $("stage").scrollIntoView({block:"center"}); }catch(e){}
 }
+$("skipBtn").addEventListener("click", e=>{ e.stopPropagation(); unlock(); skipGame(); });
+$("rematch").addEventListener("click", ()=>{ $("pinRes").hidden=true; resetGame(); });
 $("go").addEventListener("click", ()=>{
   const d=findCode($("paste").value);
   if(!d){ $("pasteErr").hidden=false; return; }
