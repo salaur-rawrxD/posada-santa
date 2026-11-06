@@ -79,6 +79,11 @@ h1{font-family:var(--display);font-weight:400;font-size:clamp(28px,8vw,36px);lin
 /* the match card is a gift tag: ribbon and bow on top, a poinsettia in the corner */
 .tag{background:var(--card);color:var(--ink);border-radius:16px;padding:52px 22px 22px;display:grid;gap:18px;position:relative;box-shadow:0 14px 30px rgba(0,0,0,.35);overflow:hidden;text-align:center}
 .tag.plain{padding-top:24px;overflow:visible}
+.orjust{display:grid;gap:8px;justify-items:center;padding-top:12px;margin-top:4px;border-top:2px dashed #efe2cc;font-weight:800;color:var(--muted);font-size:14px}
+.arcK{font-size:12px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--rosa)}
+.arcT{margin:0;font-family:var(--display);font-weight:400;font-size:clamp(28px,8vw,36px);line-height:1.05;color:var(--red)}
+.arcMore{display:flex;flex-wrap:wrap;justify-content:center;gap:8px}.arcMore a{font-weight:800;font-size:14px;color:var(--ink);text-decoration:none;padding:8px 12px;border-radius:99px;background:#fff;border:2px solid #efe2cc}
+.arcHost{font-weight:800;color:var(--red);text-underline-offset:3px}
 .ribbon{position:absolute;left:0;right:0;top:20px;height:14px;background:var(--red);box-shadow:inset 0 -3px 0 rgba(0,0,0,.15)}
 .bow{position:absolute;top:2px;left:50%;width:76px;margin-left:-38px}
 .poin{position:absolute;right:-18px;bottom:-18px;width:96px;opacity:.95}
@@ -302,6 +307,17 @@ ol li::before{content:"★";color:var(--marigold);font-size:16px;line-height:1.4
     <textarea id="paste" rows="3" placeholder="Paste here" style="font:inherit;font-size:16px;color:var(--ink);background:#fff;border:2px solid #e6d7c0;border-radius:12px;padding:10px;width:100%;box-sizing:border-box;resize:vertical;-webkit-user-select:text;user-select:text"></textarea>
     <button id="go" type="button" style="font-family:var(--display);font-size:20px;border:0;border-radius:14px;padding:13px 24px;background:var(--rosa);color:#fff;box-shadow:0 5px 0 #9c1f55;cursor:pointer" data-t="go">Let's break it! 🪅</button>
     <p id="pasteErr" hidden style="margin:0;text-align:center;color:var(--red);font-weight:700" data-t="pasteErr">That doesn't look like your Secret Santa link. Copy the whole text message and try again.</p>
+    <div class="orjust"><span data-t="orJust">No Secret Santa yet?</span><button id="justPlay" type="button" class="saveimg" data-t="justPlay">🪅 Just play the piñata</button></div>
+  </div>
+  <div class="tag plain" id="arcade" hidden>
+    <span class="arcK" data-t="arcK">¡La rompiste!</span>
+    <h2 class="arcT" id="arcT"></h2>
+    <div class="pstats"><div><b id="aSw">0</b><small data-t="pSw">swings</small></div><div><b id="aPf">0</b><small data-t="pPf">perfect</small></div><div><b id="aCd">0</b><small data-t="pCd">candy</small></div><div><b id="aSc">0</b><small data-t="pSc">points</small></div></div>
+    <div class="pbest" id="aBest"></div>
+    <button id="arcAgain" type="button" class="saveimg" data-t="rematch">🪅 Play the piñata again</button>
+    <a id="arcShare" class="saveimg play" target="_blank" rel="noopener" data-t="share">📣 Challenge the family</a>
+    <div class="arcMore"><a id="arcTr" target="_blank" rel="noopener">🛷 El Trineo</a><a id="arcTm" target="_blank" rel="noopener">🫔 ¡Tamalazo!</a><a id="arcPo" target="_blank" rel="noopener">🏠 La Posada</a></div>
+    <a id="arcHost" class="arcHost" data-t="arcHost">🎄 Run your own Secret Santa →</a>
   </div>
 </div>
 <div class="shot" id="shot" hidden role="dialog" aria-modal="true" aria-label="Your match as a picture">
@@ -364,6 +380,8 @@ function findCode(text){
   return null;
 }
 let data = findCode(location.hash) || findCode(location.href);
+let ARCADE=false;
+if(!data&&/[#?&]play\b/.test(location.href)){ ARCADE=true; data={n:"",r:"",l:""}; }
 /* the family game leaderboard rides along in the link (sb=S…) */
 let sbRaw=null, sbData=null;
 (function(){ const m=String(location.hash+" "+location.href).match(/[#&]sb=(S[A-Za-z0-9_-]{8,})/); if(!m) return; try{ let s=m[1].slice(1).replace(/-/g,"+").replace(/_/g,"/"); while(s.length%4) s+="="; const bin=atob(s), b=new Uint8Array(bin.length); for(let i=0;i<b.length;i++) b[i]=bin.charCodeAt(i)^KEY.charCodeAt(i%KEY.length); const o=JSON.parse(new TextDecoder().decode(b)); if(o&&o.gid){ sbRaw=m[1]; sbData=o; } }catch(e){} })();
@@ -379,7 +397,9 @@ function renderFam(){ famLiveLoad(); if(!sbData||!rawCode) return; const e=(sbDa
 const T={
   en:{title:"Your Secret Santa Match",hello:"Break the piñata!",helloN:n=>`${n}, break the piñata!`,sub:"Your Secret Santa match is hiding inside 🎁",tap:"Tap anywhere to swing",keep:"Keep swinging!",below:"Your match is below 👇",
     stage:"Swing at the piñata",shopping:"You're shopping for",sizes:"Their sizes",shirt:"Shirt",pants:"Pants",shoes:"Shoes",wishes:"Their top 3 wishes",hints:"Gift hints ✨",noIdeas:"No ideas listed",
-    skip:"Skip to my match →",aim:"Swing when the piñata passes the ⭐",perfect:"¡PERFECTO! 💥",good:"¡Bien! 👊",miss:"¡Aire! 💨 Missed",yank:"¡El tío la jaló! He yanked it ⬆️",blind:"They spun you around! Listen for the beeps 👂",grab:"Grab the candy! 🍬",
+    skip:"Skip to my match →",orJust:"No Secret Santa yet?",justPlay:"🪅 Just play the piñata",arcK:"You broke it!",arcHost:"🎄 Run your own Secret Santa →",share:"📣 Challenge the family",
+    arcSub:"Just for fun: how fast can you break it?",arcTitles:[[2600,"Professional piñata breaker!"],[1800,"¡Qué tino! Great aim!"],[1000,"¡Nada mal!"],[0,"¡Dale, dale, dale!"]],
+    arcMsg:(s,url)=>`🪅 I broke the piñata with ${s} points! Think you can beat me? 👇\n${url}`,aim:"Swing when the piñata passes the ⭐",perfect:"¡PERFECTO! 💥",good:"¡Bien! 👊",miss:"¡Aire! 💨 Missed",yank:"¡El tío la jaló! He yanked it ⬆️",blind:"They spun you around! Listen for the beeps 👂",grab:"Grab the candy! 🍬",
     rematch:"🪅 Play the piñata again",pSw:"swings",pPf:"perfect",pCd:"candy",pSc:"points",best:"New best! 🏆",bestWas:n=>`Your best: ${n} points`,combo:"Combo",
     hush:"Shhh, it's top secret 🤫 Keep this text so you can check back while you shop.",shot:"📸 Save as image",playTips:"🎮 Play for elf tips",making:"Making your picture…",again:"🎺 Play the song again",
     bad1:"Almost there! Your secret code didn't come through.",bad2:"Go back to your text, copy the whole message (or just the link), and paste it here.",badLabel:"Your Secret Santa text",paste:"Paste here",go:"Let's break it! 🪅",
@@ -390,7 +410,9 @@ const T={
       tr:"Favorite treats",rd:"Likes to read",gm:"Plays or uses",sp:"Their sport or workout",tm:"Their team",st:"Stores or brands they love",gc:"Gift cards",no:"Please, no…"}},
   es:{title:"Tu Secret Santa",hello:"¡Rompe la piñata!",helloN:n=>`¡${n}, rompe la piñata!`,sub:"Tu Secret Santa está escondido adentro 🎁",tap:"Toca donde sea para pegarle",keep:"¡Sigue pegándole!",below:"Tu Secret Santa está abajo 👇",
     stage:"Pégale a la piñata",shopping:"Le vas a regalar a",sizes:"Sus tallas",shirt:"Camisa",pants:"Pantalón",shoes:"Zapato",wishes:"Sus 3 deseos favoritos",hints:"Pistas para el regalo ✨",noIdeas:"No puso ideas",
-    skip:"Ir directo a mi Secret Santa →",aim:"Pégale cuando la piñata pase por la ⭐",perfect:"¡PERFECTO! 💥",good:"¡Bien! 👊",miss:"¡Aire! 💨",yank:"¡El tío la jaló! ⬆️",blind:"¡Te dieron vueltas! Escucha los bips 👂",grab:"¡Agarra los dulces! 🍬",
+    skip:"Ir directo a mi Secret Santa →",orJust:"¿Todavía no tienes Secret Santa?",justPlay:"🪅 Solo jugar la piñata",arcK:"¡La rompiste!",arcHost:"🎄 Organiza tu propio Secret Santa →",share:"📣 Reta a la familia",
+    arcSub:"Solo por diversión: ¿qué tan rápido la rompes?",arcTitles:[[2600,"¡Rompepiñatas profesional!"],[1800,"¡Qué tino!"],[1000,"¡Nada mal!"],[0,"¡Dale, dale, dale!"]],
+    arcMsg:(s,url)=>`🪅 ¡Rompí la piñata con ${s} puntos! ¿A que no me ganas? 👇\n${url}`,aim:"Pégale cuando la piñata pase por la ⭐",perfect:"¡PERFECTO! 💥",good:"¡Bien! 👊",miss:"¡Aire! 💨",yank:"¡El tío la jaló! ⬆️",blind:"¡Te dieron vueltas! Escucha los bips 👂",grab:"¡Agarra los dulces! 🍬",
     rematch:"🪅 Jugar la piñata otra vez",pSw:"golpes",pPf:"perfectos",pCd:"dulces",pSc:"puntos",best:"¡Nuevo récord! 🏆",bestWas:n=>`Tu récord: ${n} puntos`,combo:"Combo",
     hush:"Shhh, es top secret 🤫 Guarda este mensaje para revisarlo mientras compras.",shot:"📸 Guardar como imagen",playTips:"🎮 Juega por tips",making:"Haciendo tu imagen…",again:"🎺 Tocar la canción otra vez",
     bad1:"¡Ya casi! Tu código secreto no llegó.",bad2:"Regresa a tu mensaje, copia todo el texto (o solo el link) y pégalo aquí.",badLabel:"Tu mensaje del Secret Santa",paste:"Pega aquí",go:"¡A romperla! 🪅",
@@ -425,7 +447,8 @@ function applyLang(){
   document.documentElement.lang=LANG; document.title=t("title");
   document.querySelectorAll("[data-t]").forEach(el=>{ el.textContent=t(el.dataset.t); });
   document.querySelectorAll(".lang button").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.lang===LANG)));
-  $("hello").textContent=data&&data.n?t("helloN")(data.n):t("hello");
+  $("hello").textContent=data&&data.n?t("helloN")(data.n):t("hello"); if(ARCADE) document.querySelector('[data-t="sub"]').textContent=t("arcSub");
+  if(ARCADE&&!$("arcade").hidden) fillArcade();
   $("paste").placeholder=t("paste"); $("stage").setAttribute("aria-label",t("stage")); $("shot").setAttribute("aria-label",t("shotAria"));
   $("shotHelp").innerHTML=t("shotHelp");
   if(!hits){ $("shout").textContent=t("tap"); hintKey=hintKey||"aim"; }
@@ -647,13 +670,21 @@ function finishGame(){ const secs=(performance.now()-(G0.t0||performance.now()))
   let prev=0; try{ prev=+localStorage.getItem("pinata-best")||0; if(G0.score>prev) localStorage.setItem("pinata-best",String(G0.score)); }catch(e){}
   $("pSw").textContent=hits; $("pPf").textContent=G0.perfect; $("pCd").textContent=G0.candy; $("pSc").textContent=G0.score.toLocaleString();
   $("pBest").textContent=G0.score>prev?t("best"):t("bestWas")(prev.toLocaleString()); $("pinRes").hidden=false;
-  flood(); banner(); setTimeout(reveal, RM?200:900); }
+  flood(); banner(); setTimeout(ARCADE?showArcade:reveal, RM?200:900); }
+let arcPrev=0;
+function showArcade(){ arcPrev=0; try{ arcPrev=+localStorage.getItem("pinata-best-prev")||0; }catch(e){} fillArcade(); const r=$("arcade"); r.hidden=false; r.classList.add("result-in"); try{ r.scrollIntoView({behavior:RM?"auto":"smooth",block:"center"}); }catch(e){} }
+function fillArcade(){ const sc=G0.score; $("arcT").textContent=t("arcTitles").find(([m])=>sc>=m)[1];
+  $("aSw").textContent=hits; $("aPf").textContent=G0.perfect; $("aCd").textContent=G0.candy; $("aSc").textContent=sc.toLocaleString(); $("aBest").textContent=$("pBest").textContent;
+  const url=location.href.split("#")[0]+"#play"; $("arcShare").href="https://wa.me/?text="+encodeURIComponent(t("arcMsg")(sc.toLocaleString(),url));
+  const inClaude=/claude|anthropic/.test(location.hostname)||location.protocol==="file:";
+  $("arcTr").href=inClaude?"/trineo":"/trineo"; $("arcTm").href=inClaude?"/tamalazo":"/tamalazo"; $("arcPo").href=inClaude?"/play":"/play";
+  $("arcHost").href=inClaude?"/host":"/host"; }
 function skipGame(){ if(broken) { if(GR){ GR.t=GR.len; } return; } skipMode=true; breakPinata(); }
 function resetGame(){ broken=false; skipMode=false; hits=0; stickA=REST;
   ["cTop","cRight","cLeft","cBR","cBL","core"].forEach(id=>{ const el=$(id); el.getAnimations().forEach(a=>a.cancel()); el.style.opacity=""; });
   document.querySelectorAll(".crack").forEach(c=>c.setAttribute("opacity","0")); $("pile").innerHTML=""; piled=0;
   $("blindfold").setAttribute("opacity","1"); $("eyes").setAttribute("opacity","0"); $("mouth").setAttribute("d","M110 160 Q120 168 130 160"); $("mouth").setAttribute("fill","none");
-  $("skipBtn").hidden=false; $("phud").hidden=false; $("zone").style.display=""; newGame(); pop(t("tap")); say("aim");
+  $("skipBtn").hidden=ARCADE; $("phud").hidden=false; $("zone").style.display=""; newGame(); pop(t("tap")); say("aim");
   try{ $("stage").scrollIntoView({behavior:RM?"auto":"smooth",block:"center"}); }catch(e){} }
 
 /* ---------- particles ---------- */
@@ -848,7 +879,7 @@ $("snd").addEventListener("click", ()=>{
 let started=false;
 function startGame(){
   if(started) return; started=true;
-  $("bad").hidden=true; $("play").hidden=false; newGame(); hintKey="aim";
+  $("bad").hidden=true; $("play").hidden=false; newGame(); hintKey="aim"; if(ARCADE) $("skipBtn").hidden=true;
   applyLang();
   document.addEventListener("pointerdown", e=>{ if(e.button>0) return; if(e.target.closest("textarea,button,a")) return; swing(); });
   $("stage").addEventListener("keydown", e=>{ if(e.target!==$("stage")) return; if(e.key===" "||e.key==="Enter"){ e.preventDefault(); swing(); } });
@@ -856,6 +887,8 @@ function startGame(){
 }
 $("skipBtn").addEventListener("click", e=>{ e.stopPropagation(); unlock(); skipGame(); });
 $("rematch").addEventListener("click", ()=>{ $("pinRes").hidden=true; resetGame(); });
+$("arcAgain").addEventListener("click", ()=>{ $("arcade").hidden=true; resetGame(); });
+$("justPlay").addEventListener("click", ()=>{ ARCADE=true; data={n:"",r:"",l:""}; try{ history.replaceState(null,"",location.pathname+location.search+"#play"); }catch(e){} unlock(); startGame(); applyLang(); });
 $("go").addEventListener("click", ()=>{
   const d=findCode($("paste").value);
   if(!d){ $("pasteErr").hidden=false; return; }
