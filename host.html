@@ -15,6 +15,10 @@
 <meta property="og:description" content="Add the whole familia, draw names and send invites in minutes. Free, no accounts.">
 <meta property="og:image" content="https://posadaxmas.com/assets/og.png">
 <meta name="twitter:card" content="summary_large_image">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Posada Santa">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lilita+One&family=Nunito:wght@500;700;800&display=swap">
 <style>
@@ -168,6 +172,8 @@ async function rpc(fn,args){ const c=new AbortController(), tm=setTimeout(()=>c.
   try{ const r=await fetch(SB_URL+"/rest/v1/rpc/"+fn,{method:"POST",headers:{"Content-Type":"application/json",apikey:SB_KEY,Authorization:"Bearer "+SB_KEY},body:JSON.stringify(args),signal:c.signal});
     if(!r.ok) throw new Error("rpc "+r.status); return await r.json(); } finally{ clearTimeout(tm); } }
 const ORIGIN=location.origin;
+const MINE={K:"posada-groups-v1", load(){ try{ const d=JSON.parse(localStorage.getItem(this.K)||"null"); if(d&&d.groups) return d; }catch(e){} return {groups:{},cur:null}; },
+  join(gid,gn,me,extra){ if(!gid) return; const d=this.load(), g=d.groups[gid]||(d.groups[gid]={gn:gn||"",e:{}}); if(gn) g.gn=gn; if(me) g.me=String(me).trim().slice(0,18); Object.assign(g,extra||{}); g.seen=Date.now(); d.cur=gid; try{ localStorage.setItem(this.K,JSON.stringify(d)); }catch(e){} } };
 /* ---------- organizer accounts: email code login, groups saved to the account ---------- */
 const AUTH=(()=>{ const AK="posada-auth-v1"; let S=null; try{ S=JSON.parse(localStorage.getItem(AK)||"null"); }catch(e){}
   const save=()=>{ try{ S?localStorage.setItem(AK,JSON.stringify(S)):localStorage.removeItem(AK); }catch(e){} };

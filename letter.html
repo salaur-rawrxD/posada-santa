@@ -15,6 +15,10 @@
 <meta property="og:description" content="Write your wishlist letter for the family Secret Santa.">
 <meta property="og:image" content="https://posadaxmas.com/assets/letter.png">
 <meta name="twitter:card" content="summary_large_image">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Posada Santa">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lilita+One&family=Nunito:wght@500;700;800&display=swap">
 <style>
@@ -127,6 +131,8 @@ async function rpc(fn,args){ const c=new AbortController(), tm=setTimeout(()=>c.
   try{ const r=await fetch(SB_URL+"/rest/v1/rpc/"+fn,{method:"POST",headers:{"Content-Type":"application/json",apikey:SB_KEY,Authorization:"Bearer "+SB_KEY},body:JSON.stringify(args),signal:c.signal});
     if(!r.ok) throw new Error("rpc "+r.status); return await r.json(); } finally{ clearTimeout(tm); } }
 const ORIGIN=location.origin;
+const MINE={K:"posada-groups-v1", load(){ try{ const d=JSON.parse(localStorage.getItem(this.K)||"null"); if(d&&d.groups) return d; }catch(e){} return {groups:{},cur:null}; },
+  join(gid,gn,me,extra){ if(!gid) return; const d=this.load(), g=d.groups[gid]||(d.groups[gid]={gn:gn||"",e:{}}); if(gn) g.gn=gn; if(me) g.me=String(me).trim().slice(0,18); Object.assign(g,extra||{}); g.seen=Date.now(); d.cur=gid; try{ localStorage.setItem(this.K,JSON.stringify(d)); }catch(e){} } };
 
 const HOST_URL=ORIGIN+"/host";
 const GAME_URL=ORIGIN+"/play";
@@ -181,7 +187,7 @@ const WORDS={
     review:"Look it over",reviewSub:"Tap Edit to change anything.",edit:"Edit",none:"—",shirtL:"Shirt",pantsL:"Pants",shoeL:"Shoes",
     doneKick:"Sealed with love",done:"Your letter is ready!",doneSub:o=>`Last step: send it to ${o}. Pick an app below and tap send.`,doneNoOrg:"Last step: send it to your organizer. Pick an app below and tap send.",
     wa:"Send on WhatsApp",im:"Send by text / iMessage",cp:"Copy to send another way",org:"I'm the organizer, add it to my list",
-    stayK:"Stay and play",stayT:"La Posada leaderboard",stayP:g=>`Hop through 5 levels of posada chaos and climb the ${g} board.`,stayP0:g=>`Hop through 5 levels of posada chaos. Nobody from ${g} is on the board yet. Be first!`,stayGo:n=>`🎮 Play and beat ${n}`,stayGo0:"🎮 Play and claim #1",dlvK:"Delivered",dlvT:o=>`Delivered to ${o}!`,dlvP:o=>`Your letter is already in ${o}'s Secret Santa list. Nothing else to do.`,dlvNudge:o=>`Want to give ${o||"them"} a heads-up? (optional)`,dlvWait:"Sending…",dlvWaitP:"Dropping your letter in the buzón…",another:"Write one for someone else",after:"Didn't go through? Tap Copy and paste it to them in any app.",editAgain:"Change my letter",play:"🎮 While you wait, play La Posada",
+    stayK:"Stay and play",stayT:"La Posada leaderboard",stayP:g=>`Hop through 5 levels of posada chaos and climb the ${g} board.`,stayP0:g=>`Hop through 5 levels of posada chaos. Nobody from ${g} is on the board yet. Be first!`,stayGo:n=>`🎮 Play and beat ${n}`,stayGo0:"🎮 Play and claim #1",comeBack:"Come back anytime at posadaxmas.com: your posada, your letter and the family leaderboard are waiting there.",dlvK:"Delivered",dlvT:o=>`Delivered to ${o}!`,dlvP:o=>`Your letter is already in ${o}'s Secret Santa list. Nothing else to do.`,dlvNudge:o=>`Want to give ${o||"them"} a heads-up? (optional)`,dlvWait:"Sending…",dlvWaitP:"Dropping your letter in the buzón…",another:"Write one for someone else",after:"Didn't go through? Tap Copy and paste it to them in any app.",editAgain:"Change my letter",play:"🎮 While you wait, play La Posada",
     msg:(o,g,n,url)=>`📮 ¡Hola ${o}! Here's my letter to Santa for ${g}. — ${n}\n\nTap to add it to the Secret Santa:\n${url}\n\n(If the link doesn't open the list, copy this whole message and paste it on the Secret Santa page.)`,
     noInv:"Find your invite link",noInvSub:"This page opens from the link your organizer sent you. If you have their message, paste it here.",pasteL:"Paste your invite message",pasteGo:"Open my letter",badInv:"That doesn't look like a Secret Santa invite. Copy the whole message and try again.",
     saved:"Draft saved on this phone",resumed:"Welcome back! Your draft is right where you left it."},
@@ -200,7 +206,7 @@ const WORDS={
     review:"Revísala",reviewSub:"Toca Editar para cambiar algo.",edit:"Editar",none:"—",shirtL:"Camisa",pantsL:"Pantalón",shoeL:"Zapato",
     doneKick:"Sellada con cariño",done:"¡Tu carta está lista!",doneSub:o=>`Último paso: mándasela a ${o}. Escoge una app y toca enviar.`,doneNoOrg:"Último paso: mándasela a quien organiza. Escoge una app y toca enviar.",
     wa:"Mandar por WhatsApp",im:"Mandar por mensaje / iMessage",cp:"Copiar para mandarla de otra forma",org:"Yo organizo, agrégala a mi lista",
-    stayK:"Quédate a jugar",stayT:"La tabla de La Posada",stayP:g=>`Brinca 5 niveles de puro relajo posadero y sube en la tabla de ${g}.`,stayP0:g=>`Brinca 5 niveles de puro relajo posadero. Nadie de ${g} está en la tabla todavía. ¡Sé el primero!`,stayGo:n=>`🎮 Juega y gánale a ${n}`,stayGo0:"🎮 Juega y quédate con el #1",dlvK:"Entregada",dlvT:o=>`¡Le llegó a ${o}!`,dlvP:o=>`Tu carta ya está en la lista del Secret Santa de ${o}. No tienes que hacer nada más.`,dlvNudge:o=>`¿Le quieres avisar a ${o||"quien organiza"}? (opcional)`,dlvWait:"Enviando…",dlvWaitP:"Echando tu carta al buzón…",another:"Escribir otra para alguien más",after:"¿No se mandó? Toca Copiar y pégasela en cualquier app.",editAgain:"Cambiar mi carta",play:"🎮 Mientras esperas, juega La Posada",
+    stayK:"Quédate a jugar",stayT:"La tabla de La Posada",stayP:g=>`Brinca 5 niveles de puro relajo posadero y sube en la tabla de ${g}.`,stayP0:g=>`Brinca 5 niveles de puro relajo posadero. Nadie de ${g} está en la tabla todavía. ¡Sé el primero!`,stayGo:n=>`🎮 Juega y gánale a ${n}`,stayGo0:"🎮 Juega y quédate con el #1",comeBack:"Vuelve cuando quieras a posadaxmas.com: tu posada, tu carta y la tabla de la familia te esperan ahí.",dlvK:"Entregada",dlvT:o=>`¡Le llegó a ${o}!`,dlvP:o=>`Tu carta ya está en la lista del Secret Santa de ${o}. No tienes que hacer nada más.`,dlvNudge:o=>`¿Le quieres avisar a ${o||"quien organiza"}? (opcional)`,dlvWait:"Enviando…",dlvWaitP:"Echando tu carta al buzón…",another:"Escribir otra para alguien más",after:"¿No se mandó? Toca Copiar y pégasela en cualquier app.",editAgain:"Cambiar mi carta",play:"🎮 Mientras esperas, juega La Posada",
     msg:(o,g,n,url)=>`📮 ¡Hola ${o}! Aquí va mi carta a Santa para ${g}. — ${n}\n\nToca para agregarla al Secret Santa:\n${url}\n\n(Si el link no abre la lista, copia todo este mensaje y pégalo en la página del Secret Santa.)`,
     noInv:"Busca tu invitación",noInvSub:"Esta página se abre con el link que te mandaron. Si tienes el mensaje, pégalo aquí.",pasteL:"Pega tu mensaje de invitación",pasteGo:"Abrir mi carta",badInv:"Eso no parece una invitación del Secret Santa. Copia todo el mensaje y vuelve a intentar.",
     saved:"Borrador guardado en este teléfono",resumed:"¡Qué bueno que volviste! Tu borrador está donde lo dejaste."}
@@ -213,12 +219,13 @@ function fmtDate(iso){ if(!iso) return ""; const d=new Date(iso+"T12:00:00"); re
 
 /* ---------- state ---------- */
 let inv=findGroup(location.hash)||findGroup(location.href);
+if(inv&&inv.g) MINE.join(inv.g.gid,inv.g.gn,inv.n?first(inv.n):"",{letter:location.pathname+location.hash});
 let A=null, step=0, sealed=null, delivered=null;
 const STEPS=["intro","you","sizes","wishes","style","loves","last","review","done"];
 function draftKey(){ return "santa-letter-"+(inv?inv.g.gid+"-"+String(inv.n||"").toLowerCase().replace(/[^a-z0-9]+/g,""):"none"); }
 function blank(){ return {name:inv&&inv.n||"",phone:"",shirt:"",shirtO:"",pants:"",shoe:"",g:["","",""],vb:[],fi:[],co:[],sw:[],lv:[],sc:[],cf:[],gc:[],ck:"",tr:"",rd:"",gm:"",sp:"",tm:"",st:"",no:""}; }
 function save(){ if(inv) store.set(draftKey(),{A,step,lang,sealed,delivered}); }
-async function deliver(){ delivered=null; render(); try{ const ok=await rpc("submit_letter",{p_gid:inv.g.gid,p_code:sealed}); delivered=ok===true; }catch(e){ delivered=false; } save(); if(STEPS[step]==="done") render(); }
+async function deliver(){ try{ if(inv&&inv.g&&A&&A.name) MINE.join(inv.g.gid,inv.g.gn,first(A.name)); }catch(e){} delivered=null; render(); try{ const ok=await rpc("submit_letter",{p_gid:inv.g.gid,p_code:sealed}); delivered=ok===true; }catch(e){ delivered=false; } save(); if(STEPS[step]==="done") render(); }
 function setLang(l){ lang=l==="es"?"es":"en"; document.documentElement.lang=lang; document.querySelectorAll("[data-lang]").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.lang===lang))); document.title=L().title; }
 document.querySelectorAll("[data-lang]").forEach(b=>b.onclick=()=>{ setLang(b.dataset.lang); save(); render(); });
 
@@ -288,7 +295,7 @@ function render(){
   if(id==="done"){ const o=first(g.on), m=message(), hasO=!!digits(g.op);
     const ok=delivered===true, wait=delivered===null, alt=ok?" alt":"";
     h=`<div class="card in sent"><div class="stamp" aria-hidden="true">${ok?"✅":wait?"✉️":"📮"}</div><div class="stack tight" style="justify-items:center"><span class="kicker">${esc(ok?W.dlvK:wait?W.dlvWait:W.doneKick)}</span><h1>${esc(ok?W.dlvT(o||"Santa"):W.done)}</h1><p>${esc(ok?W.dlvP(o||"your organizer"):wait?W.dlvWaitP:(o?W.doneSub(o):W.doneNoOrg))}</p></div>
-      ${ok?`<p class="tiny">${esc(W.dlvNudge(o||""))}</p>`:""}
+      ${ok?`<p class="tiny">${esc(W.dlvNudge(o||""))}</p>`:""}<p class="tiny" style="font-weight:800">🏠 ${esc(W.comeBack)}</p>
       <div class="btns"><a class="cta wa${alt}" id="waBtn" href="${esc(waLink(g.op,m))}" target="_blank" rel="noopener">${esc(W.wa)}</a><a class="cta im${alt}" id="imBtn" href="${esc(imLink(g.op,m))}">${esc(W.im)}</a><button class="cta alt" id="cpBtn" type="button">${esc(W.cp)}</button></div>
       ${ok?"":`<p class="tiny">${esc(W.after)}</p>`}
       <div class="row" style="flex-wrap:wrap;justify-content:center;gap:4px"><button class="ghost" id="editBtn" type="button">${esc(W.editAgain)}</button><button class="ghost" id="anotherBtn" type="button">${esc(W.another)}</button>${HOST_URL.startsWith("http")?`<a class="ghost" href="${esc(hostLink())}" target="_blank" rel="noopener">${esc(W.org)}</a>`:""}</div></div>

@@ -15,6 +15,10 @@
 <meta property="og:description" content="Brinca, come tamales y vence a 5 jefes navideños. Free family game.">
 <meta property="og:image" content="https://posadaxmas.com/assets/game.png">
 <meta name="twitter:card" content="summary_large_image">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Posada Santa">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lilita+One&family=Nunito:wght@500;700;800&display=swap">
 <style>
@@ -421,7 +425,9 @@ const SB_URL="https://ktssnlyspwzhdhffpgqm.supabase.co", SB_KEY="eyJhbGciOiJIUzI
 async function rpc(fn,args){ const c=new AbortController(), tm=setTimeout(()=>c.abort(),9000);
   try{ const r=await fetch(SB_URL+"/rest/v1/rpc/"+fn,{method:"POST",headers:{"Content-Type":"application/json",apikey:SB_KEY,Authorization:"Bearer "+SB_KEY},body:JSON.stringify(args),signal:c.signal});
     if(!r.ok) throw new Error("rpc "+r.status); return await r.json(); } finally{ clearTimeout(tm); } }
-const ORIGIN=location.origin;</script>
+const ORIGIN=location.origin;
+const MINE={K:"posada-groups-v1", load(){ try{ const d=JSON.parse(localStorage.getItem(this.K)||"null"); if(d&&d.groups) return d; }catch(e){} return {groups:{},cur:null}; },
+  join(gid,gn,me,extra){ if(!gid) return; const d=this.load(), g=d.groups[gid]||(d.groups[gid]={gn:gn||"",e:{}}); if(gn) g.gn=gn; if(me) g.me=String(me).trim().slice(0,18); Object.assign(g,extra||{}); g.seen=Date.now(); d.cur=gid; try{ localStorage.setItem(this.K,JSON.stringify(d)); }catch(e){} } };</script>
 <script>
 const RM = matchMedia("(prefers-reduced-motion: reduce)").matches;
 const $ = id => document.getElementById(id);
@@ -2415,17 +2421,19 @@ const Fam=(function(){
   function unseal(c){ try{ if(!c||c[0]!=="S") return null; let s=c.slice(1).replace(/-/g,"+").replace(/_/g,"/"); while(s.length%4) s+="="; const bin=atob(s), b=new Uint8Array(bin.length); for(let i=0;i<b.length;i++) b[i]=bin.charCodeAt(i)^SK.charCodeAt(i%SK.length); const o=JSON.parse(new TextDecoder().decode(b)); return o&&o.gid?o:null; }catch(e){ return null; } }
   const load=()=>{ try{ const d=JSON.parse(localStorage.getItem(KEY)||"null"); if(d&&d.groups) return d; }catch(e){} return {groups:{},cur:null}; };
   const save=d=>{ try{ localStorage.setItem(KEY,JSON.stringify(d)); }catch(e){} };
-  function merge(o){ const d=load(), g=d.groups[o.gid]||(d.groups[o.gid]={gn:o.gn||"",e:{}}); if(o.gn) g.gn=o.gn;
+  function merge(o){ const d=load(), g=d.groups[o.gid]||(d.groups[o.gid]={gn:o.gn||"",e:{}}); if(o.gn) g.gn=o.gn; g.seen=Date.now();
     (o.e||[]).forEach(([n,s,st,lv,t])=>{ const k=nk(n); if(!k) return; const old=g.e[k]; if(!old||s>old.s||(s===old.s&&(t||0)>(old.t||0))) g.e[k]={n,s:+s||0,st:+st||0,lv:+lv||0,t:+t||0}; });
     d.cur=o.gid; save(d); return g; }
   function group(){ const d=load(); return d.cur&&d.groups[d.cur]?Object.assign({gid:d.cur},d.groups[d.cur]):null; }
   function link(name){ const d=load(); if(!d.cur||!d.groups[d.cur]) return; d.groups[d.cur].me=name; save(d); }
+  function setCur(gid){ const d=load(); if(d.groups[gid]){ d.cur=gid; save(d); return true; } return false; }
+  function all(){ const d=load(); return Object.entries(d.groups).map(([gid,g])=>Object.assign({gid},g)).sort((a,b)=>(b.seen||0)-(a.seen||0)); }
   // merged rows: everyone we've heard about + this phone's live score for its linked player
   function rows(){ const g=group(); if(!g) return []; const map=Object.assign({},g.e), me=g.me||Board.current();
     if(me){ const r=Board.rows().find(x=>x.name===me); if(r&&r.total>0){ const k=nk(me), old=map[k]; if(!old||r.total>=old.s) map[k]={n:me,s:r.total,st:r.stars,lv:r.top,t:Date.now(),me:true}; else map[k]=Object.assign({},old,{me:true}); } }
     return Object.values(map).filter(x=>x.s>0).sort((a,b)=>b.s-a.s||b.st-a.st||a.n.localeCompare(b.n)); }
   function code(){ const g=group(); if(!g) return ""; return seal({gid:g.gid,gn:g.gn,e:rows().slice(0,20).map(r=>[r.n,r.s,r.st,r.lv,r.t||0])}); }
-  return {seal,unseal,merge,group,link,rows,code,nk};
+  return {seal,unseal,merge,group,link,rows,code,nk,setCur,all,load,save};
 })();
 
 const FAMW={
@@ -2447,6 +2455,8 @@ const GAME_LINK=ORIGIN+"/play";
 /* incoming: sb (board snapshot) and me (who's holding the phone) */
 (function(){ const raw=String(window.__H0||location.hash||""); const m=raw.match(/[#&]sb=(S[A-Za-z0-9_-]{8,})/); const meM=raw.match(/[#&]me=([^&]+)/);
   const o=m&&Fam.unseal(m[1]); if(o) Fam.merge(o);
+  const fm=raw.match(/[#&]fam=([A-Za-z0-9_-]{4,40})/); if(!o&&fm) Fam.setCur(fm[1]);
+  if(!o){ const gg=Fam.group(); if(gg&&gg.me) window.__famMe=gg.me; }
   let me=""; try{ me=meM?decodeURIComponent(meM[1]).trim().replace(/\s+/g," ").slice(0,18):""; }catch(e){}
   if(o&&me){ const d=Board.load(), known=Object.keys(d.players).find(k=>k.toLowerCase()===me.toLowerCase()); window.__famMe=known||me; }
   else if(o&&Board.current()) Fam.link(Board.current()); })();
@@ -2456,7 +2466,7 @@ const GAME_LINK=ORIGIN+"/play";
 .famban{display:grid;grid-template-columns:auto 1fr auto;gap:12px;align-items:center;padding:12px 14px;border-radius:18px;background:linear-gradient(135deg,rgba(245,165,36,.22),rgba(226,51,127,.14));border:1px solid rgba(245,198,106,.5);color:#fff8ec;font:inherit;text-align:left;cursor:pointer;width:100%}
 .famban .tro{font-size:28px;line-height:1}.famban b{display:block;font-size:15px;font-weight:800}.famban small{display:block;font-size:12px;font-weight:700;color:#e3d6c4}
 .famban .go{font-size:13px;font-weight:800;color:#1c1430;background:linear-gradient(180deg,#ffc95e,#f5a524);border-radius:12px;padding:8px 11px;white-space:nowrap}
-.bseg{display:flex;padding:3px;border-radius:99px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.09);justify-self:start}
+.bseg button{flex:0 0 auto}.bseg{display:flex;max-width:100%;overflow-x:auto;scrollbar-width:none;padding:3px;border-radius:99px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.09);justify-self:start}
 .bseg button{font:inherit;font-weight:800;font-size:13px;height:32px;padding:0 13px;border:0;border-radius:99px;background:none;color:#9aa6cf;cursor:pointer;max-width:58vw;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .bseg button[aria-pressed="true"]{background:#fff8ec;color:#16224a}
 .boardlist li.gap{background:none;border:0;padding:0 12px;color:#8f9cc8;display:block;text-align:center}
@@ -2499,8 +2509,8 @@ function renderFamBanner(){ const g=Fam.group(), b=$("famBan"); if(!g){ b.hidden
 const _fam_renderLevels=renderLevels; renderLevels=function(){ _fam_renderLevels(); renderFamBanner(); };
 const _fam_renderBoard=renderBoard; renderBoard=function(){ const g=Fam.group(), seg=$("boardSeg");
   if(!g){ seg.hidden=true; $("famChallenge").hidden=true; _fam_renderBoard(); return; }
-  seg.hidden=false; seg.innerHTML=`<button type="button" data-b="fam" aria-pressed="${boardTab==="fam"}">🏆 ${esc(g.gn)}</button><button type="button" data-b="phone" aria-pressed="${boardTab!=="fam"}">📱 ${esc(ft("thisPhone"))}</button>`;
-  seg.querySelectorAll("button").forEach(x=>x.onclick=()=>{ boardTab=x.dataset.b; renderBoard(); });
+  seg.hidden=false; seg.innerHTML=Fam.all().sort((a,b)=>String(a.gn).localeCompare(String(b.gn))).map(x=>`<button type="button" data-b="fam" data-g="${esc(x.gid)}" aria-pressed="${boardTab==="fam"&&x.gid===g.gid}">🏆 ${esc(x.gn||"Familia")}</button>`).join("")+`<button type="button" data-b="phone" aria-pressed="${boardTab!=="fam"}">📱 ${esc(ft("thisPhone"))}</button>`;
+  seg.querySelectorAll("button").forEach(x=>x.onclick=()=>{ boardTab=x.dataset.b; if(x.dataset.g){ Fam.setCur(x.dataset.g); if(typeof famSync==="function") famSync(true); renderFamBanner(); } renderBoard(); });
   const sub=document.querySelector("#board [data-t=boardSub]");
   if(boardTab!=="fam"){ $("famChallenge").hidden=true; if(sub) sub.textContent=t("boardSub"); _fam_renderBoard(); return; }
   if(sub) sub.textContent=ft("famSub",g.gn);
@@ -2521,8 +2531,10 @@ const _fam_applyLang=applyLang; applyLang=function(){ _fam_applyLang(); if(!$("m
 let famT=0;
 async function famSync(force){ const g=Fam.group(); if(!g) return; if(!force&&Date.now()-famT<8000) return; famT=Date.now();
   try{ const bd=await rpc("get_board",{p_gid:g.gid}); if(Array.isArray(bd)){ Fam.merge({gid:g.gid,gn:g.gn,e:bd.map(r=>[r.player,r.score,r.stars,r.top_level,Date.parse(r.updated_at)||0])}); renderFamBanner(); if(!$("board").hidden) renderBoard(); } }catch(e){} }
-async function famPush(){ const g=Fam.group(); if(!g) return; const me=g.me||Board.current(); if(!me) return; const r=Board.rows().find(x=>x.name===me); if(!r||!r.total) return;
-  try{ await rpc("submit_score",{p_gid:g.gid,p_player:me,p_score:r.total,p_stars:r.stars,p_top:r.top}); }catch(e){} famSync(true); }
+async function famPush(){ const cur=Fam.group(); if(!cur) return;
+  for(const g of Fam.all()){ const me=g.me||(g.gid===cur.gid?Board.current():""); if(!me) continue; const r=Board.rows().find(x=>x.name===me); if(!r||!r.total) continue;
+    try{ await rpc("submit_score",{p_gid:g.gid,p_player:me,p_score:r.total,p_stars:r.stars,p_top:r.top}); }catch(e){} }
+  famSync(true); }
 const _famLD2=levelDone; levelDone=function(){ _famLD2(); famPush(); };
 const _famOpen2=open; open=function(id){ _famOpen2(id); if(id==="board"||id==="menu") famSync(false); };
 setTimeout(()=>{ famPush(); famSync(true); },800);

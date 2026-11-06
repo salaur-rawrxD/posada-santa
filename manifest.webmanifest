@@ -1,0 +1,15 @@
+{
+  "name": "Posada Santa",
+  "short_name": "Posada Santa",
+  "description": "Secret Santa con sabor: letters to Santa, piñata reveals and La Posada family game.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#16224a",
+  "theme_color": "#16224a",
+  "icons": [
+    { "src": "/assets/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "/assets/icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "/assets/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

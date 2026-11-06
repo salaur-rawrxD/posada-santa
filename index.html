@@ -13,6 +13,10 @@
 <meta property="og:description" content="Letters to Santa, piñata reveals and La Posada game. Free, no accounts.">
 <meta property="og:image" content="https://posadaxmas.com/assets/og.png">
 <meta name="twitter:card" content="summary_large_image">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Posada Santa">
 <meta name="theme-color" content="#16224a">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -74,6 +78,12 @@ section{padding:56px 0}
 .game{display:grid;grid-template-columns:1fr 1fr;gap:36px;align-items:center;padding:30px;border-radius:32px;background:linear-gradient(150deg,rgba(226,51,127,.2),rgba(34,169,196,.12) 60%,rgba(47,143,78,.14));border:1px solid rgba(245,198,106,.3)}
 .game img{width:100%;border-radius:22px;box-shadow:0 20px 50px rgba(0,0,0,.4);display:block}
 .bosses{display:flex;flex-wrap:wrap;gap:8px;margin:16px 0 22px}.bosses span{font-weight:800;font-size:14px;padding:7px 12px;border-radius:99px;background:rgba(0,0,0,.22);border:1px solid var(--line)}
+.mines{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;margin-top:24px}
+.minec{border-radius:24px;padding:20px;background:linear-gradient(160deg,rgba(245,165,36,.16),rgba(226,51,127,.08));border:1px solid rgba(245,198,106,.4);display:grid;gap:12px}
+.minec h3{font-family:var(--display);font-size:24px;margin:0}.minec .who{color:var(--gold);font-weight:800;font-size:14px}.minec .rank{font-weight:800;font-size:15px}
+.minec .acts{display:flex;flex-wrap:wrap;gap:8px}.minec .acts a{flex:1 1 auto;min-height:46px;font-size:15px;padding:0 14px;border-radius:14px}
+#mine.top{padding:22px 0 8px}#mine.top .center h2{font-size:clamp(24px,5vw,34px)}
+.homeTip{text-align:center;color:var(--muted,#aab4d6);font-weight:700;font-size:14px;margin-top:18px}
 .minis{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:28px}@media (max-width:1100px) and (min-width:861px){.minis{grid-template-columns:repeat(2,1fr)}}
 .minicard{display:grid;gap:8px;align-content:start;padding:22px;border-radius:24px;text-decoration:none;background:linear-gradient(160deg,rgba(226,51,127,.18),rgba(34,169,196,.12));border:1px solid rgba(245,198,106,.3);transition:transform .15s}
 .minicard:hover{transform:translateY(-3px)}.minicard .mi{font-size:40px}.minicard b{color:var(--gold);font-weight:900}
@@ -105,6 +115,7 @@ footer a{color:var(--muted)}
     </div>
     <div class="phones" aria-hidden="true"><div class="phone a"><img src="/assets/letter.png" alt=""></div><div class="phone b"><img src="/assets/pinata.png" alt=""></div></div>
   </header>
+  <section id="mine" hidden><div class="center"><span class="kicker" id="mineK"></span><h2 id="mineT"></h2></div><div class="mines" id="mineList"></div><p class="homeTip" id="homeTip"></p></section>
 
   <section class="center" id="how">
     <span class="kicker" data-t="howK">How it works</span><h2 data-t="howT">Three steps. Zero spreadsheets.</h2>
@@ -170,6 +181,33 @@ function setLang(l){ document.documentElement.lang=l; const D=l==="es"?ES:EN; do
   document.querySelectorAll("[data-l]").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.l===l))); try{ localStorage.setItem("posada-lang",l); }catch(e){} }
 document.querySelectorAll("[data-l]").forEach(b=>b.onclick=()=>setLang(b.dataset.l));
 let pref=null; try{ pref=localStorage.getItem("posada-lang"); }catch(e){} setLang(pref||((navigator.language||"").startsWith("es")?"es":"en"));
+</script>
+<script>
+/* ---------- your posadas: every family this phone belongs to ---------- */
+(function(){
+const SB_URL="https://ktssnlyspwzhdhffpgqm.supabase.co", SB_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt0c3NubHlzcHd6aGRoZmZwZ3FtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTM5MjYwMDgsImV4cCI6MjEwOTUwMjAwOH0.3lHaJYRYCyeqcdgS2EIfT1_6qr0B5CxNqYQNHkyevCk";
+const W={en:{k:"Your posadas",t1:"Welcome back 👋",t:"Pick up where you left off",as:n=>`You play as ${n}`,org:"You organize this one",rank:(r,n)=>`You're #${r} of ${n} on the family board`,lead:(n,s)=>`${n} leads with ${s} pts`,empty:"No scores yet. Be the first!",play:"🎮 Play",letter:"✉️ My letter",pin:"🪅 My piñata",host:"🎛️ Organize",tip:"📲 Tip: add posadaxmas.com to your home screen (Share → Add to Home Screen) so the family game is one tap away."},
+ es:{k:"Tus posadas",t1:"¡Qué bueno verte! 👋",t:"Sigue donde te quedaste",as:n=>`Juegas como ${n}`,org:"Tú organizas esta",rank:(r,n)=>`Vas #${r} de ${n} en la tabla de la familia`,lead:(n,s)=>`${n} va ganando con ${s} pts`,empty:"Todavía no hay puntos. ¡Sé el primero!",play:"🎮 Jugar",letter:"✉️ Mi carta",pin:"🪅 Mi piñata",host:"🎛️ Organizar",tip:"📲 Tip: agrega posadaxmas.com a tu pantalla de inicio (Compartir → Agregar a inicio) y el juego de la familia queda a un toque."}};
+const esc=x=>String(x??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const nk=x=>String(x||"").normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase().trim();
+function load(k){ try{ return JSON.parse(localStorage.getItem(k)||"null"); }catch(e){ return null; } }
+const live={};
+async function board(gid){ try{ const r=await fetch(SB_URL+"/rest/v1/rpc/get_board",{method:"POST",headers:{"Content-Type":"application/json",apikey:SB_KEY,Authorization:"Bearer "+SB_KEY},body:JSON.stringify({p_gid:gid})}); if(r.ok){ live[gid]=await r.json(); render(); } }catch(e){} }
+function groups(){ const fam=(load("posada-groups-v1")||{}).groups||{}, host=(load("santa-host-v1")||{}).groups||{}, out={};
+  Object.entries(fam).forEach(([gid,g])=>{ out[gid]={gid,gn:g.gn,me:g.me,letter:g.letter,pinata:g.pinata,seen:g.seen||0,e:g.e||{}}; });
+  Object.values(host).forEach(g=>{ if(!g||!g.setup) return; const o=out[g.gid]||(out[g.gid]={gid:g.gid,gn:g.name,e:{},seen:0}); o.org=true; o.gn=o.gn||g.name; o.seen=Math.max(o.seen,g.ut||0); if(!o.me&&g.org) o.me=(g.org.name||"").split(" ")[0]; });
+  return Object.values(out).filter(x=>x.gn).sort((a,b)=>(b.seen||0)-(a.seen||0)); }
+let asked=false;
+function render(){ const L=W[document.documentElement.lang==="es"?"es":"en"], gs=groups(), sec=document.getElementById("mine"); if(!gs.length){ sec.hidden=true; return; } sec.hidden=false;
+  document.getElementById("mineK").textContent=L.k; document.getElementById("mineT").textContent=L.t1+" "+L.t; document.getElementById("homeTip").textContent=L.tip;
+  document.getElementById("mineList").innerHTML=gs.map(g=>{ let rows=Object.values(g.e).map(r=>[r.n,r.s]); if(live[g.gid]) rows=live[g.gid].map(r=>[r.player,r.score]); rows=rows.filter(r=>r[1]>0).sort((a,b)=>b[1]-a[1]);
+      const i=g.me?rows.findIndex(r=>nk(r[0])===nk(g.me)):-1, rank=i>=0?L.rank(i+1,rows.length):rows.length?L.lead(rows[0][0],Number(rows[0][1]).toLocaleString()):L.empty;
+      return `<div class="minec"><div><h3>🎄 ${esc(g.gn)}</h3><div class="who">${esc(g.org?L.org:g.me?L.as(g.me):"")}</div></div><div class="rank">🏆 ${esc(rank)}</div>
+        <div class="acts"><a class="cta" href="/play#fam=${encodeURIComponent(g.gid)}">${L.play}</a>${g.letter?`<a class="cta alt" href="${esc(g.letter)}">${L.letter}</a>`:""}${g.pinata?`<a class="cta alt" href="${esc(g.pinata)}">${L.pin}</a>`:""}${g.org?`<a class="cta alt" href="/host">${L.host}</a>`:""}</div></div>`; }).join("");
+  if(!asked){ asked=true; gs.slice(0,6).forEach(g=>board(g.gid)); } }
+const _sl=setLang; setLang=function(l){ _sl(l); render(); }; render();
+if(groups().length){ const sec=document.getElementById("mine"), hd=document.querySelector("header.hero"); if(sec&&hd){ hd.parentNode.insertBefore(sec,hd); sec.classList.add("top"); } }
+})();
 </script>
 </body>
 </html>
