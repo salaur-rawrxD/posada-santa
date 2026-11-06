@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
-<title>Tamalazo</title>
+<title>¡Tamalazo! · La guerra de los terrenos</title>
 <meta name="theme-color" content="#16224a">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -48,6 +48,10 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offse
 .gamesrow{display:flex;gap:6px;justify-content:center;flex-wrap:wrap}
 .gamesrow a{display:inline-flex;align-items:center;gap:5px;height:34px;padding:0 11px;border-radius:99px;font-weight:900;font-size:13px;text-decoration:none;color:var(--cream);background:rgba(255,255,255,.07);border:1px solid var(--line)}
 .gamesrow a[aria-current="page"]{background:var(--cream);color:var(--night)}
+.crumbs{display:flex;flex-wrap:wrap;justify-content:center;gap:6px;padding-top:10px;margin-top:2px;border-top:1px solid var(--line)}
+.crumbs a{display:inline-flex;align-items:center;gap:5px;height:32px;padding:0 11px;border-radius:99px;font-weight:900;font-size:12.5px;text-decoration:none;color:var(--muted);background:rgba(255,255,255,.04);border:1px solid var(--line)}
+.crumbs a:hover{color:var(--cream)}
+.crumbs-k{width:100%;text-align:center;font-size:10px;font-weight:900;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
 
 .ammo{position:fixed;left:max(12px,env(safe-area-inset-left,0px));bottom:calc(12px + env(safe-area-inset-bottom,0px));z-index:6;display:flex;align-items:center;gap:8px}
 .olla{width:58px;height:58px;border-radius:50%;border:2px solid rgba(245,198,106,.6);background:radial-gradient(circle at 50% 35%,#c96a3a,#8a3e1e);font-size:26px;display:grid;place-items:center;cursor:pointer;box-shadow:0 8px 18px rgba(0,0,0,.35)}
@@ -62,7 +66,7 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offse
 <body data-game="tamalazo">
 <canvas id="cv" aria-label="Tamalazo: throw tamales at the targets"></canvas>
 <div class="hud">
-  <div class="col"><span class="chip">⭐ <b id="hScore">0</b></span><span class="chip mult" id="hMult" hidden></span></div>
+  <div class="col"><span class="chip">🏡 <b id="hScore">0</b> m²</span><span class="chip mult" id="hMult" hidden></span></div>
   <div class="col r"><span class="chip">⏱️ <b class="timer" id="hTime">60</b></span></div>
 </div>
 <div class="ammo"><button class="olla" id="olla" type="button" aria-label="Grab more tamales">🫕</button><div class="tams" id="tams" aria-hidden="true"></div></div>
@@ -73,52 +77,56 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offse
   <div class="card">
     <div class="seg" role="group" aria-label="Language / Idioma"><button data-lang="en" aria-pressed="true">EN</button><button data-lang="es" aria-pressed="false">ES</button></div>
     <div class="gamesrow" id="gamesRow"></div>
-    <span class="kicker" data-t="kick">Posada mini game</span>
+    <span class="kicker" data-t="kick">La guerra de los terrenos</span>
     <h1 data-t="title">¡Tamalazo!</h1>
-    <p data-t="intro">Forget snowballs. You've got an olla full of tamales and 60 seconds. Tap to throw.</p>
+    <p data-t="intro">Your tíos and tías want to keep the family land. Grab the olla of tamales and win los terrenos back.</p>
     <div class="how">
       <div><span>🥫</span><b data-t="how1">Knock down the cans and break the piñatas</b></div>
-      <div><span>🤠</span><b data-t="how2">Bonk the judgy tíos and tías in the windows</b></div>
-      <div><span>👵</span><b data-t="how3">Never hit Abuelita. She made the tamales.</b></div>
+      <div><span>🤠</span><b data-t="how2">Bonk the tíos and tías fighting over the land</b></div>
+      <div><span>👵</span><b data-t="how3">Never hit Abuelita. She has the escrituras.</b></div>
       <div><span>🎯</span><b data-t="how4">Tamales take a moment to fly, so aim ahead</b></div>
     </div>
     <p class="best" id="startBest"></p>
-    <button class="cta" id="go" type="button" data-t="go">🫔 ¡A darle!</button>
-    <a class="ghost" id="moreLink" data-t="more">← More posada games</a>
+    <button class="cta" id="go" type="button" data-t="go">🫔 ¡A ganar los terrenos!</button>
+    <nav class="crumbs" data-crumbs aria-label="Breadcrumbs"></nav>
   </div>
 </div>
-<div class="overlay" id="paused" hidden><div class="card"><h2 data-t="pausedT">Paused</h2><button class="cta" id="resume" type="button" data-t="resume">▶ Keep throwing</button><button class="ghost" id="quit" type="button" data-t="quit">Restart</button></div></div>
+<div class="overlay" id="paused" hidden><div class="card"><h2 data-t="pausedT">Paused</h2><button class="cta" id="resume" type="button" data-t="resume">▶ Keep throwing</button><button class="ghost" id="quit" type="button" data-t="quit">Restart</button><div class="gamesrow"></div><nav class="crumbs" data-crumbs aria-label="Breadcrumbs"></nav></div></div>
 <div class="overlay" id="over" hidden>
   <div class="card">
-    <span class="kicker" data-t="overK">Time's up!</span>
+    <span class="kicker" data-t="overK">¡Se acabó la posada!</span>
     <h1 id="overT"></h1>
-    <div class="stats"><div><b id="oScore">0</b><small data-t="sScore">points</small></div><div><b id="oAcc">0%</b><small data-t="sAcc">aim</small></div><div><b id="oCombo">×1</b><small data-t="sCombo">best combo</small></div></div>
+    <div class="stats"><div><b id="oScore">0</b><small data-t="sScore">m² won</small></div><div><b id="oAcc">0%</b><small data-t="sAcc">aim</small></div><div><b id="oCombo">×1</b><small data-t="sCombo">best combo</small></div></div>
     <p id="oLine"></p>
     <p class="best" id="oBest"></p>
     <button class="cta" id="again" type="button" data-t="again">🔄 Throw again</button>
     <a class="cta wa" id="oShare" target="_blank" rel="noopener" data-t="share">📣 Challenge the family</a>
-    <a class="ghost" id="moreLink2" data-t="more">← More posada games</a>
+    <a class="ghost" id="moreLink2" data-t="more" hidden>← More posada games</a>
+    <div class="gamesrow"></div>
+    <nav class="crumbs" data-crumbs aria-label="Breadcrumbs"></nav>
   </div>
 </div>
 
 <script>
 const WORDS={
-  en:{kick:"Posada mini game",title:"¡Tamalazo!",intro:"Forget snowballs. You've got an olla full of tamales and 60 seconds. Tap to throw.",how1:"Knock down the cans and break the piñatas",how2:"Bonk the judgy tíos and tías in the windows",
-    how3:"Never hit Abuelita. She made the tamales.",how4:"Tamales take a moment to fly, so aim ahead",go:"🫔 ¡A darle!",more:"← More posada games",pausedT:"Paused",resume:"▶ Keep throwing",quit:"Restart",
-    overK:"Time's up!",sScore:"points",sAcc:"aim",sCombo:"best combo",again:"🔄 Throw again",share:"📣 Challenge the family",best:n=>`Your best: ${n} points`,newBest:"🏆 New best!",
-    titles:[[3000,"¡Rey del Tamalazo!"],[1800,"¡Puntería de charro!"],[900,"¡Nada mal, mijo!"],[0,"¡Más masa, menos miedo!"]],
-    line:(c,p,r)=>`${c} cans · ${p} piñatas · ${r} relatives bonked`,reload:"¡Más tamales!",chuza:"¡CHUZA! +50",abuela:"¡LA ABUELA NO! −50",cucuy:"¡Le diste al Cucuy! +150",pin:"¡Piñata rota! +60",
-    oye:["¡Oye!","¡Ay, mi sombrero!","¡Qué falta de respeto!","¡Grosero!","¡Ahorita le digo a tu mamá!"],miss:"¡Plaf!",go2:"¡Ya!",last:"¡Últimos 10!",
-    msg:(s,url)=>`🫔 I just scored ${s} in ¡Tamalazo! Think you can throw better than me? 👇\n${url}`},
-  es:{kick:"Minijuego de la posada",title:"¡Tamalazo!",intro:"Olvídate de las bolas de nieve. Tienes una olla llena de tamales y 60 segundos. Toca para aventar.",how1:"Tumba las latas y rompe las piñatas",how2:"Pégale a los tíos y tías criticones de las ventanas",
-    how3:"Nunca le pegues a la Abuelita. Ella hizo los tamales.",how4:"Los tamales tardan en llegar, apunta adelantado",go:"🫔 ¡A darle!",more:"← Más juegos de la posada",pausedT:"En pausa",resume:"▶ Seguir aventando",quit:"Empezar otra vez",
-    overK:"¡Se acabó el tiempo!",sScore:"puntos",sAcc:"puntería",sCombo:"mejor combo",again:"🔄 Otra vez",share:"📣 Reta a la familia",best:n=>`Tu récord: ${n} puntos`,newBest:"🏆 ¡Nuevo récord!",
-    titles:[[3000,"¡Rey del Tamalazo!"],[1800,"¡Puntería de charro!"],[900,"¡Nada mal, mijo!"],[0,"¡Más masa, menos miedo!"]],
-    line:(c,p,r)=>`${c} latas · ${p} piñatas · ${r} parientes`,reload:"¡Más tamales!",chuza:"¡CHUZA! +50",abuela:"¡LA ABUELA NO! −50",cucuy:"¡Le diste al Cucuy! +150",pin:"¡Piñata rota! +60",
-    oye:["¡Oye!","¡Ay, mi sombrero!","¡Qué falta de respeto!","¡Grosero!","¡Ahorita le digo a tu mamá!"],miss:"¡Plaf!",go2:"¡Ya!",last:"¡Últimos 10!",
-    msg:(s,url)=>`🫔 ¡Hice ${s} puntos en ¡Tamalazo! ¿A que no avientas mejor que yo? 👇\n${url}`}};
-const JUICIOS={en:["So when's the wedding?","You got chubby!","Still no job?","That's what you're wearing?","Kids yet?","You never visit!"],
-  es:["¿Y el novio pa' cuándo?","¡Estás más gordito!","¿Y el trabajo?","¿Así vas a ir vestido?","¿Y los nietos?","¡Ya ni nos visitas!"]};
+  en:{kick:"La guerra de los terrenos",title:"¡Tamalazo!",intro:"Your tíos and tías want to keep the family land. Grab the olla of tamales and <b>win los terrenos back</b> before the posada's over. Every hit wins you more m².",
+    how1:"Knock down the cans and break the piñatas",how2:"Bonk the tíos and tías fighting over the land",how3:"Never hit Abuelita. She has the escrituras.",how4:"Tamales take a moment to fly, so aim ahead",
+    go:"🫔 ¡A ganar los terrenos!",more:"← More posada games",pausedT:"Paused",resume:"▶ Keep throwing",quit:"Restart",
+    overK:"¡Se acabó la posada!",sScore:"m² won",sAcc:"aim",sCombo:"best combo",again:"🔄 Fight for more land",share:"📣 Challenge the family",best:n=>`Your record: ${n} m²`,newBest:"🏆 New record!",
+    titles:[[3000,"¡Te quedaste con todo el rancho!"],[1800,"¡La parcela es tuya!"],[900,"¡Ganaste un buen pedazo!"],[0,"¡Los tíos se quedaron con todo!"]],
+    line:(c,p,r)=>`${c} cans · ${p} piñatas · ${r} relatives sent to court`,reload:"¡Más tamales!",chuza:"¡CHUZA! +50 m²",abuela:"¡A la abuela no! She has the escrituras −50",cucuy:"¡Le quitaste las escrituras al licenciado! +150",pin:"¡Piñata rota! +60",
+    oye:["¡Ta' bueno, quédatelo!","¡Te veo en el juzgado!","¡Ay, mi sombrero!","¡Grosero!","¡Le voy a decir a tu mamá!","¡Ese terreno era mío!"],miss:"¡Plaf!",go2:"¡Por los terrenos!",last:"¡Últimos 10!",unit:"m²",
+    msg:(s,url)=>`🫔 I won ${s} m² of the family land from my tíos in ¡Tamalazo! Think you can win more? 👇\n${url}`},
+  es:{kick:"La guerra de los terrenos",title:"¡Tamalazo!",intro:"Tus tíos y tías se quieren quedar con los terrenos de la familia. Agarra la olla de tamales y <b>¡gánale los terrenos a tus tías y tíos!</b> Cada tamalazo te gana más m².",
+    how1:"Tumba las latas y rompe las piñatas",how2:"Pégale a los tíos y tías que se pelean el terreno",how3:"Nunca le pegues a la Abuelita. Ella tiene las escrituras.",how4:"Los tamales tardan en llegar, apunta adelantado",
+    go:"🫔 ¡A ganar los terrenos!",more:"← Más juegos de la posada",pausedT:"En pausa",resume:"▶ Seguir aventando",quit:"Empezar otra vez",
+    overK:"¡Se acabó la posada!",sScore:"m² ganados",sAcc:"puntería",sCombo:"mejor combo",again:"🔄 Pelear más terreno",share:"📣 Reta a la familia",best:n=>`Tu récord: ${n} m²`,newBest:"🏆 ¡Nuevo récord!",
+    titles:[[3000,"¡Te quedaste con todo el rancho!"],[1800,"¡La parcela es tuya!"],[900,"¡Ganaste un buen pedazo!"],[0,"¡Los tíos se quedaron con todo!"]],
+    line:(c,p,r)=>`${c} latas · ${p} piñatas · ${r} parientes al juzgado`,reload:"¡Más tamales!",chuza:"¡CHUZA! +50 m²",abuela:"¡A la abuela no! Ella tiene las escrituras −50",cucuy:"¡Le quitaste las escrituras al licenciado! +150",pin:"¡Piñata rota! +60",
+    oye:["¡Ta' bueno, quédatelo!","¡Te veo en el juzgado!","¡Ay, mi sombrero!","¡Grosero!","¡Le voy a decir a tu mamá!","¡Ese terreno era mío!"],miss:"¡Plaf!",go2:"¡Por los terrenos!",last:"¡Últimos 10!",unit:"m²",
+    msg:(s,url)=>`🫔 ¡Le gané ${s} m² de terreno a mis tíos en ¡Tamalazo! ¿A que no ganas más? 👇\n${url}`}};
+const JUICIOS={en:["That land is MINE!","Dad left it to me!","I paid the predial!","I already got a lawyer!","I'm building there!","Where are the escrituras?","You don't even visit!"],
+  es:["¡Ese terreno es MÍO!","¡Mi papá me lo dejó a mí!","¡Yo pagué el predial!","¡Ya tengo abogado!","¡Ahí voy a construir!","¿Y las escrituras qué?","¡Ni nos visitas!"]};
 /* shared bits for the posada mini games: language, sound, best scores, sharing */
 const $=id=>document.getElementById(id);
 const RM=matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -162,7 +170,15 @@ async function copyText(s){ try{ await navigator.clipboard.writeText(s); return 
 (function(){ const box=$("gamesRow"); if(!box) return; const inClaude=!ON_SITE;
   const G=[["trineo","🛷","El Trineo",inClaude?"https://claude.ai/artifact/FhF8WSQbXjzZZ72ygW1nLA":"/trineo"],["tamalazo","🫔","Tamalazo",inClaude?"https://claude.ai/artifact/ErLYAvBA8sSGhLu2MADBab":"/tamalazo"],
     ["pinata","🪅","Piñata",inClaude?"https://claude.ai/artifact/RZTLwQMZ2o4bQ1yDrzMya4#play":"/pinata#play"],["play","🏠","La Posada",LINK.play]];
-  const me=document.body.dataset.game; box.innerHTML=G.map(([k,e,n,u])=>`<a href="${u}" ${k===me?'aria-current="page"':'target="_blank" rel="noopener"'}>${e} ${n}</a>`).join(""); })();
+  const me=document.body.dataset.game; const html=G.map(([k,e,n,u])=>`<a href="${u}" ${k===me?'aria-current="page"':''}>${e} ${n}</a>`).join("");
+  document.querySelectorAll(".gamesrow").forEach(b=>b.innerHTML=html); })();
+/* breadcrumbs on the pause and game-over cards: home, leaderboard, organizer */
+function renderCrumbs(){ const inClaude=!ON_SITE, es=LANG==="es";
+  const C=[ !inClaude&&["🏠",es?"Inicio":"Home","/"],
+    ["🏆",es?"Tabla familiar":"Leaderboard",inClaude?"https://claude.ai/artifact/W2yhsdrnRyCpRqrUPPbdu3#board":"/play#board"],
+    ["🎄",es?"Organizar Secret Santa":"Organizer",inClaude?"https://claude.ai/artifact/Tp8Yit2cs1dM1UrXe8bipC":"/host"] ].filter(Boolean);
+  document.querySelectorAll("[data-crumbs]").forEach(n=>{ n.innerHTML=`<span class="crumbs-k">${es?"Ir a":"Go to"}</span>`+C.map(([e,l,u])=>`<a href="${u}">${e} ${l}</a>`).join(""); }); }
+renderCrumbs(); document.querySelectorAll("[data-lang]").forEach(b=>b.addEventListener("click",()=>setTimeout(renderCrumbs,0)));
 
 
 /* =================== Tamalazo =================== */
@@ -201,7 +217,7 @@ function land(tm){ const x=tm.x, y=tm.y;
   const c=S.cucuy; if(c&&!c.hit&&Math.abs(x-c.x)<26&&y>ROOF-62&&y<ROOF+6){ hitCucuy(c); return; }
   // ¡plaf! on whatever is behind
   S.combo=0; S.splats.push({x,y,t:0,s:.6+(1-tm.d)*.5,r:rnd(0,6)}); const t0=now(); noise(t0,.14,.25,"lowpass",600,200); floatTxt(t("miss"),x,y-14,"#e9c46a"); updMult(); }
-function gain(pts,x,y,col){ S.hits++; S.combo++; S.bestCombo=Math.max(S.bestCombo,S.combo); const m=mult(); const v=pts*m; S.score+=v; floatTxt("+"+v,x,y-18,col||"#ffd34d");
+function gain(pts,x,y,col){ S.hits++; S.combo++; S.bestCombo=Math.max(S.bestCombo,S.combo); const m=mult(); const v=pts*m; S.score+=v; floatTxt("+"+v+" m²",x,y-18,col||"#ffd34d");
   if(S.combo>0&&S.combo%3===0&&m<=4){ const t0=now(); [660,880,1100].forEach((f,i)=>tone("square",f,t0+i*.05,.09,.06)); } updMult(); }
 const mult=()=>1+Math.min(3,Math.floor(S.combo/3));
 function updMult(){ const m=mult(), el=$("hMult"); el.hidden=m<2; el.textContent="🔥 ×"+m; $("hScore").textContent=S.score.toLocaleString(); }
@@ -216,7 +232,7 @@ function hitWin(w){ w.hit=.9; const t0=now();
   S.rels++; gain(40,w.x,w.y-30,"#7ee8ff"); w.who.say=pick(t("oye")); w.who.hatV={x:rnd(-90,90),y:-rnd(240,320),r:rnd(-10,10),px:0,py:0,a:0};
   const f=w.who.k==="tia"?520:200; tone("sawtooth",f,t0,.12,.12,f*1.6); tone("sawtooth",f*1.5,t0+.1,.22,.12,f*.8); noise(t0,.1,.2,"lowpass",900); shake=5; }
 function hitCucuy(c){ c.hit=1; S.score+=0; gain(150,c.x,ROOF-30,"#c9a7ff"); toast(t("cucuy")); const t0=now(); tone("sawtooth",130,t0,.5,.15,60); noise(t0,.5,.3,"lowpass",600); shake=8;
-  for(let i=0;i<8;i++) S.parts.push({x:c.x,y:ROOF-20,vx:rnd(-160,160),vy:rnd(-260,-80),t:0,l:1.3,r:0,emoji:"🎁",rot:rnd(-5,5)}); }
+  for(let i=0;i<10;i++) S.parts.push({x:c.x,y:ROOF-20,vx:rnd(-160,160),vy:rnd(-260,-80),t:0,l:1.4,r:0,emoji:i%3?"📜":"🏡",rot:rnd(-5,5)}); }
 function burst(x,y,n,c){ for(let i=0;i<n;i++) S.parts.push({x,y,vx:rnd(-170,170),vy:rnd(-220,40),t:0,l:rnd(.35,.7),r:rnd(2,4.5),c}); }
 function floatTxt(txt,x,y,c){ S.floats.push({txt,x,y,c,t:0}); }
 
@@ -224,7 +240,7 @@ function floatTxt(txt,x,y,c){ S.floats.push({txt,x,y,c,t:0}); }
 const RELS=["tio","tia","tio2","tia2"];
 function stepWins(dt){ const fast=Math.min(1,S.t/55);
   S.wins.forEach(w=>{ if(w.who){ w.t+=dt; if(w.hit){ w.hit-=dt; if(w.hit<=0){ w.who=null; w.cool=rnd(.4,1.1); } } else if(w.t>w.dur){ w.who=null; w.cool=rnd(.3,1.2)*(1-fast*.5); } if(w.who&&w.who.hatV){ const h=w.who.hatV; h.px+=h.x*dt; h.py+=h.y*dt; h.y+=900*dt; h.a+=h.r*dt; } }
-    else { w.cool-=dt; if(w.cool<=0&&S.left>.8){ const abu=Math.random()<.22+fast*.06&&!S.wins.some(o=>o.who&&o.who.k==="abuela"); w.who={k:abu?"abuela":pick(RELS),line:abu?null:(Math.random()<.5?pick(JUICIOS[LANG]||JUICIOS.en):null)}; w.t=0; w.dur=rnd(1.5,2.3)*(1-fast*.35); w.hit=0;
+    else { w.cool-=dt; if(w.cool<=0&&S.left>.8){ const abu=Math.random()<.22+fast*.06&&!S.wins.some(o=>o.who&&o.who.k==="abuela"); w.who={k:abu?"abuela":pick(RELS),line:abu?null:(Math.random()<.75?pick(JUICIOS[LANG]||JUICIOS.en):null)}; w.t=0; w.dur=rnd(1.5,2.3)*(1-fast*.35); w.hit=0;
       const t0=now(); if(!abu) tone("triangle",pick([330,392,440]),t0,.08,.04); } } }); }
 function stepCucuy(dt){ if(!S.cucuy){ S.cucuyT-=dt; if(S.cucuyT<=0&&S.left>3){ const dir=Math.random()<.5?1:-1; S.cucuy={x:dir>0?-40:VW+40,dir,v:rnd(110,150)*(1+S.t/120),hit:0}; S.cucuyT=rnd(10,15); const t0=now(); tone("sawtooth",110,t0,.5,.08,80); } return; }
   const c=S.cucuy; if(c.hit){ c.hit+=dt; if(c.hit>1.1) S.cucuy=null; return; } c.x+=c.dir*c.v*dt; if(c.x<-60||c.x>VW+60) S.cucuy=null; }
@@ -275,10 +291,17 @@ function drawRel(w){ const k=w.who.k, x=w.x, pop=Math.min(1,w.t/.16), out=w.hit>
   else if(k==="tio2"){ ctx.fillStyle="#3a2a20"; ctx.beginPath(); ctx.ellipse(x,y-17,26,5,0,0,6.283); ctx.fill(); ctx.fillRect(x-13,y-34,26,18); ctx.fillStyle="#d7372f"; ctx.fillRect(x-13,y-22,26,4); }
   else { ctx.fillStyle=k==="tia"?"#ff4d6d":"#f5a524"; for(let i=0;i<5;i++){ ctx.beginPath(); ctx.arc(x+12+Math.cos(i*1.256)*5,y-16+Math.sin(i*1.256)*5,4.5,0,6.283); ctx.fill(); } ctx.fillStyle="#ffd34d"; ctx.beginPath(); ctx.arc(x+12,y-16,3,0,6.283); ctx.fill(); }
   ctx.restore(); }
-function drawCucuy(){ const c=S.cucuy; if(!c) return; const x=c.x, y=ROOF-4, b=Math.sin(S.t*14)*2; ctx.save(); ctx.translate(x,y); if(c.hit){ ctx.globalAlpha=Math.max(0,1-c.hit); ctx.rotate(c.hit*3); }
-  ctx.scale(c.dir,1); ctx.fillStyle="#2a1840"; ctx.beginPath(); ctx.moveTo(-18,0); ctx.quadraticCurveTo(-16,-36+b,0,-58+b); ctx.quadraticCurveTo(16,-36+b,18,0); ctx.closePath(); ctx.fill();
-  ctx.fillStyle="#140a22"; ctx.beginPath(); ctx.ellipse(4,-40+b,9,11,0,0,6.283); ctx.fill(); ctx.fillStyle=c.hit?"#ff6a5a":"#ffd34d"; ctx.shadowColor="#ffd34d"; ctx.shadowBlur=8; ctx.beginPath(); ctx.ellipse(2,-42+b,2,1.6,0,0,6.283); ctx.ellipse(8,-42+b,2,1.6,0,0,6.283); ctx.fill(); ctx.shadowBlur=0;
-  ctx.fillStyle="#7a5a3a"; ctx.beginPath(); ctx.ellipse(-14,-22+b,12,14,.2,0,6.283); ctx.fill(); ctx.fillStyle="#d7372f"; ctx.fillRect(-20,-38+b,7,7); ctx.fillStyle="#22a9c4"; ctx.fillRect(-12,-40+b,7,7); ctx.restore(); }
+function drawCucuy(){ const c=S.cucuy; if(!c) return; const x=c.x, y=ROOF-4, b=Math.abs(Math.sin(S.t*14))*3, leg=Math.sin(S.t*16)*6; ctx.save(); ctx.translate(x,y); if(c.hit){ ctx.globalAlpha=Math.max(0,1-c.hit); ctx.rotate(c.hit*3*c.dir); }
+  ctx.scale(c.dir,1);
+  ctx.strokeStyle="#1d2540"; ctx.lineWidth=5; ctx.lineCap="round"; ctx.beginPath(); ctx.moveTo(-3,-18-b); ctx.lineTo(-6+leg,-2); ctx.moveTo(3,-18-b); ctx.lineTo(6-leg,-2); ctx.stroke();
+  ctx.fillStyle="#2b3350"; ctx.beginPath(); ctx.roundRect(-11,-44-b,22,28,6); ctx.fill(); ctx.fillStyle="#fff8ec"; ctx.beginPath(); ctx.moveTo(-4,-44-b); ctx.lineTo(0,-34-b); ctx.lineTo(4,-44-b); ctx.fill(); ctx.fillStyle="#d7372f"; ctx.fillRect(-1.5,-42-b,3,10);
+  ctx.fillStyle="#d9a27a"; ctx.beginPath(); ctx.arc(0,-53-b,9,0,6.283); ctx.fill(); ctx.fillStyle="#1b1410"; ctx.beginPath(); ctx.arc(0,-56-b,9,Math.PI,0); ctx.fill();
+  ctx.strokeStyle="#1b1410"; ctx.lineWidth=1.4; ctx.strokeRect(1,-56-b,5,4); ctx.fillStyle="#1b1410"; ctx.beginPath(); ctx.ellipse(3,-48-b,4,1.6,0,0,6.283); ctx.fill();
+  ctx.strokeStyle="#2b3350"; ctx.lineWidth=4; ctx.beginPath(); ctx.moveTo(8,-38-b); ctx.lineTo(16,-26-b); ctx.stroke(); ctx.lineCap="butt";
+  ctx.fillStyle="#6b4226"; ctx.fillRect(12,-28-b,16,12); ctx.fillStyle="#3a2414"; ctx.fillRect(17,-31-b,6,3);
+  if(!c.hit){ ctx.fillStyle="#f4efe4"; ctx.save(); ctx.translate(20,-30-b); ctx.rotate(-.3); ctx.fillRect(-4,-10,9,11); ctx.fillStyle="#7a2a1f"; ctx.fillRect(-3,-8,7,1.4); ctx.fillRect(-3,-5,7,1.4); ctx.restore(); }
+  ctx.restore();
+  if(!c.hit){ ctx.font="900 10px Nunito,sans-serif"; ctx.textAlign="center"; ctx.lineWidth=3; ctx.strokeStyle="rgba(22,34,74,.85)"; const tx=LANG==="es"?"¡Las escrituras!":"The deeds!"; ctx.strokeText(tx,x,ROOF-72); ctx.fillStyle="#ffd34d"; ctx.fillText(tx,x,ROOF-72); } }
 function rope(){ ctx.strokeStyle="#e8dcc4"; ctx.lineWidth=2.5; ctx.beginPath(); ctx.moveTo(-40,ROPE-20); ctx.quadraticCurveTo(VW/2,ROPE+18,VW+40,ROPE-20); ctx.stroke();
   for(let i=0;i<11;i++){ const u=i/10, x=-20+u*(VW+40), y=ROPE-20+38*u*(1-u)*1.9-2; ctx.fillStyle=["#d7372f","#2f8f4e","#f5a524","#e2337f","#22a9c4"][i%5]; ctx.beginPath(); ctx.moveTo(x-12,y); ctx.lineTo(x+12,y); ctx.lineTo(x+12,y+20); ctx.lineTo(x,y+15); ctx.lineTo(x-12,y+20); ctx.closePath(); ctx.fill(); }
   S.pinatas.forEach(drawPin); }
@@ -292,7 +315,10 @@ function fence(){ ctx.fillStyle="#6b4226"; ctx.fillRect(-200,FENCE,VW+400,16); c
   ctx.fillStyle="#3a2a48"; ctx.fillRect(-200,FENCE+76,VW+400,VH); const g=ctx.createLinearGradient(0,FENCE+60,0,VH); g.addColorStop(0,"#4a3a5a"); g.addColorStop(1,"#2a1f3a"); ctx.fillStyle=g; ctx.fillRect(-200,FENCE+60,VW+400,VH);
   // nochebuenas along the yard
   [30,110,280,360].forEach((x,i)=>{ const y=FENCE+92+(i%2)*20; ctx.fillStyle="#2f8f4e"; ctx.beginPath(); ctx.ellipse(x,y+6,18,8,0,0,6.283); ctx.fill(); ctx.fillStyle="#d7372f"; for(let k=0;k<6;k++){ ctx.save(); ctx.translate(x,y); ctx.rotate(k*1.047); ctx.beginPath(); ctx.ellipse(9,0,9,4,0,0,6.283); ctx.fill(); ctx.restore(); } ctx.fillStyle="#ffd34d"; ctx.beginPath(); ctx.arc(x,y,3,0,6.283); ctx.fill(); });
-  S.cansList.forEach(drawCan); }
+  drawSign(); S.cansList.forEach(drawCan); }
+function drawSign(){ const x=VW-70, y=FENCE+44; ctx.fillStyle="#5a3a26"; ctx.fillRect(x-3,y-6,6,40); ctx.save(); ctx.translate(x,y-18); ctx.rotate(-.06);
+  ctx.fillStyle="#e8d2a6"; ctx.fillRect(-52,-20,104,40); ctx.strokeStyle="#8d5a34"; ctx.lineWidth=3; ctx.strokeRect(-52,-20,104,40);
+  ctx.fillStyle="#7a2a1f"; ctx.font="900 10px Nunito,sans-serif"; ctx.textAlign="center"; ctx.textBaseline="middle"; ctx.fillText(LANG==="es"?"TERRENO FAMILIAR":"FAMILY LAND",0,-7); ctx.fillStyle="#d7372f"; ctx.font="900 9px Nunito,sans-serif"; ctx.fillText(LANG==="es"?"¡NO SE VENDE!":"NOT FOR SALE!",0,8); ctx.restore(); }
 function drawCan(c){ ctx.save(); ctx.translate(c.x,c.y); ctx.rotate(c.rot); ctx.fillStyle="#c9ccd6"; ctx.fillRect(-12,-16,24,32); ctx.fillStyle=c.c; ctx.fillRect(-12,-9,24,18); ctx.fillStyle="#fff8ec"; ctx.font="900 6px Nunito,sans-serif"; ctx.textAlign="center"; ctx.textBaseline="middle"; ctx.fillText("CHILES",0,0);
   ctx.fillStyle="#9aa3b5"; ctx.fillRect(-12,-16,24,3); ctx.fillRect(-12,13,24,3); ctx.restore(); }
 function tamal(x,y,s,rot){ ctx.save(); ctx.translate(x,y); ctx.rotate(rot); ctx.scale(s,s);
@@ -335,7 +361,7 @@ function onSound(on){ if(!on) stopMusic(); else if(state==="play") startMusic(SO
 $("go").addEventListener("click",begin); $("again").addEventListener("click",begin);
 $("pause").addEventListener("click",e=>{ e.stopPropagation(); pause(state==="play"); }); $("resume").addEventListener("click",()=>pause(false)); $("quit").addEventListener("click",begin);
 document.addEventListener("visibilitychange",()=>{ if(document.hidden) pause(true); });
-["moreLink","moreLink2"].forEach(id=>{ $(id).href=LINK.play; });
+["moreLink2"].forEach(id=>{ if($(id)) $(id).href=LINK.play; });
 function onLang(){ const b=best.get("tamalazo-best"); $("startBest").textContent=b?t("best",b.toLocaleString()):""; }
 applyWords(); newRound(); requestAnimationFrame(loop);
 </script>

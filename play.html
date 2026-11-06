@@ -157,6 +157,9 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--marigold);outline-o
 .who-row .wn{display:grid}.who-row small{font-size:10px;font-weight:800;letter-spacing:.1em;white-space:nowrap;text-transform:uppercase;color:#8f9cc8}.who-row b{font-size:18px;font-weight:800;color:#fff8ec}
 .pillbtn{font:inherit;font-weight:800;font-size:13px;height:34px;padding:0 14px;border-radius:99px;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.06);color:#fff8ec;cursor:pointer}
 .levels{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.crumbs{display:flex;flex-wrap:wrap;justify-content:center;gap:6px;padding-top:10px;border-top:1px solid rgba(255,255,255,.09)}
+.crumbs a{display:inline-flex;align-items:center;gap:5px;height:32px;padding:0 11px;border-radius:99px;font-weight:800;font-size:12.5px;text-decoration:none;color:#aab4d6;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.09)}
+.crumbs-k{width:100%;text-align:center;font-size:10px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:#9aa6cf}
 .minis{display:grid;gap:6px;margin-top:4px}.minis-k{font-size:11px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:#f5c66a;text-align:left}
 .minis-row{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
 .mini{display:grid;grid-template-columns:auto 1fr;grid-template-rows:auto auto;column-gap:6px;align-items:center;text-align:left;padding:8px 8px;min-width:0;border-radius:14px;background:linear-gradient(150deg,rgba(226,51,127,.22),rgba(34,169,196,.14));border:1px solid rgba(245,198,106,.35);color:#fff8ec;text-decoration:none}
@@ -283,7 +286,7 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--marigold);outline-o
   <div class="card in">
     <div class="card-top"><span class="kicker" data-t="gameKicker">Posada game</span><div class="seg" role="group" aria-label="Language / Idioma"><button type="button" data-lang="en" aria-pressed="true">EN</button><button type="button" data-lang="es" aria-pressed="false">ES</button></div></div>
     <div class="stack tight"><h2 data-t="gameTitle">La Posada</h2><p data-t="gameSub">5 levels, each a little tougher.</p></div>
-    <div class="minis"><span class="minis-k" id="minisK">Mini games</span><div class="minis-row"><a class="mini" id="miniTr" target="_blank" rel="noopener"><span>🛷</span><b>El Trineo</b><small id="miniTrS">Sled run</small></a><a class="mini" id="miniTm" target="_blank" rel="noopener"><span>🫔</span><b>Tamalazo</b><small id="miniTmS">Tamale toss</small></a><a class="mini" id="miniPn" target="_blank" rel="noopener"><span>🪅</span><b>La Piñata</b><small id="miniPnS">Dale, dale</small></a></div></div>
+    <div class="minis"><span class="minis-k" id="minisK">Mini games</span><div class="minis-row"><a class="mini" id="miniTr" target="_blank" rel="noopener"><span>🛷</span><b>El Trineo</b><small id="miniTrS">Sled run</small></a><a class="mini" id="miniTm" target="_blank" rel="noopener"><span>🫔</span><b>Tamalazo</b><small id="miniTmS">Los terrenos</small></a><a class="mini" id="miniPn" target="_blank" rel="noopener"><span>🪅</span><b>La Piñata</b><small id="miniPnS">Dale, dale</small></a></div></div>
     <div class="goalcard">
       <canvas class="ico" data-ico="letter"></canvas><span class="garrow" aria-hidden="true">→</span><canvas class="ico" data-ico="buzon"></canvas>
       <span class="gtxt"><small data-t="mainGoal">Main goal</small><b data-t="goalLbl">Get your letter to Santa's buzón</b></span>
@@ -387,6 +390,7 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--marigold);outline-o
       <button class="cta alt" id="replayBtn" type="button" data-t="replay">Play again</button>
       <button class="ghost" id="toLevels" type="button" data-t="toLevels">All levels</button>
     </div>
+    <nav class="crumbs" data-pcrumbs aria-label="Breadcrumbs"></nav>
   </div>
 </div>
 
@@ -2045,8 +2049,12 @@ requestAnimationFrame(frame);
 /* links to the mini games: site paths on the web, artifact links inside Claude */
 (function(){ const inClaude=/claude|anthropic/.test(location.hostname)||location.protocol==="file:";
   $("miniTr").href=inClaude?"/trineo":"/trineo"; $("miniTm").href=inClaude?"/tamalazo":"/tamalazo"; $("miniPn").href=inClaude?"/pinata#play":"/pinata#play";
-  const set=()=>{ const es=LANG==="es"; $("minisK").textContent=es?"Minijuegos":"Mini games"; $("miniTrS").textContent=es?"Bájate en trineo":"Sled run"; $("miniTmS").textContent=es?"Avienta tamales":"Tamale toss"; $("miniPnS").textContent=es?"Dale, dale":"Dale, dale"; };
-  const _al=applyLang; applyLang=function(){ _al(); set(); }; set(); })();
+  const set=()=>{ const es=LANG==="es"; $("minisK").textContent=es?"Minijuegos":"Mini games"; $("miniTrS").textContent=es?"Bájate en trineo":"Sled run"; $("miniTmS").textContent="Los terrenos"; $("miniPnS").textContent=es?"Dale, dale":"Dale, dale"; };
+  const crumbs=()=>{ const es=LANG==="es"; const C=[!inClaude&&["🏠",es?"Inicio":"Home","/"],["🎮",es?"Minijuegos":"Mini games",inClaude?"/trineo":"/#minis"],["🏆",es?"Tabla familiar":"Leaderboard","#board"],["🎄",es?"Organizar":"Organizer",inClaude?"/host":"/host"]].filter(Boolean);
+    document.querySelectorAll("[data-pcrumbs]").forEach(n=>{ n.innerHTML=`<span class="crumbs-k">${es?"Ir a":"Go to"}</span>`+C.map(([e,l,u])=>`<a href="${u}" ${u==="#board"?'data-board="1"':''}>${e} ${l}</a>`).join(""); n.querySelectorAll("[data-board]").forEach(a=>a.onclick=ev=>{ ev.preventDefault(); open("board"); }); }); };
+  const _al=applyLang; applyLang=function(){ _al(); set(); crumbs(); }; set(); crumbs(); window.__pcrumbs=crumbs;
+  // a #board link opens the family leaderboard
+  if(/[#&]board\b/.test(String(window.__H0||""))) setTimeout(()=>{ try{ open("board"); }catch(e){} },500); })();
 const ARC={hearts:3,max:3,invul:0,flash:0,cp:null,cpHalf:false,comboT:0,callout:null,bossOn:false,bossDone:false,boss:null,proj:[],tokens:[],flying:[],warns:[],
   bossPending:0,chispas:[],hearts_:[],failed:false,sinceHeart:0,tramoI:0,nm:0,bestM:1,lost:0};
 const COMBO_T=3.2;
@@ -2104,7 +2112,7 @@ function tossSound(){ const t=now(); noise(t,.12,.12,"bandpass",1800); }
   const f=document.createElement("div"); f.className="overlay"; f.id="fail"; f.hidden=true;
   f.innerHTML=`<div class="card in"><div class="card-top"><span class="kicker" id="failK"></span></div><div class="stack tight"><h2 id="failT"></h2><p id="failP"></p></div>
     <div class="failstats"><div><b id="fScore">0</b><small id="fScoreL"></small></div><div><b id="fNear">0</b><small id="fNearL"></small></div><div><b id="fCombo">×1</b><small id="fComboL"></small></div></div>
-    <div class="stack tight"><button class="cta" id="failCp" type="button"></button><button class="cta alt" id="failRestart" type="button"></button><button class="ghost" id="failLv" type="button"></button></div></div>`;
+    <div class="stack tight"><button class="cta" id="failCp" type="button"></button><button class="cta alt" id="failRestart" type="button"></button><button class="ghost" id="failLv" type="button"></button></div><nav class="crumbs" data-pcrumbs aria-label="Breadcrumbs"></nav></div>`;
   document.body.appendChild(f); overlays.push("fail");
   const rl=document.createElement("p"); rl.className="resline"; rl.id="resLine"; rl.hidden=true; $("resStars").after(rl);
 })();
@@ -2129,7 +2137,7 @@ function failRun(){ ARC.failed=true; state="failed"; failSound(); duckMusic&&duc
     $("failP").textContent=ARC.cp?t("failP"):t("failP0"); $("fScore").textContent=score; $("fNear").textContent=ARC.nm; $("fCombo").textContent="×"+ARC.bestM;
     $("fScoreL").textContent=t("fScore"); $("fNearL").textContent=t("fNear"); $("fComboL").textContent=t("fCombo");
     $("failCp").hidden=!ARC.cp; $("failCp").textContent=t("retryCp"); $("failRestart").textContent=t("restart"); $("failLv").textContent=t("toLv");
-    $("failRestart").className=ARC.cp?"cta alt":"cta"; closeAll(); $("fail").hidden=false; },900); }
+    $("failRestart").className=ARC.cp?"cta alt":"cta"; if(window.__pcrumbs) window.__pcrumbs(); closeAll(); $("fail").hidden=false; },900); }
 $("failRestart").addEventListener("click",()=>{ startLevel(L.n); });
 $("failLv").addEventListener("click",()=>{ ARC.failed=false; open("menu"); });
 $("failCp").addEventListener("click",()=>{ const cp=ARC.cp; startLevel(L.n); if(!cp) return;

@@ -48,6 +48,10 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offse
 .gamesrow{display:flex;gap:6px;justify-content:center;flex-wrap:wrap}
 .gamesrow a{display:inline-flex;align-items:center;gap:5px;height:34px;padding:0 11px;border-radius:99px;font-weight:900;font-size:13px;text-decoration:none;color:var(--cream);background:rgba(255,255,255,.07);border:1px solid var(--line)}
 .gamesrow a[aria-current="page"]{background:var(--cream);color:var(--night)}
+.crumbs{display:flex;flex-wrap:wrap;justify-content:center;gap:6px;padding-top:10px;margin-top:2px;border-top:1px solid var(--line)}
+.crumbs a{display:inline-flex;align-items:center;gap:5px;height:32px;padding:0 11px;border-radius:99px;font-weight:900;font-size:12.5px;text-decoration:none;color:var(--muted);background:rgba(255,255,255,.04);border:1px solid var(--line)}
+.crumbs a:hover{color:var(--cream)}
+.crumbs-k{width:100%;text-align:center;font-size:10px;font-weight:900;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
 
 </style>
 </head>
@@ -69,16 +73,17 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offse
     <p data-t="intro">Race down the hill to the posada. Dodge pines, snowmen and burros, grab the regalos, and hit the ramps to reach the stars.</p>
     <div class="how">
       <div><span>👆</span><b data-t="how1">Drag left and right to steer</b></div>
-      <div><span>⤴️</span><b data-t="how2">Tap to hop over rocks and logs</b></div>
+      <div><span>⤴️</span><b data-t="how2">Tap to hop over nochebuenas, gallos and chanclas</b></div>
       <div><span>🛷</span><b data-t="how3">Ramps launch you up to the ⭐</b></div>
+      <div><span>🪅</span><b data-t="how4">Don't hop under a piñata. ¡Te pega!</b></div>
     </div>
     <p class="best" id="startBest"></p>
     <button class="cta" id="go" type="button" data-t="go">🛷 ¡Vámonos!</button>
-    <a class="ghost" id="moreLink" data-t="more">← More posada games</a>
+    <nav class="crumbs" data-crumbs aria-label="Breadcrumbs"></nav>
   </div>
 </div>
 
-<div class="overlay" id="paused" hidden><div class="card"><h2 data-t="pausedT">Paused</h2><button class="cta" id="resume" type="button" data-t="resume">▶ Keep going</button><button class="ghost" id="quit" type="button" data-t="quit">Restart</button></div></div>
+<div class="overlay" id="paused" hidden><div class="card"><h2 data-t="pausedT">Paused</h2><button class="cta" id="resume" type="button" data-t="resume">▶ Keep going</button><button class="ghost" id="quit" type="button" data-t="quit">Restart</button><div class="gamesrow"></div><nav class="crumbs" data-crumbs aria-label="Breadcrumbs"></nav></div></div>
 
 <div class="overlay" id="over" hidden>
   <div class="card">
@@ -88,22 +93,26 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offse
     <p class="best" id="oBest"></p>
     <button class="cta" id="again" type="button" data-t="again">🔄 Ride again</button>
     <a class="cta wa" id="oShare" target="_blank" rel="noopener" data-t="share">📣 Challenge the family</a>
-    <a class="ghost" id="moreLink2" data-t="more">← More posada games</a>
+    <a class="ghost" id="moreLink2" data-t="more" hidden>← More posada games</a>
+    <div class="gamesrow"></div>
+    <nav class="crumbs" data-crumbs aria-label="Breadcrumbs"></nav>
   </div>
 </div>
 
 <script>
 const WORDS={
-  en:{kick:"Posada mini game",title:"El Trineo",intro:"Race down the hill to the posada. Dodge pines, snowmen and burros, grab the regalos, and hit the ramps to reach the stars.",
-    how1:"Drag left and right to steer",how2:"Tap to hop over rocks and logs",how3:"Ramps launch you up to the ⭐",go:"🛷 ¡Vámonos!",more:"← More posada games",
+  en:{kick:"Posada mini game",title:"El Trineo",intro:"Race down the hill to the posada! Dodge mariachis, burros, the tamal cart and Tía's flying chancla. Grab tamales, conchas and regalos, and hit the ramps to reach the stars.",
+    how1:"Drag left and right to steer",how2:"Tap to hop over nochebuenas, gallos and chanclas",how4:"Don't hop under a piñata. ¡Te pega!",how3:"Ramps launch you up to the ⭐",go:"🛷 ¡Vámonos!",more:"← More posada games",
     pausedT:"Paused",resume:"▶ Keep going",quit:"Restart",sDist:"meters",sGifts:"regalos",sScore:"points",again:"🔄 Ride again",share:"📣 Challenge the family",
-    best:n=>`Your best: ${n} points`,newBest:"🏆 New best!",overK:"Crash!",crashes:["¡Ay, mi trineo!","¡Pinos traicioneros!","¡Se me atravesó el burro!","¡Uy, nieve en los calzones!"],
+    best:n=>`Your best: ${n} points`,newBest:"🏆 New best!",overK:"Crash!",crashes:["¡Ay, mi trineo!","¡Uy, nieve en los calzones!"],crashBy:{tree:"¡Pinos traicioneros!",burro:"¡Se me atravesó el burro!",mariachi:"¡Me atropelló el mariachi!",carrito:"¡Adiós, tamales!",ponche:"¡Se me cayó el ponche!",gallo:"¡Gallo traicionero!",chancla:"¡La chancla de la tía!",pinrope:"¡Te pegó la piñata!",nochebuena:"¡Ay, la nochebuena!",snowman:"¡Perdón, señor muñeco!",nopal:"¡Ay, el nopal!"},
+    treat:{tamal:"🫔 +30",concha:"🥐 +20"},tia:"¡Ahí te va la chancla!",fire:"¡Cohetes!",
     near:"¡Uf!",ramp:"¡A volar! 🚀",star:"⭐ +100",speed:"¡Más rápido!",arch:"¡Ajúa!",
     msg:(s,m,url)=>`🛷 I just rode ${m} m down the hill in El Trineo and scored ${s} points! Think you can beat me? 👇\n${url}`},
-  es:{kick:"Minijuego de la posada",title:"El Trineo",intro:"Baja la colina a toda velocidad hasta la posada. Esquiva pinos, muñecos de nieve y burros, junta regalos y usa las rampas para alcanzar las estrellas.",
-    how1:"Desliza a los lados para manejar",how2:"Toca para brincar piedras y troncos",how3:"Las rampas te lanzan hasta la ⭐",go:"🛷 ¡Vámonos!",more:"← Más juegos de la posada",
+  es:{kick:"Minijuego de la posada",title:"El Trineo",intro:"¡Bájate la colina hasta la posada! Esquiva mariachis, burros, el carrito de tamales y la chancla voladora de la tía. Junta tamales, conchas y regalos, y usa las rampas para alcanzar las estrellas.",
+    how1:"Desliza a los lados para manejar",how2:"Toca para brincar nochebuenas, gallos y chanclas",how4:"No brinques debajo de una piñata. ¡Te pega!",how3:"Las rampas te lanzan hasta la ⭐",go:"🛷 ¡Vámonos!",more:"← Más juegos de la posada",
     pausedT:"En pausa",resume:"▶ Seguir",quit:"Empezar otra vez",sDist:"metros",sGifts:"regalos",sScore:"puntos",again:"🔄 Otra vez",share:"📣 Reta a la familia",
-    best:n=>`Tu récord: ${n} puntos`,newBest:"🏆 ¡Nuevo récord!",overK:"¡Choque!",crashes:["¡Ay, mi trineo!","¡Pinos traicioneros!","¡Se me atravesó el burro!","¡Uy, nieve en los calzones!"],
+    best:n=>`Tu récord: ${n} puntos`,newBest:"🏆 ¡Nuevo récord!",overK:"¡Choque!",crashes:["¡Ay, mi trineo!","¡Uy, nieve en los calzones!"],crashBy:{tree:"¡Pinos traicioneros!",burro:"¡Se me atravesó el burro!",mariachi:"¡Me atropelló el mariachi!",carrito:"¡Adiós, tamales!",ponche:"¡Se me cayó el ponche!",gallo:"¡Gallo traicionero!",chancla:"¡La chancla de la tía!",pinrope:"¡Te pegó la piñata!",nochebuena:"¡Ay, la nochebuena!",snowman:"¡Perdón, señor muñeco!",nopal:"¡Ay, el nopal!"},
+    treat:{tamal:"🫔 +30",concha:"🥐 +20"},tia:"¡Ahí te va la chancla!",fire:"¡Cohetes!",
     near:"¡Uf!",ramp:"¡A volar! 🚀",star:"⭐ +100",speed:"¡Más rápido!",arch:"¡Ajúa!",
     msg:(s,m,url)=>`🛷 ¡Bajé ${m} m de la colina en El Trineo e hice ${s} puntos! ¿A que no me ganas? 👇\n${url}`}};
 /* shared bits for the posada mini games: language, sound, best scores, sharing */
@@ -149,7 +158,15 @@ async function copyText(s){ try{ await navigator.clipboard.writeText(s); return 
 (function(){ const box=$("gamesRow"); if(!box) return; const inClaude=!ON_SITE;
   const G=[["trineo","🛷","El Trineo",inClaude?"https://claude.ai/artifact/FhF8WSQbXjzZZ72ygW1nLA":"/trineo"],["tamalazo","🫔","Tamalazo",inClaude?"https://claude.ai/artifact/ErLYAvBA8sSGhLu2MADBab":"/tamalazo"],
     ["pinata","🪅","Piñata",inClaude?"https://claude.ai/artifact/RZTLwQMZ2o4bQ1yDrzMya4#play":"/pinata#play"],["play","🏠","La Posada",LINK.play]];
-  const me=document.body.dataset.game; box.innerHTML=G.map(([k,e,n,u])=>`<a href="${u}" ${k===me?'aria-current="page"':'target="_blank" rel="noopener"'}>${e} ${n}</a>`).join(""); })();
+  const me=document.body.dataset.game; const html=G.map(([k,e,n,u])=>`<a href="${u}" ${k===me?'aria-current="page"':''}>${e} ${n}</a>`).join("");
+  document.querySelectorAll(".gamesrow").forEach(b=>b.innerHTML=html); })();
+/* breadcrumbs on the pause and game-over cards: home, leaderboard, organizer */
+function renderCrumbs(){ const inClaude=!ON_SITE, es=LANG==="es";
+  const C=[ !inClaude&&["🏠",es?"Inicio":"Home","/"],
+    ["🏆",es?"Tabla familiar":"Leaderboard",inClaude?"https://claude.ai/artifact/W2yhsdrnRyCpRqrUPPbdu3#board":"/play#board"],
+    ["🎄",es?"Organizar Secret Santa":"Organizer",inClaude?"https://claude.ai/artifact/Tp8Yit2cs1dM1UrXe8bipC":"/host"] ].filter(Boolean);
+  document.querySelectorAll("[data-crumbs]").forEach(n=>{ n.innerHTML=`<span class="crumbs-k">${es?"Ir a":"Go to"}</span>`+C.map(([e,l,u])=>`<a href="${u}">${e} ${l}</a>`).join(""); }); }
+renderCrumbs(); document.querySelectorAll("[data-lang]").forEach(b=>b.addEventListener("click",()=>setTimeout(renderCrumbs,0)));
 
 
 /* =================== El Trineo =================== */
@@ -165,18 +182,40 @@ let S=null, state="start", last=0, shake=0;
 function newRun(){ S={pz:0,px:0,vx:0,tx:0,camX:0,h:0,vh:0,speed:17,ramp:0,gifts:0,stars:0,near:0,score:0,objs:[],nextZ:46,parts:[],flakes:[],crash:0,tumble:0,lean:0,mult:1,giftRun:0,lastSpeedUp:0,t:0};
   for(let z=0;z<140;z+=6){ deco(z); }
   for(let i=0;i<70;i++) S.flakes.push({x:rnd(-1,1),y:rnd(-1,1),z:rnd(.1,1)}); }
-function deco(z){ [-1,1].forEach(sd=>S.objs.push({k:"lum",x:sd*(TW+.55),z,r:0,h:.5})); if(Math.random()<.5) S.objs.push({k:"tree",x:(TW+rnd(1.6,5))*(Math.random()<.5?-1:1),z:z+rnd(0,5),r:0,h:3.4,deco:1,s:rnd(.8,1.3)}); }
+function deco(z){ [-1,1].forEach(sd=>S.objs.push({k:"lum",x:sd*(TW+.55),z,r:0,h:.5})); const sd=Math.random()<.5?-1:1, r=Math.random();
+  if(r<.32) S.objs.push({k:"tree",x:(TW+rnd(1.6,5))*sd,z:z+rnd(0,5),r:0,h:3.4,deco:1,s:rnd(.8,1.3)});
+  else if(r<.52) S.objs.push({k:"casita",x:(TW+rnd(3,4.5))*sd,z:z+rnd(0,5),r:0,h:3,deco:1,c:pick(["#e2337f","#f5a524","#22a9c4","#2f8f4e","#c86b4a"])});
+  else if(r<.66) S.objs.push({k:"maguey",x:(TW+rnd(1.4,3))*sd,z:z+rnd(0,5),r:0,h:1.2,deco:1});
+  else if(r<.74) S.objs.push({k:"nacim",x:(TW+rnd(2,3))*sd,z:z+rnd(0,5),r:0,h:1.4,deco:1}); }
 
 /* ---------- the course: rows of hand-shaped patterns ---------- */
-function obj(k,x,z,extra){ const base={tree:[.55,3.4],rock:[.5,.55],snowman:[.5,1.7],nopal:[.5,1.5],log:[0,.45],burro:[.75,1.4],ramp:[0,.3],gift:[.5,.4],star:[.55,2.4],arch:[0,0],coin:[.45,.3]}[k];
+function obj(k,x,z,extra){ const base={tree:[.55,3.4],rock:[.5,.55],snowman:[.5,1.7],nopal:[.5,1.5],log:[0,.45],burro:[.75,1.4],ramp:[0,.3],gift:[.5,.4],star:[.55,2.4],arch:[0,0],coin:[.45,.3],
+    mariachi:[.5,2],carrito:[1.05,1.8],ponche:[.6,1],nochebuena:[.45,.5],gallo:[.38,.6],pinrope:[.7,0],chancla:[.42,.3],tamal:[.45,.4],concha:[.45,.4]}[k];
   const o=Object.assign({k,x,z,r:base[0],h:base[1]},extra||{}); S.objs.push(o); return o; }
 function freeLanes(n){ const start=Math.floor(Math.random()*(LANES.length-n+1)); return LANES.slice(start,start+n); }
-function genRow(){ const z=S.nextZ, d=Math.min(1,S.pz/2600), r=Math.random();
+const TREAT=()=>pick(["gift","gift","tamal","concha"]);
+function genRow(){ const z=S.nextZ, d=Math.min(1,S.pz/2600); let r=Math.random();
+  // half the time, one of the fiesta sections
+  if(S.pz>120&&Math.random()<.5){ const q=Math.random(), gap0=rnd(10,14)-d*3;
+    if(q<.18){ // mariachis blocking the run, with a gap
+      const g=Math.floor(Math.random()*(LANES.length-1)); LANES.forEach((l,i)=>{ if(i===g||i===g+1) obj(TREAT(),l,z); else if(i%2===(g%2)) obj("mariachi",l,z,{ph:rnd(0,6)}); }); S.nextZ=z+gap0; return; }
+    if(q<.32){ // the tamal cart parked in the middle, treats all around it
+      const l=pick([-1.35,0,1.35]); obj("carrito",l,z); obj("tamal",l-2.6,z); obj("tamal",l+2.6,z); obj("concha",l,z+5); S.nextZ=z+gap0+4; return; }
+    if(q<.46){ // piñata alley: don't hop under them, hop the nochebuenas instead
+      const ls=[...LANES].sort(()=>Math.random()-.5); obj("pinrope",ls[0],z,{ph:rnd(0,6)}); obj("pinrope",ls[1],z+8,{ph:rnd(0,6)}); obj("nochebuena",ls[2],z+3); obj("nochebuena",ls[3],z+10); obj("gift",ls[0],z+.6); obj("concha",ls[1],z+8.6); S.nextZ=z+gap0+12; return; }
+    if(q<.58){ // ollas de ponche
+      const free=new Set(freeLanes(2)); LANES.filter(l=>!free.has(l)).sort(()=>Math.random()-.5).slice(0,2+Math.floor(d*2)).forEach(l=>obj("ponche",l,z+rnd(-1,1))); obj("tamal",[...free][0],z); S.nextZ=z+gap0; return; }
+    if(q<.70&&S.pz>250){ // gallos running across
+      const sd=Math.random()<.5?-1:1; obj("gallo",-sd*(TW+.6),z,{vx:sd*rnd(3,4.5)}); obj("gallo",sd*(TW+.6),z+9,{vx:-sd*rnd(3,4.5)}); obj("concha",0,z+4); S.nextZ=z+gap0+10; return; }
+    if(q<.84&&S.pz>350){ // Tía at the side of the run, throwing chanclas
+      const sd=Math.random()<.5?-1:1; S.objs.push({k:"tia",x:sd*(TW+1.4),z:z,r:0,h:2,deco:1,sd}); [0,7,14].forEach((dz,i)=>obj("chancla",pick(LANES),z+dz+6,{fall:1,rot:rnd(0,6)})); S.nextZ=z+gap0+16; return; }
+    // a nacimiento-style row: nochebuenas to hop and treats on top
+    LANES.forEach((l,i)=>{ if(i%2) obj("nochebuena",l,z); else obj(TREAT(),l,z+.4,{y:i%4?0:1}); }); S.nextZ=z+gap0; return; }
   let gap=rnd(9,13)-d*3.5;
   if(r<.30){ // scatter with a guaranteed free path
     const free=new Set(freeLanes(2)); const n=1+Math.floor(Math.random()*(2+d*2));
-    LANES.filter(l=>!free.has(l)).sort(()=>Math.random()-.5).slice(0,n).forEach(l=>obj(pick(d>.3?["tree","tree","rock","snowman","nopal"]:["tree","rock","snowman"]),l+rnd(-.2,.2),z+rnd(-1,1)));
-    if(Math.random()<.6) obj("gift",[...free][0],z+rnd(-1,1));
+    LANES.filter(l=>!free.has(l)).sort(()=>Math.random()-.5).slice(0,n).forEach(l=>obj(pick(d>.3?["tree","mariachi","ponche","snowman","nopal","nochebuena"]:["tree","ponche","snowman","nochebuena"]),l+rnd(-.2,.2),z+rnd(-1,1),{ph:rnd(0,6)}));
+    if(Math.random()<.6) obj(TREAT(),[...free][0],z+rnd(-1,1));
   } else if(r<.42){ // slalom
     for(let i=0;i<4;i++){ const sd=i%2?1:-1; obj("tree",sd*rnd(.3,1.6),z+i*7); obj("gift",-sd*2.6,z+i*7); } gap+=22;
   } else if(r<.54){ // wall with a gap, regalos in the gap
@@ -232,7 +271,10 @@ function drawSky(){ const g=ctx.createLinearGradient(0,0,0,HOR); g.addColorStop(
   [[.62,"#2a3566",1],[.8,"#344280",1.6]].forEach(([hh,c,k],li)=>{ ctx.fillStyle=c; ctx.beginPath(); ctx.moveTo(-50,HOR); for(let x=-50;x<=W+50;x+=40){ const yy=HOR-(Math.sin((x+off*k)*.012+li*2)*.5+.6)*HOR*(1-hh)*.9-Math.sin((x+off*k)*.031)*HOR*.04; ctx.lineTo(x,yy); } ctx.lineTo(W+50,HOR); ctx.closePath(); ctx.fill(); });
   // the pueblo at the bottom of the hill, all lit up
   ctx.fillStyle="#1d2550"; for(let i=0;i<14;i++){ const x=W/2+(i-7)*W*.06+off*.4, w=W*.045, h=HOR*(.05+(i*37%5)*.012); ctx.fillRect(x,HOR-h,w,h); ctx.fillStyle=["#ffd34d","#ff9a4d","#fff2b0"][i%3]; ctx.fillRect(x+w*.3,HOR-h*.6,w*.25,h*.25); ctx.fillStyle="#1d2550"; }
-  const ch=W/2+off*.4; ctx.fillRect(ch-8,HOR-HOR*.16,16,HOR*.16); ctx.beginPath(); ctx.moveTo(ch-11,HOR-HOR*.16); ctx.lineTo(ch,HOR-HOR*.23); ctx.lineTo(ch+11,HOR-HOR*.16); ctx.fill(); ctx.fillStyle="#ffd34d"; ctx.fillRect(ch-1.5,HOR-HOR*.27,3,8); ctx.fillRect(ch-4,HOR-HOR*.255,8,2.5); }
+  // cohetes bursting over the pueblo now and then
+  S.fw=S.fw||[]; if(Math.random()<.012) S.fw.push({x:W*(.15+Math.random()*.7),y:HOR*(.25+Math.random()*.35),t:0,c:pick(["#ffd34d","#ff6fb5","#5ac8ff","#4ddc7a","#ff4d4d"])});
+  S.fw.forEach(f=>{ f.t+=.016; const r=f.t*60; ctx.globalAlpha=Math.max(0,1-f.t/1.2); ctx.fillStyle=f.c; for(let i=0;i<12;i++){ const a=i*Math.PI/6; ctx.beginPath(); ctx.arc(f.x+Math.cos(a)*r,f.y+Math.sin(a)*r+f.t*f.t*30,1.8,0,6.283); ctx.fill(); } }); ctx.globalAlpha=1; S.fw=S.fw.filter(f=>f.t<1.2);
+  const ch=W/2+off*.4; ctx.fillStyle="#1d2550"; ctx.fillRect(ch-8,HOR-HOR*.16,16,HOR*.16); ctx.beginPath(); ctx.moveTo(ch-11,HOR-HOR*.16); ctx.lineTo(ch,HOR-HOR*.23); ctx.lineTo(ch+11,HOR-HOR*.16); ctx.fill(); ctx.fillStyle="#ffd34d"; ctx.fillRect(ch-1.5,HOR-HOR*.27,3,8); ctx.fillRect(ch-4,HOR-HOR*.255,8,2.5); }
 function drawGround(){ const g=ctx.createLinearGradient(0,HOR,0,H); g.addColorStop(0,"#9fb1df"); g.addColorStop(.3,"#d3def5"); g.addColorStop(1,"#f4f7ff"); ctx.fillStyle=g; ctx.fillRect(0,HOR,W,H-HOR);
   // the groomed run: alternating bands rushing toward you
   const z0=Math.floor(S.pz/4)*4;
@@ -269,6 +311,50 @@ function drawObj(o){ const p=proj(o.x,0,o.z); if(!p||p.dz>136) return; const s=p
   else if(o.k==="arch"){ const a=proj(-TW+.2,0,o.z), b=proj(TW-.2,0,o.z), top=proj(0,3.2,o.z); if(a&&b&&top){ ctx.strokeStyle="#6b4226"; ctx.lineWidth=Math.max(2,.14*s); ctx.beginPath(); ctx.moveTo(a.x,a.y); ctx.lineTo(a.x,top.y); ctx.moveTo(b.x,b.y); ctx.lineTo(b.x,top.y); ctx.stroke();
       ctx.strokeStyle="#fff8ec"; ctx.lineWidth=Math.max(1,.04*s); ctx.beginPath(); ctx.moveTo(a.x,top.y); ctx.quadraticCurveTo((a.x+b.x)/2,top.y+.5*s,b.x,top.y); ctx.stroke();
       const n=9; for(let i=0;i<n;i++){ const u=(i+.5)/n, x=a.x+(b.x-a.x)*u, y=top.y+Math.sin(u*Math.PI)*.5*s; ctx.fillStyle=["#d7372f","#2f8f4e","#f5a524","#e2337f","#22a9c4"][i%5]; const fw=(b.x-a.x)/n*.8; ctx.beginPath(); ctx.moveTo(x-fw/2,y); ctx.lineTo(x+fw/2,y); ctx.lineTo(x+fw/2,y+fw*1.1); ctx.lineTo(x,y+fw*.85); ctx.lineTo(x-fw/2,y+fw*1.1); ctx.closePath(); ctx.fill(); } } }
+  else if(o.k==="mariachi"){ const k=s, sw=Math.sin(S.t*6+(o.ph||0))*.06*k; shadow(p,.55);
+    ctx.fillStyle="#1b1b2a"; ctx.fillRect(p.x-.2*k,p.y-.9*k,.16*k,.9*k); ctx.fillRect(p.x+.04*k,p.y-.9*k,.16*k,.9*k); ctx.fillStyle="#c9ccd6"; for(let i=0;i<4;i++){ ctx.fillRect(p.x-.22*k,p.y-(.2+i*.18)*k,.04*k,.06*k); ctx.fillRect(p.x+.18*k,p.y-(.2+i*.18)*k,.04*k,.06*k); }
+    ctx.fillStyle="#1b1b2a"; ctx.beginPath(); ctx.roundRect(p.x-.3*k+sw,p.y-1.6*k,.6*k,.75*k,.12*k); ctx.fill(); ctx.fillStyle="#d7372f"; ctx.beginPath(); ctx.moveTo(p.x-.12*k+sw,p.y-1.55*k); ctx.lineTo(p.x+sw,p.y-1.42*k); ctx.lineTo(p.x+.12*k+sw,p.y-1.55*k); ctx.fill();
+    ctx.fillStyle="#d9a27a"; ctx.beginPath(); ctx.arc(p.x+sw,p.y-1.78*k,.18*k,0,6.283); ctx.fill(); ctx.fillStyle="#1b1410"; ctx.fillRect(p.x-.1*k+sw,p.y-1.74*k,.2*k,.05*k);
+    ctx.fillStyle="#1b1b2a"; ctx.beginPath(); ctx.ellipse(p.x+sw,p.y-1.92*k,.55*k,.12*k,0,0,6.283); ctx.fill(); ctx.beginPath(); ctx.ellipse(p.x+sw,p.y-2.02*k,.2*k,.16*k,0,Math.PI,0); ctx.fill(); ctx.strokeStyle="#c9ccd6"; ctx.lineWidth=Math.max(1,.03*k); ctx.beginPath(); ctx.ellipse(p.x+sw,p.y-1.92*k,.45*k,.09*k,0,0,6.283); ctx.stroke();
+    ctx.fillStyle="#c98a4a"; ctx.save(); ctx.translate(p.x+.18*k+sw,p.y-1.15*k); ctx.rotate(-.6); ctx.beginPath(); ctx.ellipse(0,0,.2*k,.26*k,0,0,6.283); ctx.fill(); ctx.fillStyle="#3a2414"; ctx.beginPath(); ctx.arc(0,0,.07*k,0,6.283); ctx.fill(); ctx.fillStyle="#8d5a34"; ctx.fillRect(-.03*k,-.6*k,.06*k,.4*k); ctx.restore(); }
+  else if(o.k==="carrito"){ const k=s; shadow(p,1.2); ctx.fillStyle="#2b3a7a"; [-.7,.7].forEach(dx=>{ ctx.beginPath(); ctx.arc(p.x+dx*k,p.y-.2*k,.2*k,0,6.283); ctx.fill(); });
+    ctx.fillStyle="#f4efe4"; ctx.fillRect(p.x-1*k,p.y-1*k,2*k,.7*k); ctx.fillStyle="#2f8f4e"; ctx.fillRect(p.x-1*k,p.y-1*k,2*k,.12*k); ctx.fillStyle="#d7372f"; ctx.font=`900 ${Math.max(6,.24*k)}px Nunito,sans-serif`; ctx.textAlign="center"; ctx.textBaseline="middle"; ctx.fillText("TAMALES",p.x,p.y-.6*k);
+    ctx.fillStyle="#9aa3b5"; ctx.fillRect(p.x-.35*k,p.y-1.35*k,.7*k,.36*k); ctx.fillStyle="rgba(255,255,255,.7)"; [0,1,2].forEach(i=>{ ctx.beginPath(); ctx.arc(p.x+(-.2+i*.2)*k,p.y-(1.55+Math.sin(S.t*3+i)*.08)*k,.08*k,0,6.283); ctx.fill(); });
+    ctx.fillStyle="#6b4226"; ctx.fillRect(p.x-.03*k,p.y-2.3*k,.06*k,1.3*k); for(let i=0;i<6;i++){ ctx.fillStyle=i%2?"#fff8ec":"#e2337f"; ctx.beginPath(); ctx.moveTo(p.x,p.y-2.35*k); ctx.lineTo(p.x+(-1.1+i*.37)*k,p.y-1.95*k); ctx.lineTo(p.x+(-1.1+(i+1)*.37)*k,p.y-1.95*k); ctx.closePath(); ctx.fill(); } }
+  else if(o.k==="ponche"){ const k=s; shadow(p,.7); ctx.fillStyle="#6e7690"; [-.4,0,.4].forEach(dx=>{ ctx.beginPath(); ctx.arc(p.x+dx*k,p.y-.08*k,.13*k,0,6.283); ctx.fill(); });
+    ctx.fillStyle="#ff8a2a"; ctx.globalAlpha*=.9; ctx.beginPath(); ctx.ellipse(p.x,p.y-.12*k,.25*k,.1*k,0,0,6.283); ctx.fill(); ctx.globalAlpha=1-f*.85;
+    ctx.fillStyle="#b4552c"; ctx.beginPath(); ctx.ellipse(p.x,p.y-.55*k,.55*k,.42*k,0,0,6.283); ctx.fill(); ctx.fillStyle="#8a3e1e"; ctx.fillRect(p.x-.42*k,p.y-1*k,.84*k,.14*k); ctx.fillStyle="#f5a524"; ctx.beginPath(); ctx.ellipse(p.x,p.y-.98*k,.38*k,.07*k,0,0,6.283); ctx.fill();
+    ctx.strokeStyle="#fff8ec"; ctx.lineWidth=Math.max(1,.03*k); ctx.beginPath(); for(let i=0;i<5;i++){ ctx.moveTo(p.x-.4*k+i*.2*k,p.y-.6*k); ctx.lineTo(p.x-.3*k+i*.2*k,p.y-.5*k); } ctx.stroke();
+    ctx.fillStyle="rgba(255,255,255,.55)"; [0,1].forEach(i=>{ const ph=(S.t*.8+i*.5)%1; ctx.globalAlpha=(1-ph)*.6; ctx.beginPath(); ctx.arc(p.x+(i?.12:-.1)*k,p.y-(1.1+ph*.8)*k,(.08+ph*.12)*k,0,6.283); ctx.fill(); }); }
+  else if(o.k==="nochebuena"){ const k=s; shadow(p,.5); ctx.fillStyle="#b4552c"; ctx.fillRect(p.x-.22*k,p.y-.25*k,.44*k,.25*k); ctx.fillStyle="#2f8f4e"; ctx.beginPath(); ctx.ellipse(p.x,p.y-.32*k,.4*k,.14*k,0,0,6.283); ctx.fill();
+    ctx.fillStyle="#d7372f"; for(let i=0;i<7;i++){ ctx.save(); ctx.translate(p.x,p.y-.42*k); ctx.rotate(i*.9); ctx.beginPath(); ctx.ellipse(.2*k,0,.2*k,.07*k,0,0,6.283); ctx.fill(); ctx.restore(); } ctx.fillStyle="#ffd34d"; ctx.beginPath(); ctx.arc(p.x,p.y-.42*k,.05*k,0,6.283); ctx.fill(); }
+  else if(o.k==="gallo"){ const q=proj(o.x,0,o.z); if(!q){ ctx.restore(); return; } const k=q.s, dir=Math.sign(o.vx)||1, leg=Math.sin(S.t*20)*.08; shadow(q,.35); ctx.save(); ctx.translate(q.x,q.y-Math.abs(Math.sin(S.t*20))*.05*k); ctx.scale(dir,1);
+    ctx.strokeStyle="#f5a524"; ctx.lineWidth=Math.max(1,.04*k); ctx.beginPath(); ctx.moveTo((-.05+leg)*k,0); ctx.lineTo(-.05*k,-.22*k); ctx.moveTo((.08-leg)*k,0); ctx.lineTo(.08*k,-.22*k); ctx.stroke();
+    ctx.fillStyle="#8a3e1e"; ctx.beginPath(); ctx.ellipse(0,-.35*k,.25*k,.18*k,0,0,6.283); ctx.fill(); ["#2f8f4e","#1b1410","#22a9c4"].forEach((c,i)=>{ ctx.fillStyle=c; ctx.beginPath(); ctx.ellipse(-.25*k,(-.45-i*.06)*k,.16*k,.05*k,-.8+i*.3,0,6.283); ctx.fill(); });
+    ctx.fillStyle="#d9a84e"; ctx.beginPath(); ctx.arc(.2*k,-.52*k,.1*k,0,6.283); ctx.fill(); ctx.fillStyle="#d7372f"; ctx.beginPath(); ctx.arc(.18*k,-.63*k,.05*k,0,6.283); ctx.arc(.24*k,-.62*k,.04*k,0,6.283); ctx.fill(); ctx.fillStyle="#f5a524"; ctx.beginPath(); ctx.moveTo(.29*k,-.53*k); ctx.lineTo(.37*k,-.5*k); ctx.lineTo(.29*k,-.48*k); ctx.fill(); ctx.restore(); }
+  else if(o.k==="pinrope"){ const top=proj(o.x,3.3,o.z), a=proj(-TW,3.3,o.z), b=proj(TW,3.3,o.z); if(top&&a&&b){ ctx.strokeStyle="rgba(240,230,210,.9)"; ctx.lineWidth=Math.max(1,.03*s); ctx.beginPath(); ctx.moveTo(a.x,a.y); ctx.lineTo(b.x,b.y); ctx.stroke();
+      const sw=Math.sin(S.t*2+(o.ph||0))*.35, py=proj(o.x+sw,2.5,o.z); ctx.beginPath(); ctx.moveTo(top.x,top.y); ctx.lineTo(py.x,py.y-.3*s); ctx.stroke(); const k=s*.9; ctx.save(); ctx.translate(py.x,py.y); ctx.rotate(-sw*.5);
+      const cols=["#e2337f","#f5a524","#22a9c4","#2f8f4e","#d7372f","#8a4f9a","#f5c66a"]; for(let i=0;i<7;i++){ ctx.save(); ctx.rotate(i*Math.PI*2/7); ctx.fillStyle=cols[i]; ctx.beginPath(); ctx.moveTo(-.1*k,-.25*k); ctx.lineTo(0,-.62*k); ctx.lineTo(.1*k,-.25*k); ctx.closePath(); ctx.fill(); ctx.restore(); }
+      ctx.fillStyle="#f5c66a"; ctx.beginPath(); ctx.arc(0,0,.3*k,0,6.283); ctx.fill(); ctx.restore(); } }
+  else if(o.k==="chancla"){ const fall=o.fall?Math.max(0,Math.min(1,(o.z-S.pz-6)/14)):0, y=fall*4.5, q=proj(o.x,y,o.z); if(!q){ ctx.restore(); return; }
+    ctx.fillStyle=`rgba(60,80,140,${.15+.25*(1-fall)})`; ctx.beginPath(); ctx.ellipse(p.x,p.y,.45*p.s*(1-fall*.5),.13*p.s,0,0,6.283); ctx.fill();
+    ctx.save(); ctx.translate(q.x,q.y-.12*q.s); ctx.rotate((o.rot||0)+(fall>0?S.t*12:0)); const k=q.s; ctx.fillStyle="#22a9c4"; ctx.beginPath(); ctx.ellipse(0,0,.42*k,.17*k,0,0,6.283); ctx.fill(); ctx.strokeStyle="#e2337f"; ctx.lineWidth=Math.max(1,.07*k); ctx.beginPath(); ctx.moveTo(.05*k,-.12*k); ctx.lineTo(.18*k,.1*k); ctx.moveTo(.05*k,-.12*k); ctx.lineTo(.3*k,-.02*k); ctx.stroke(); ctx.restore(); }
+  else if(o.k==="tamal"||o.k==="concha"){ if(o.got){ ctx.restore(); return; } const y=(o.y||0)+.35+Math.sin(S.t*4+o.z)*.06, q=proj(o.x,y,o.z); shadow(p,.35); const k=q.s; ctx.save(); ctx.translate(q.x,q.y);
+    if(o.k==="tamal"){ ctx.rotate(.4); ctx.fillStyle="#d9b25a"; ctx.beginPath(); ctx.moveTo(-.16*k,-.36*k); ctx.quadraticCurveTo(-.24*k,0,-.14*k,.36*k); ctx.lineTo(.14*k,.36*k); ctx.quadraticCurveTo(.24*k,0,.16*k,-.36*k); ctx.closePath(); ctx.fill(); ctx.fillStyle="#f0d78a"; ctx.fillRect(-.09*k,-.28*k,.18*k,.56*k); ctx.fillStyle="#8a5a2a"; ctx.fillRect(-.18*k,-.24*k,.36*k,.05*k); ctx.fillRect(-.18*k,.19*k,.36*k,.05*k); }
+    else { ctx.fillStyle="#e7b06a"; ctx.beginPath(); ctx.ellipse(0,.05*k,.36*k,.22*k,0,0,6.283); ctx.fill(); ctx.fillStyle=o.z%2<1?"#ff8ab8":"#fff3dc"; ctx.beginPath(); ctx.ellipse(0,-.04*k,.32*k,.18*k,0,Math.PI,0); ctx.fill(); ctx.strokeStyle="rgba(150,90,40,.6)"; ctx.lineWidth=Math.max(1,.03*k); for(let i=-2;i<=2;i++){ ctx.beginPath(); ctx.moveTo(i*.1*k,-.2*k); ctx.lineTo(i*.13*k,-.02*k); ctx.stroke(); } }
+    ctx.restore(); }
+  else if(o.k==="casita"){ const k=s; ctx.fillStyle=o.c; ctx.fillRect(p.x-1.3*k,p.y-2*k,2.6*k,2*k); ctx.fillStyle="#fff8ec"; ctx.fillRect(p.x-1.4*k,p.y-2.15*k,2.8*k,.2*k);
+    ctx.fillStyle="#ffd34d"; ctx.shadowColor="#ffb84d"; ctx.shadowBlur=Math.min(16,.5*k); ctx.fillRect(p.x-.9*k,p.y-1.5*k,.5*k,.5*k); ctx.fillRect(p.x+.4*k,p.y-1.5*k,.5*k,.5*k); ctx.shadowBlur=0; ctx.fillStyle="#6b3324"; ctx.fillRect(p.x-.25*k,p.y-1*k,.5*k,1*k);
+    for(let i=0;i<5;i++){ ctx.fillStyle=["#ff4d4d","#ffd34d","#4ddc7a","#5ac8ff","#ff6fb5"][i]; ctx.beginPath(); ctx.arc(p.x+(-1.1+i*.55)*k,p.y-1.9*k,.06*k,0,6.283); ctx.fill(); } }
+  else if(o.k==="maguey"){ const k=s; ctx.fillStyle="#4f8a5a"; for(let i=-3;i<=3;i++){ ctx.save(); ctx.translate(p.x,p.y); ctx.rotate(i*.32); ctx.beginPath(); ctx.moveTo(-.08*k,0); ctx.lineTo(0,-(1.1-Math.abs(i)*.12)*k); ctx.lineTo(.08*k,0); ctx.closePath(); ctx.fill(); ctx.restore(); } }
+  else if(o.k==="nacim"){ const k=s; ctx.fillStyle="#8d5a34"; ctx.beginPath(); ctx.moveTo(p.x-.9*k,p.y); ctx.lineTo(p.x-.9*k,p.y-.9*k); ctx.lineTo(p.x,p.y-1.4*k); ctx.lineTo(p.x+.9*k,p.y-.9*k); ctx.lineTo(p.x+.9*k,p.y); ctx.closePath(); ctx.fill();
+    ctx.fillStyle="#e0b15a"; ctx.fillRect(p.x-.7*k,p.y-.75*k,1.4*k,.75*k); ctx.fillStyle="#ffd34d"; ctx.shadowColor="#ffd34d"; ctx.shadowBlur=Math.min(18,.6*k); ctx.beginPath(); ctx.arc(p.x,p.y-1.65*k,.12*k,0,6.283); ctx.fill(); ctx.shadowBlur=0;
+    [["#22a9c4",-.35],["#d7372f",.35]].forEach(([c,dx])=>{ ctx.fillStyle=c; ctx.beginPath(); ctx.moveTo(p.x+dx*k-.14*k,p.y); ctx.lineTo(p.x+dx*k,p.y-.55*k); ctx.lineTo(p.x+dx*k+.14*k,p.y); ctx.fill(); ctx.fillStyle="#d9a27a"; ctx.beginPath(); ctx.arc(p.x+dx*k,p.y-.6*k,.08*k,0,6.283); ctx.fill(); });
+    ctx.fillStyle="#f4efe4"; ctx.beginPath(); ctx.ellipse(p.x,p.y-.12*k,.14*k,.08*k,0,0,6.283); ctx.fill(); }
+  else if(o.k==="tia"){ const k=s, throwA=Math.sin(S.t*5)*.6; ctx.fillStyle="#e2337f"; ctx.beginPath(); ctx.moveTo(p.x-.4*k,p.y); ctx.lineTo(p.x-.28*k,p.y-1.3*k); ctx.lineTo(p.x+.28*k,p.y-1.3*k); ctx.lineTo(p.x+.4*k,p.y); ctx.fill();
+    ctx.fillStyle="#22a9c4"; ctx.fillRect(p.x-.3*k,p.y-1.3*k,.6*k,.18*k); ctx.fillStyle="#c98a5c"; ctx.beginPath(); ctx.arc(p.x,p.y-1.55*k,.22*k,0,6.283); ctx.fill(); ctx.fillStyle="#1b1410"; ctx.beginPath(); ctx.arc(p.x,p.y-1.62*k,.23*k,Math.PI,0); ctx.fill(); ctx.beginPath(); ctx.arc(p.x,p.y-1.88*k,.12*k,0,6.283); ctx.fill();
+    ctx.save(); ctx.translate(p.x-o.sd*.3*k,p.y-1.2*k); ctx.rotate(-o.sd*(1.2+throwA)); ctx.strokeStyle="#c98a5c"; ctx.lineWidth=.1*k; ctx.lineCap="round"; ctx.beginPath(); ctx.moveTo(0,0); ctx.lineTo(0,-.5*k); ctx.stroke(); ctx.fillStyle="#22a9c4"; ctx.beginPath(); ctx.ellipse(0,-.62*k,.1*k,.22*k,0,0,6.283); ctx.fill(); ctx.restore();
+    if(!o.said&&p.dz<40){ o.said=1; floatTxt(t("tia"),p.x,p.y-2.2*k); } }
   else if(o.k==="lum"){ const q=p, k=s; ctx.fillStyle="#e8c98a"; ctx.fillRect(q.x-.16*k,q.y-.42*k,.32*k,.42*k); ctx.fillStyle="rgba(255,200,90,.9)"; ctx.shadowColor="#ffb84d"; ctx.shadowBlur=Math.min(18,.6*k); ctx.beginPath(); ctx.arc(q.x,q.y-.2*k,.09*k,0,6.283); ctx.fill(); ctx.shadowBlur=0; }
   ctx.restore(); }
 function drawPlayer(){ const p=proj(S.px,S.h,S.pz); const g=proj(S.px,0,S.pz); if(!p) return; const s=p.s; shadow(g,.7*(1-Math.min(.5,S.h*.15)));
@@ -312,15 +398,19 @@ function update(dt){ S.t+=dt; if(shake>0) shake=Math.max(0,shake-dt*30);
   while(S.nextZ<S.pz+130) genRow(); if(Math.floor(S.pz/6)!==Math.floor((S.pz-S.speed*dt)/6)) deco(Math.floor(S.pz/6)*6+132);
   // collisions
   const pr=.5;
-  S.objs.forEach(o=>{ if(o.k==="burro"&&o.z-S.pz<60) o.x+=o.vx*dt; });
+  S.objs.forEach(o=>{ if((o.k==="burro"||o.k==="gallo")&&o.z-S.pz<60) o.x+=o.vx*dt; });
   for(const o of S.objs){ const dz=o.z-S.pz; if(dz>1.4||dz<-1.2) continue;
+    if(o.k==="tamal"||o.k==="concha"){ if(!o.got&&Math.abs(dz)<.9&&Math.abs(o.x-S.px)<o.r+pr&&Math.abs((o.y||0)-S.h)<1){ o.got=true; S.gifts++; S.giftRun++; S.score+=(o.k==="tamal"?30:20)*S.mult; giftSnd(); const q=proj(o.x,.5,o.z); if(q){ spray(10,o.k==="tamal"?"#f0d78a":"#ff8ab8",q.x,q.y); floatTxt(t("treat")[o.k],q.x,q.y-20); } if(S.giftRun%5===0){ S.mult=Math.min(4,S.mult+1); toast("×"+S.mult); } } continue; }
+    if(o.k==="pinrope"){ const sw=Math.sin(S.t*2+(o.ph||0))*.35; if(Math.abs(dz)<.5&&Math.abs(o.x+sw-S.px)<o.r+.3&&S.h>.3){ crash(o); return; } if(!o.passed&&dz<-.55){ o.passed=true; } continue; }
     if(o.k==="gift"||o.k==="coin"){ if(!o.got&&Math.abs(dz)<.9&&Math.abs(o.x-S.px)<o.r+pr&&Math.abs((o.y||0)-S.h)<1){ o.got=true; S.gifts++; S.giftRun++; S.score+=(o.k==="coin"?40:25)*S.mult; giftSnd(); const q=proj(o.x,.5,o.z); if(q) spray(10,"#ffd34d",q.x,q.y); if(S.giftRun%5===0){ S.mult=Math.min(4,S.mult+1); toast("×"+S.mult); } } continue; }
     if(o.k==="star"){ if(!o.got&&Math.abs(dz)<1&&Math.abs(o.x-S.px)<.9&&Math.abs(o.y-S.h)<1.1){ o.got=true; S.stars++; S.score+=100*S.mult; starSnd(); toast(t("star")); const q=proj(o.x,o.y,o.z); if(q) spray(16,"#ffd34d",q.x,q.y); } continue; }
     if(o.k==="ramp"){ if(!o.used&&dz<.8&&dz>-1.6&&Math.abs(o.x-S.px)<o.w/2+.2&&S.h<.3){ o.used=true; S.vh=11.2; rampSnd(); toast(t("ramp")); } continue; }
+    if(o.k==="chancla"&&o.fall&&o.z-S.pz<7){ o.fall=0; const t0=now(); noise(t0,.12,.2,"lowpass",700); }
     if(o.k==="arch"){ if(!o.used&&dz<0){ o.used=true; S.score+=10*S.mult; toast(t("arch")); } continue; }
     if(o.k==="lum"||o.deco) continue;
     let hit=false;
     if(o.k==="log"){ hit=Math.abs(dz)<.45&&Math.abs(o.x-S.px)<o.w/2+.35&&S.h<o.h; }
+    else if(o.k==="carrito"){ hit=Math.abs(dz)<.6&&Math.abs(o.x-S.px)<1.15&&S.h<o.h*.85; }
     else hit=Math.abs(dz)<.55&&Math.abs(o.x-S.px)<o.r+pr*.8&&S.h<o.h*.85;
     if(hit){ crash(o); return; }
     if(!o.passed&&dz<-.55){ o.passed=true; const lat=Math.abs(o.x-S.px)-(o.r+pr*.8); if(lat<.55&&lat>0&&S.h<o.h){ S.near++; S.score+=5*S.mult; nearSnd(); const q=proj(o.x,1,o.z+.6); if(q&&Math.random()<.5) floatTxt(t("near"),q.x,q.y); } }
@@ -332,7 +422,7 @@ function update(dt){ S.t+=dt; if(shake>0) shake=Math.max(0,shake-dt*30);
 const score=()=>Math.floor(S.pz/2)+S.score;
 let floats=[]; function floatTxt(txt,x,y){ floats.push({txt,x,y,t:0}); }
 function drawFloats(dt){ floats.forEach(f=>{ f.t+=dt; ctx.globalAlpha=Math.max(0,1-f.t/.8); ctx.font="900 18px Nunito,sans-serif"; ctx.textAlign="center"; ctx.lineWidth=4; ctx.strokeStyle="rgba(22,34,74,.85)"; ctx.strokeText(f.txt,f.x,f.y-f.t*40); ctx.fillStyle="#7ee8ff"; ctx.fillText(f.txt,f.x,f.y-f.t*40); }); ctx.globalAlpha=1; floats=floats.filter(f=>f.t<.8); }
-function crash(o){ S.crash=.001; shake=14; crashSnd(); stopWind(); S.mult=1; const q=proj(S.px,.5,S.pz); if(q){ spray(26,"#ffffff",q.x,q.y); spray(10,o.k==="tree"?"#2f8f4e":"#8a8f9e",q.x,q.y); } try{ if(navigator.vibrate) navigator.vibrate([60,40,90]); }catch(e){} }
+function crash(o){ S.crashBy=o.k; S.crash=.001; shake=14; crashSnd(); stopWind(); S.mult=1; const q=proj(S.px,.5,S.pz); if(q){ spray(26,"#ffffff",q.x,q.y); spray(10,o.k==="tree"?"#2f8f4e":"#8a8f9e",q.x,q.y); } try{ if(navigator.vibrate) navigator.vibrate([60,40,90]); }catch(e){} }
 
 /* ---------- flow ---------- */
 function loop(ts){ const dt=Math.min(.05,(ts-(last||ts))/1000); last=ts;
@@ -340,7 +430,7 @@ function loop(ts){ const dt=Math.min(.05,(ts-(last||ts))/1000); last=ts;
   if(S){ draw(dt); drawFloats(dt); } requestAnimationFrame(loop); }
 function begin(){ newRun(); state="play"; ["start","over","paused"].forEach(id=>$(id).hidden=true); unlock(); startWind(); startMusic(SONG,150); last=0; }
 function gameOver(){ state="over"; stopMusic(); stopWind(); const sc=score(), m=Math.floor(S.pz/2), b=best.get("trineo-best"), nb=sc>b; if(nb) best.set("trineo-best",sc);
-  $("overK").textContent=t("overK"); const cr=t("crashes"); $("overT").textContent=cr[Math.floor(Math.random()*cr.length)];
+  $("overK").textContent=t("overK"); const cb=t("crashBy")[S.crashBy], cr=t("crashes"); $("overT").textContent=cb&&Math.random()<.85?cb:cr[Math.floor(Math.random()*cr.length)];
   $("oDist").textContent=m; $("oGifts").textContent=S.gifts; $("oScore").textContent=sc.toLocaleString(); $("oBest").textContent=nb?t("newBest"):t("best",b.toLocaleString());
   $("oShare").href=shareLinks(t("msg",sc.toLocaleString(),m,location.href.split("#")[0])).wa;
   setTimeout(()=>{ $("over").hidden=false; },350); }
@@ -348,7 +438,7 @@ function pause(on){ if(on&&state==="play"){ state="paused"; $("paused").hidden=f
 $("go").addEventListener("click",begin); $("again").addEventListener("click",begin);
 $("pause").addEventListener("click",e=>{ e.stopPropagation(); pause(state==="play"); }); $("resume").addEventListener("click",()=>pause(false)); $("quit").addEventListener("click",begin);
 document.addEventListener("visibilitychange",()=>{ if(document.hidden) pause(true); });
-["moreLink","moreLink2"].forEach(id=>{ $(id).href=LINK.play; });
+["moreLink2"].forEach(id=>{ if($(id)) $(id).href=LINK.play; });
 function onLang(){ const b=best.get("trineo-best"); $("startBest").textContent=b?t("best",b.toLocaleString()):""; }
 applyWords();
 // a calm demo run behind the start card

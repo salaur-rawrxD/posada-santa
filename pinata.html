@@ -316,7 +316,7 @@ ol li::before{content:"★";color:var(--marigold);font-size:16px;line-height:1.4
     <div class="pbest" id="aBest"></div>
     <button id="arcAgain" type="button" class="saveimg" data-t="rematch">🪅 Play the piñata again</button>
     <a id="arcShare" class="saveimg play" target="_blank" rel="noopener" data-t="share">📣 Challenge the family</a>
-    <div class="arcMore"><a id="arcTr" target="_blank" rel="noopener">🛷 El Trineo</a><a id="arcTm" target="_blank" rel="noopener">🫔 ¡Tamalazo!</a><a id="arcPo" target="_blank" rel="noopener">🏠 La Posada</a></div>
+    <div class="arcMore"><a id="arcHome" hidden>🏠 Home</a><a id="arcTr" target="_blank" rel="noopener">🛷 El Trineo</a><a id="arcTm" target="_blank" rel="noopener">🫔 ¡Tamalazo!</a><a id="arcPo" target="_blank" rel="noopener">🏠 La Posada</a></div>
     <a id="arcHost" class="arcHost" data-t="arcHost">🎄 Run your own Secret Santa →</a>
   </div>
 </div>
@@ -678,6 +678,7 @@ function fillArcade(){ const sc=G0.score; $("arcT").textContent=t("arcTitles").f
   const url=location.href.split("#")[0]+"#play"; $("arcShare").href="https://wa.me/?text="+encodeURIComponent(t("arcMsg")(sc.toLocaleString(),url));
   const inClaude=/claude|anthropic/.test(location.hostname)||location.protocol==="file:";
   $("arcTr").href=inClaude?"/trineo":"/trineo"; $("arcTm").href=inClaude?"/tamalazo":"/tamalazo"; $("arcPo").href=inClaude?"/play":"/play";
+  $("arcHome").hidden=inClaude; $("arcHome").href="/"; $("arcHome").textContent=LANG==="es"?"🏠 Inicio":"🏠 Home";
   $("arcHost").href=inClaude?"/host":"/host"; }
 function skipGame(){ if(broken) { if(GR){ GR.t=GR.len; } return; } skipMode=true; breakPinata(); }
 function resetGame(){ broken=false; skipMode=false; hits=0; stickA=REST;

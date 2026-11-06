@@ -128,8 +128,8 @@ footer a{color:var(--muted)}
   <section id="minis">
     <div class="center"><span class="kicker" data-t="mK">Mini games</span><h2 data-t="mT">Quick games for the whole familia</h2></div>
     <div class="minis">
-      <a class="minicard" href="/trineo"><span class="mi">🛷</span><h3>El Trineo</h3><p data-t="m1">Race down the hill. Dodge pines and burros, hit the ramps, grab the regalos.</p><b data-t="mGo">Play →</b></a>
-      <a class="minicard" href="/tamalazo"><span class="mi">🫔</span><h3>¡Tamalazo!</h3><p data-t="m2">60 seconds, an olla of tamales. Bonk the judgy tíos. Never hit Abuelita.</p><b data-t="mGo">Play →</b></a>
+      <a class="minicard" href="/trineo"><span class="mi">🛷</span><h3>El Trineo</h3><p data-t="m1">Race down to the posada past mariachis, burros, the tamal cart and Tía's flying chancla.</p><b data-t="mGo">Play →</b></a>
+      <a class="minicard" href="/tamalazo"><span class="mi">🫔</span><h3>¡Tamalazo!</h3><p data-t="m2">Win los terrenos back from your tíos and tías with an olla of tamales. Never hit Abuelita.</p><b data-t="mGo">Play →</b></a>
       <a class="minicard" href="/pinata#play"><span class="mi">🪅</span><h3>La Piñata</h3><p data-t="m4">Time your swings, survive the rope yank, then grab the candy.</p><b data-t="mGo">Play →</b></a>
       <a class="minicard" href="/play"><span class="mi">🏠</span><h3>La Posada</h3><p data-t="m3">Five levels, five bosses and a live family leaderboard.</p><b data-t="mGo">Play →</b></a>
     </div>
@@ -151,7 +151,7 @@ const ES={kick:"Gratis · Sin cuentas · Español e inglés",h1:"Secret Santa, <
   f2t:"Piñatas sorpresa",f2p:"Pégale hasta que se rompa y guarda tu Secret Santa y su lista como imagen.",f3t:"Tabla familiar",f3p:"Puntos en vivo solo para tu grupo. A Tío Beto no le va a gustar perder.",
   f4t:"Bilingüe desde el principio",f4p:"Cada persona recibe mensajes y páginas en su idioma, español o inglés.",
   gK:"El juego",gT:"La Posada",gP:"Cinco niveles de puro relajo posadero. Esquiva chanclas voladoras, humo de chile y tías criticonas, arma combos hasta ×5 y vence a un jefe al final de cada nivel.",gCta:"🎮 Jugar ahora",
-  mK:"Minijuegos",mT:"Juegos rápidos para toda la familia",m1:"Bájate la colina a toda velocidad. Esquiva pinos y burros, usa las rampas y junta regalos.",m2:"60 segundos y una olla de tamales. Pégale a los tíos criticones. Nunca a la Abuelita.",m3:"Cinco niveles, cinco jefes y una tabla familiar en vivo.",m4:"Pégale a tiempo, aguanta los jalones del tío y luego agarra los dulces.",mGo:"Jugar →",
+  mK:"Minijuegos",mT:"Juegos rápidos para toda la familia",m1:"Bájate hasta la posada esquivando mariachis, burros, el carrito de tamales y la chancla de la tía.",m2:"¡Gánale los terrenos a tus tías y tíos con una olla de tamales! Nunca a la Abuelita.",m3:"Cinco niveles, cinco jefes y una tabla familiar en vivo.",m4:"Pégale a tiempo, aguanta los jalones del tío y luego agarra los dulces.",mGo:"Jugar →",
   endK:"¡Ándale!",endT:"Tu posada te espera",endP:"Empieza en cinco minutos. Sin cuentas, sin descargas, sin costo.",priv:"Privacidad y términos"};
 const EN={}; document.querySelectorAll("[data-t]").forEach(el=>{ if(!(el.dataset.t in EN)) EN[el.dataset.t]=el.innerHTML; });
 function setLang(l){ document.documentElement.lang=l; const D=l==="es"?ES:EN; document.querySelectorAll("[data-t]").forEach(el=>{ const v=D[el.dataset.t]; if(v!=null) el.innerHTML=v; });
