@@ -28,6 +28,10 @@ a{color:inherit}
 nav{display:flex;justify-content:space-between;align-items:center;padding:6px 0 0}
 .logo{display:flex;align-items:center;gap:10px;font-family:var(--display);font-size:22px;text-decoration:none}
 .logo svg{width:34px;height:34px}
+.navr{display:flex;align-items:center;gap:10px}
+.logo{white-space:nowrap}@media (max-width:420px){.logo{font-size:18px;gap:7px}.logo svg{width:28px;height:28px}.gamesbtn{padding:0 11px;font-size:13px}.navr{gap:6px}}
+.gamesbtn{display:inline-flex;align-items:center;gap:6px;height:38px;padding:0 14px;border-radius:99px;font-weight:900;font-size:14px;text-decoration:none;color:#1c1430;background:linear-gradient(180deg,#ffc95e,#f5a524);box-shadow:0 8px 18px rgba(245,165,36,.25);white-space:nowrap}
+#minis{scroll-margin-top:16px}
 .seg{display:inline-flex;padding:3px;border-radius:99px;background:rgba(255,255,255,.07);border:1px solid var(--line)}
 .seg button{font:inherit;font-weight:800;font-size:13px;height:30px;min-width:40px;padding:0 10px;border:0;border-radius:99px;background:none;color:var(--muted);cursor:pointer}
 .seg button[aria-pressed="true"]{background:var(--cream);color:var(--night)}
@@ -79,14 +83,14 @@ footer a{color:var(--muted)}
 <div class="picado" id="picado" aria-hidden="true"></div>
 <div class="wrap">
   <nav><a class="logo" href="/"><svg viewBox="0 0 40 40" aria-hidden="true"><g transform="translate(20 21)"><path d="M0-18 5-6 18-6 7 2 11 15 0 7-11 15-7 2-18-6-5-6z" fill="#f5a524"/><circle r="7" fill="#e2337f"/><circle r="3" fill="#fff8ec"/></g></svg>Posada Santa</a>
-    <div class="seg" role="group" aria-label="Language / Idioma"><button data-l="en" aria-pressed="true">EN</button><button data-l="es" aria-pressed="false">ES</button></div></nav>
+    <div class="navr"><a class="gamesbtn" href="#minis" data-t="navGames">🎮 Mini games</a><div class="seg" role="group" aria-label="Language / Idioma"><button data-l="en" aria-pressed="true">EN</button><button data-l="es" aria-pressed="false">ES</button></div></div></nav>
 
   <header class="hero">
     <div>
       <span class="kicker" data-t="kick">Free · No accounts · English & Español</span>
       <h1 data-t="h1" data-html>Secret Santa, <em>con sabor.</em></h1>
       <p class="lede" data-t="lede">Your family writes letters to Santa, names get drawn in secret, and everyone breaks a piñata to find their match. Then the whole family battles it out in La Posada.</p>
-      <div class="ctas"><a class="cta" href="/host" data-t="cta">🎄 Start your Secret Santa</a><a class="cta alt" href="/play" data-t="cta2">🎮 Play La Posada</a></div>
+      <div class="ctas"><a class="cta" href="/host" data-t="cta">🎄 Start your Secret Santa</a><a class="cta alt" href="#minis" data-t="cta2">🎮 Play the mini games</a></div>
       <div class="trust"><span data-t="tr1">Set up in 5 minutes</span><span data-t="tr2">Invites by WhatsApp or text</span><span data-t="tr3">Nobody sees the matches, not even you</span></div>
     </div>
     <div class="phones" aria-hidden="true"><div class="phone a"><img src="/assets/letter.png" alt=""></div><div class="phone b"><img src="/assets/pinata.png" alt=""></div></div>
@@ -121,7 +125,7 @@ footer a{color:var(--muted)}
     </div>
   </section>
 
-  <section>
+  <section id="minis">
     <div class="center"><span class="kicker" data-t="mK">Mini games</span><h2 data-t="mT">Quick games for the whole familia</h2></div>
     <div class="minis">
       <a class="minicard" href="/trineo"><span class="mi">🛷</span><h3>El Trineo</h3><p data-t="m1">Race down the hill. Dodge pines and burros, hit the ramps, grab the regalos.</p><b data-t="mGo">Play →</b></a>
@@ -139,7 +143,7 @@ footer a{color:var(--muted)}
 (function(){ const p=document.getElementById("picado"), fl=["#d7372f","#2f8f4e","#f5a524","#e2337f","#f4efe4","#22a9c4"], bl=["#ff4d4d","#ffd34d","#4ddc7a","#5ac8ff","#ff6fb5"];
   for(let i=0;i<30;i++){ const f=document.createElement("span"); if(i%2){ f.className="bulb"; f.style.setProperty("--c",bl[(i>>1)%5]); f.style.setProperty("--d",(i*.17)+"s"); } else { f.className="flag"; f.style.background=fl[(i>>1)%6]; } p.appendChild(f); } })();
 const ES={kick:"Gratis · Sin cuentas · Español e inglés",h1:"Secret Santa, <em>con sabor.</em>",lede:"Tu familia escribe cartas a Santa, los nombres se sortean en secreto y cada quien rompe una piñata para ver a quién le tocó. Después, toda la familia se enfrenta en La Posada.",
-  cta:"🎄 Organiza tu Secret Santa",cta2:"🎮 Juega La Posada",tr1:"Listo en 5 minutos",tr2:"Invitaciones por WhatsApp o mensaje",tr3:"Nadie ve las parejas, ni tú",
+  cta:"🎄 Organiza tu Secret Santa",cta2:"🎮 Juega los minijuegos",navGames:"🎮 Minijuegos",tr1:"Listo en 5 minutos",tr2:"Invitaciones por WhatsApp o mensaje",tr3:"Nadie ve las parejas, ni tú",
   howK:"Cómo funciona",howT:"Tres pasos. Cero hojas de cálculo.",s1k:"Paso 1",s1t:"Agrega a tu gente",s1p:"Escríbelos, pega una lista del grupo o escoge de tus contactos.",
   s2k:"Paso 2",s2t:"Escriben su carta a Santa",s2p:"Tallas, tres deseos y pistas, en español o inglés. Cada carta te llega solita.",
   s3k:"Paso 3",s3t:"Sortea y manda piñatas",s3p:"Un toque sortea los nombres (las parejas no se tocan entre sí). Cada quien rompe su piñata para ver a quién le compra.",

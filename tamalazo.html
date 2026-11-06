@@ -45,6 +45,9 @@ p{margin:0;color:#c3cbe8;font-weight:700;font-size:15px;line-height:1.45}
 .toast{position:fixed;left:50%;top:38%;transform:translate(-50%,-50%);z-index:7;pointer-events:none;font-family:var(--display);font-size:clamp(28px,9vw,44px);color:var(--gold);text-shadow:0 4px 0 rgba(22,34,74,.85),0 0 24px rgba(245,165,36,.45);white-space:nowrap}
 @media (prefers-reduced-motion:no-preference){.toast.pop{animation:tp 1s cubic-bezier(.3,1.6,.5,1) forwards}@keyframes tp{0%{transform:translate(-50%,-50%) scale(.4);opacity:0}18%{transform:translate(-50%,-50%) scale(1.1);opacity:1}75%{opacity:1}100%{transform:translate(-50%,-80%) scale(1);opacity:0}}}
 button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.gamesrow{display:flex;gap:6px;justify-content:center;flex-wrap:wrap}
+.gamesrow a{display:inline-flex;align-items:center;gap:5px;height:34px;padding:0 11px;border-radius:99px;font-weight:900;font-size:13px;text-decoration:none;color:var(--cream);background:rgba(255,255,255,.07);border:1px solid var(--line)}
+.gamesrow a[aria-current="page"]{background:var(--cream);color:var(--night)}
 
 .ammo{position:fixed;left:max(12px,env(safe-area-inset-left,0px));bottom:calc(12px + env(safe-area-inset-bottom,0px));z-index:6;display:flex;align-items:center;gap:8px}
 .olla{width:58px;height:58px;border-radius:50%;border:2px solid rgba(245,198,106,.6);background:radial-gradient(circle at 50% 35%,#c96a3a,#8a3e1e);font-size:26px;display:grid;place-items:center;cursor:pointer;box-shadow:0 8px 18px rgba(0,0,0,.35)}
@@ -56,7 +59,7 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offse
 .timer.low{color:#ff8a7a}
 </style>
 </head>
-<body>
+<body data-game="tamalazo">
 <canvas id="cv" aria-label="Tamalazo: throw tamales at the targets"></canvas>
 <div class="hud">
   <div class="col"><span class="chip">⭐ <b id="hScore">0</b></span><span class="chip mult" id="hMult" hidden></span></div>
@@ -69,6 +72,7 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offse
 <div class="overlay" id="start">
   <div class="card">
     <div class="seg" role="group" aria-label="Language / Idioma"><button data-lang="en" aria-pressed="true">EN</button><button data-lang="es" aria-pressed="false">ES</button></div>
+    <div class="gamesrow" id="gamesRow"></div>
     <span class="kicker" data-t="kick">Posada mini game</span>
     <h1 data-t="title">¡Tamalazo!</h1>
     <p data-t="intro">Forget snowballs. You've got an olla full of tamales and 60 seconds. Tap to throw.</p>
@@ -153,6 +157,12 @@ function stopMusic(){ musicOn=false; clearTimeout(musicTimer); }
 function toast(txt){ const el=$("toast"); if(!el) return; el.textContent=txt; el.hidden=false; el.classList.remove("pop"); void el.offsetWidth; el.classList.add("pop"); clearTimeout(toast.t); toast.t=setTimeout(()=>el.hidden=true,1000); }
 function shareLinks(text){ return { wa:"https://wa.me/?text="+encodeURIComponent(text), sms:"sms:"+(/iPhone|iPad|Mac/i.test(navigator.userAgent)?"&":"?")+"body="+encodeURIComponent(text) }; }
 async function copyText(s){ try{ await navigator.clipboard.writeText(s); return true; }catch(e){ return false; } }
+
+/* switcher between all the posada games */
+(function(){ const box=$("gamesRow"); if(!box) return; const inClaude=!ON_SITE;
+  const G=[["trineo","🛷","El Trineo",inClaude?"https://claude.ai/artifact/FhF8WSQbXjzZZ72ygW1nLA":"/trineo"],["tamalazo","🫔","Tamalazo",inClaude?"https://claude.ai/artifact/ErLYAvBA8sSGhLu2MADBab":"/tamalazo"],
+    ["pinata","🪅","Piñata",inClaude?"https://claude.ai/artifact/RZTLwQMZ2o4bQ1yDrzMya4#play":"/pinata#play"],["play","🏠","La Posada",LINK.play]];
+  const me=document.body.dataset.game; box.innerHTML=G.map(([k,e,n,u])=>`<a href="${u}" ${k===me?'aria-current="page"':'target="_blank" rel="noopener"'}>${e} ${n}</a>`).join(""); })();
 
 
 /* =================== Tamalazo =================== */
