@@ -35,6 +35,9 @@ nav{display:flex;justify-content:space-between;align-items:center;padding:6px 0 
 .logo svg{width:34px;height:34px}
 .navr{display:flex;align-items:center;gap:10px}
 .logo{white-space:nowrap}@media (max-width:420px){.logo{font-size:18px;gap:7px}.logo svg{width:28px;height:28px}.gamesbtn{padding:0 11px;font-size:13px}.navr{gap:6px}}
+.mybtn{display:inline-flex;align-items:center;gap:6px;height:38px;padding:0 14px;border-radius:99px;font-weight:900;font-size:14px;text-decoration:none;color:var(--cream);background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.18);white-space:nowrap}
+@media (max-width:460px){.logo .lt{display:none}.mybtn,.gamesbtn{padding:0 11px;font-size:13px}}
+.mine-note{margin-top:14px;font-weight:800;font-size:15px}.mine-note a{color:var(--gold)}
 .gamesbtn{display:inline-flex;align-items:center;gap:6px;height:38px;padding:0 14px;border-radius:99px;font-weight:900;font-size:14px;text-decoration:none;color:#1c1430;background:linear-gradient(180deg,#ffc95e,#f5a524);box-shadow:0 8px 18px rgba(245,165,36,.25);white-space:nowrap}
 #minis{scroll-margin-top:16px}
 .seg{display:inline-flex;padding:3px;border-radius:99px;background:rgba(255,255,255,.07);border:1px solid var(--line)}
@@ -88,15 +91,16 @@ footer a{color:var(--muted)}
 <div class="snow" aria-hidden="true"></div>
 <div class="picado" id="picado" aria-hidden="true"></div>
 <div class="wrap">
-  <nav><a class="logo" href="/"><svg viewBox="0 0 40 40" aria-hidden="true"><g transform="translate(20 21)"><path d="M0-18 5-6 18-6 7 2 11 15 0 7-11 15-7 2-18-6-5-6z" fill="#f5a524"/><circle r="7" fill="#e2337f"/><circle r="3" fill="#fff8ec"/></g></svg>Posada Santa</a>
-    <div class="navr"><a class="gamesbtn" href="#minis" data-t="navGames">🎮 Mini games</a><div class="seg" role="group" aria-label="Language / Idioma"><button data-l="en" aria-pressed="true">EN</button><button data-l="es" aria-pressed="false">ES</button></div></div></nav>
+  <nav><a class="logo" href="/"><svg viewBox="0 0 40 40" aria-hidden="true"><g transform="translate(20 21)"><path d="M0-18 5-6 18-6 7 2 11 15 0 7-11 15-7 2-18-6-5-6z" fill="#f5a524"/><circle r="7" fill="#e2337f"/><circle r="3" fill="#fff8ec"/></g></svg><span class="lt">Posada Santa</span></a>
+    <div class="navr"><a class="mybtn" href="/host" data-t="navMine">🔑 My Secret Santa</a><a class="gamesbtn" href="#minis" data-t="navGames">🎮 Games</a><div class="seg" role="group" aria-label="Language / Idioma"><button data-l="en" aria-pressed="true">EN</button><button data-l="es" aria-pressed="false">ES</button></div></div></nav>
 
   <header class="hero">
     <div>
-      <span class="kicker" data-t="kick">Free · No accounts · English & Español</span>
+      <span class="kicker" data-t="kick">Free · No apps · English & Español</span>
       <h1 data-t="h1" data-html>Secret Santa, <em>con sabor.</em></h1>
       <p class="lede" data-t="lede">Your family writes letters to Santa, names get drawn in secret, and everyone breaks a piñata to find their match. Then the whole family battles it out in La Posada.</p>
       <div class="ctas"><a class="cta" href="/host" data-t="cta">🎄 Start your Secret Santa</a><a class="cta alt" href="#minis" data-t="cta2">🎮 Play the mini games</a></div>
+      <p class="mine-note" data-t="mine" data-html>Already organizing? <a href="/host">Open your Secret Santa →</a></p>
       <div class="trust"><span data-t="tr1">Set up in 5 minutes</span><span data-t="tr2">Invites by WhatsApp or text</span><span data-t="tr3">Nobody sees the matches, not even you</span></div>
     </div>
     <div class="phones" aria-hidden="true"><div class="phone a"><img src="/assets/letter.png" alt=""></div><div class="phone b"><img src="/assets/pinata.png" alt=""></div></div>
@@ -141,15 +145,15 @@ footer a{color:var(--muted)}
     </div>
   </section>
 
-  <section><div class="final"><span class="kicker" data-t="endK">¡Ándale!</span><h2 data-t="endT">Your posada is waiting</h2><p data-t="endP">Start in five minutes. No accounts, no downloads, no cost.</p><a class="cta" href="/host" data-t="cta">🎄 Start your Secret Santa</a></div></section>
+  <section><div class="final"><span class="kicker" data-t="endK">¡Ándale!</span><h2 data-t="endT">Your posada is waiting</h2><p data-t="endP">Start in five minutes. Your family needs no account, no downloads, no cost.</p><a class="cta" href="/host" data-t="cta">🎄 Start your Secret Santa</a></div></section>
 
   <footer><span class="veci"><img src="/assets/laveci-tree.svg" alt="" width="18" height="25"><span data-t="veci">Made with cariño by La Veci Productions</span></span><span>© 2026 Posada Santa</span><span><a href="/privacy" data-t="priv">Privacy & terms</a></span></footer>
 </div>
 <script>
 (function(){ const p=document.getElementById("picado"), fl=["#d7372f","#2f8f4e","#f5a524","#e2337f","#f4efe4","#22a9c4"], bl=["#ff4d4d","#ffd34d","#4ddc7a","#5ac8ff","#ff6fb5"];
   for(let i=0;i<30;i++){ const f=document.createElement("span"); if(i%2){ f.className="bulb"; f.style.setProperty("--c",bl[(i>>1)%5]); f.style.setProperty("--d",(i*.17)+"s"); } else { f.className="flag"; f.style.background=fl[(i>>1)%6]; } p.appendChild(f); } })();
-const ES={kick:"Gratis · Sin cuentas · Español e inglés",h1:"Secret Santa, <em>con sabor.</em>",lede:"Tu familia escribe cartas a Santa, los nombres se sortean en secreto y cada quien rompe una piñata para ver a quién le tocó. Después, toda la familia se enfrenta en La Posada.",
-  cta:"🎄 Organiza tu Secret Santa",cta2:"🎮 Juega los minijuegos",navGames:"🎮 Minijuegos",tr1:"Listo en 5 minutos",tr2:"Invitaciones por WhatsApp o mensaje",tr3:"Nadie ve las parejas, ni tú",
+const ES={kick:"Gratis · Sin apps · Español e inglés",h1:"Secret Santa, <em>con sabor.</em>",lede:"Tu familia escribe cartas a Santa, los nombres se sortean en secreto y cada quien rompe una piñata para ver a quién le tocó. Después, toda la familia se enfrenta en La Posada.",
+  cta:"🎄 Organiza tu Secret Santa",cta2:"🎮 Juega los minijuegos",navGames:"🎮 Juegos",navMine:"🔑 Mi Secret Santa",mine:"¿Ya organizas uno? <a href=\"/host\">Abre tu Secret Santa →</a>",tr1:"Listo en 5 minutos",tr2:"Invitaciones por WhatsApp o mensaje",tr3:"Nadie ve las parejas, ni tú",
   howK:"Cómo funciona",howT:"Tres pasos. Cero hojas de cálculo.",s1k:"Paso 1",s1t:"Agrega a tu gente",s1p:"Escríbelos, pega una lista del grupo o escoge de tus contactos.",
   s2k:"Paso 2",s2t:"Escriben su carta a Santa",s2p:"Tallas, tres deseos y pistas, en español o inglés. Cada carta te llega solita.",
   s3k:"Paso 3",s3t:"Sortea y manda piñatas",s3p:"Un toque sortea los nombres (las parejas no se tocan entre sí). Cada quien rompe su piñata para ver a quién le compra.",
@@ -158,8 +162,10 @@ const ES={kick:"Gratis · Sin cuentas · Español e inglés",h1:"Secret Santa, <
   f4t:"Bilingüe desde el principio",f4p:"Cada persona recibe mensajes y páginas en su idioma, español o inglés.",
   gK:"El juego",gT:"La Posada",gP:"Cinco niveles de puro relajo posadero. Esquiva chanclas voladoras, humo de chile y tías criticonas, arma combos hasta ×5 y vence a un jefe al final de cada nivel.",gCta:"🎮 Jugar ahora",
   mK:"Minijuegos",mT:"Juegos rápidos para toda la familia",m1:"Bájate hasta la posada esquivando mariachis, burros, el carrito de tamales y la chancla de la tía.",m2:"¡Gánale los terrenos a tus tías y tíos con una olla de tamales! Nunca a la Abuelita.",m3:"Cinco niveles, cinco jefes y una tabla familiar en vivo.",m4:"Pégale a tiempo, aguanta los jalones del tío y luego agarra los dulces.",mGo:"Jugar →",
-  endK:"¡Ándale!",endT:"Tu posada te espera",endP:"Empieza en cinco minutos. Sin cuentas, sin descargas, sin costo.",priv:"Privacidad y términos",veci:"Hecho con cariño por La Veci Productions"};
+  endK:"¡Ándale!",endT:"Tu posada te espera",endP:"Empieza en cinco minutos. Tu familia no necesita cuenta, ni descargas, ni pagar nada.",priv:"Privacidad y términos",veci:"Hecho con cariño por La Veci Productions"};
 const EN={}; document.querySelectorAll("[data-t]").forEach(el=>{ if(!(el.dataset.t in EN)) EN[el.dataset.t]=el.innerHTML; });
+function returning(){ try{ const d=JSON.parse(localStorage.getItem("santa-host-v1")||"null"); if(d&&d.groups&&Object.values(d.groups).some(g=>g.setup)) return true; return !!localStorage.getItem("posada-auth-v1"); }catch(e){ return false; } }
+if(returning()){ ES.cta="🎄 Abre tu Secret Santa"; EN.cta="🎄 Open your Secret Santa"; document.querySelectorAll('[data-t="cta"]').forEach(a=>a.innerHTML=EN.cta); const m=document.querySelector(".mine-note"); if(m) m.hidden=true; }
 function setLang(l){ document.documentElement.lang=l; const D=l==="es"?ES:EN; document.querySelectorAll("[data-t]").forEach(el=>{ const v=D[el.dataset.t]; if(v!=null) el.innerHTML=v; });
   document.querySelectorAll("[data-l]").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.l===l))); try{ localStorage.setItem("posada-lang",l); }catch(e){} }
 document.querySelectorAll("[data-l]").forEach(b=>b.onclick=()=>setLang(b.dataset.l));

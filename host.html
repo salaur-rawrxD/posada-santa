@@ -69,6 +69,12 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offse
 h1,h2{font-family:var(--display);font-weight:400;letter-spacing:.005em}
 .top{display:flex;justify-content:space-between;align-items:center;gap:10px;margin:2px 0 16px}
 .brand{display:flex;align-items:center;gap:8px;font-weight:800;font-size:14px;min-width:0}
+.brand.menu{background:rgba(255,255,255,.06);border:1px solid var(--line);color:inherit;font:inherit;font-weight:800;font-size:14px;padding:8px 12px 8px 10px;border-radius:999px;cursor:pointer;max-width:calc(100% - 70px)}.brand.menu b{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.brand .caret{opacity:.6;font-size:11px}
+.acct{flex:0 0 auto;border:1px solid var(--line);background:rgba(255,255,255,.06);color:var(--cream);font:inherit;font-weight:800;font-size:13px;padding:9px 14px;border-radius:999px;cursor:pointer}.acct.on{width:38px;height:38px;padding:0;background:var(--gold);color:var(--night);border:0;font-size:16px}
+.row-link{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:14px 16px;border-radius:18px;border:1px solid var(--line);background:rgba(255,255,255,.04);color:var(--cream);font-weight:800;font-size:14px;text-decoration:none}
+details.row-link{display:block}details.row-link summary{cursor:pointer;list-style:none}details.row-link summary::-webkit-details-marker{display:none}
+details.adv summary{cursor:pointer;list-style:none}details.adv summary::-webkit-details-marker{display:none}details.adv summary h3{display:inline}
+input.code{font-size:28px;letter-spacing:.4em;text-align:center;font-weight:900}
 .brand b{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .hero{text-align:center;justify-items:center}
 .hero .sleigh{width:min(260px,70%);height:auto;margin:-4px auto -2px}
@@ -160,6 +166,36 @@ async function rpc(fn,args){ const c=new AbortController(), tm=setTimeout(()=>c.
   try{ const r=await fetch(SB_URL+"/rest/v1/rpc/"+fn,{method:"POST",headers:{"Content-Type":"application/json",apikey:SB_KEY,Authorization:"Bearer "+SB_KEY},body:JSON.stringify(args),signal:c.signal});
     if(!r.ok) throw new Error("rpc "+r.status); return await r.json(); } finally{ clearTimeout(tm); } }
 const ORIGIN=location.origin;
+/* ---------- organizer accounts: email code login, groups saved to the account ---------- */
+const AUTH=(()=>{ const AK="posada-auth-v1"; let S=null; try{ S=JSON.parse(localStorage.getItem(AK)||"null"); }catch(e){}
+  const save=()=>{ try{ S?localStorage.setItem(AK,JSON.stringify(S)):localStorage.removeItem(AK); }catch(e){} };
+  const H=tk=>({"Content-Type":"application/json",apikey:SB_KEY,Authorization:"Bearer "+(tk||SB_KEY)});
+  async function call(path,opt){ const c=new AbortController(), tm=setTimeout(()=>c.abort(),12000); try{ return await fetch(SB_URL+path,Object.assign({},opt,{signal:c.signal})); } finally{ clearTimeout(tm); } }
+  function setSession(j,keepUser){ if(!j||!j.access_token) return false; const u=j.user?{id:j.user.id,email:j.user.email}:keepUser||{}; S={at:j.access_token,rt:j.refresh_token,exp:Date.now()+((j.expires_in||3600)-60)*1000,user:u}; save(); return true; }
+  async function token(){ if(!S) return null; if(Date.now()<S.exp) return S.at;
+    try{ const r=await call("/auth/v1/token?grant_type=refresh_token",{method:"POST",headers:H(),body:JSON.stringify({refresh_token:S.rt})});
+      if(r.ok){ setSession(await r.json(),S.user); return S.at; } if(r.status===400||r.status===401){ S=null; save(); } }catch(e){} return null; }
+  async function sendCode(email){ try{ const r=await call("/auth/v1/otp?redirect_to="+encodeURIComponent(ORIGIN+"/host"),{method:"POST",headers:H(),body:JSON.stringify({email,create_user:true})}); return r.ok?"ok":r.status===429?"rate":"err"; }catch(e){ return "net"; } }
+  async function verify(email,code){ try{ const r=await call("/auth/v1/verify",{method:"POST",headers:H(),body:JSON.stringify({type:"email",email,token:code})}); if(r.status===429) return "rate"; if(!r.ok) return "bad"; return setSession(await r.json())?"ok":"bad"; }catch(e){ return "net"; } }
+  async function rest(method,q,body,prefer){ const tk=await token(); if(!tk) throw new Error("auth"); const h=H(tk); if(prefer) h.Prefer=prefer;
+    const r=await call("/rest/v1/organizer_groups"+q,{method,headers:h,body:body?JSON.stringify(body):undefined}); if(r.status===401){ S=null; save(); throw new Error("auth"); } if(!r.ok) throw new Error("rest "+r.status); return method==="GET"?r.json():null; }
+  let tq=null; const dirty=new Set();
+  function queue(){ if(!S) return; const g=DB.groups[DB.cur]; if(g&&g.setup) dirty.add(g.gid); clearTimeout(tq); tq=setTimeout(flush,1200); }
+  async function flush(){ if(!S||!dirty.size) return; const rows=[...dirty].map(id=>DB.groups[id]).filter(g=>g&&g.setup).map(g=>({user_id:S.user.id,gid:g.gid,data:g})); dirty.clear(); if(!rows.length) return;
+    try{ await rest("POST","?on_conflict=user_id,gid",rows,"resolution=merge-duplicates,return=minimal"); }catch(e){ rows.forEach(r=>dirty.add(r.gid)); } }
+  async function sync(){ if(!S) return; try{ const rows=await rest("GET","?select=gid,data,updated_at"), have=new Set();
+      rows.forEach(r=>{ const R=r.data, L=DB.groups[r.gid]; have.add(r.gid); if(!R||!R.gid) return; if(!L||(R.ut||0)>(L.ut||0)) DB.groups[r.gid]=R; else if((L.ut||0)>(R.ut||0)) dirty.add(r.gid); });
+      Object.values(DB.groups).forEach(g=>{ if(g.setup&&!have.has(g.gid)) dirty.add(g.gid); });
+      try{ localStorage.setItem(SKEY,JSON.stringify(DB)); }catch(e){} await flush(); }catch(e){} }
+  async function remove(gid){ if(!S) return; try{ await rest("DELETE","?gid=eq."+encodeURIComponent(gid)); }catch(e){} }
+  async function signOut(){ const tk=S&&S.at; S=null; save(); if(tk) try{ await call("/auth/v1/logout",{method:"POST",headers:H(tk)}); }catch(e){} }
+  // if someone taps the link in the email instead of typing the code
+  (()=>{ const q=new URLSearchParams(location.hash.slice(1)); if(q.get("access_token")&&q.get("refresh_token")){ let u={};
+      try{ const p=JSON.parse(decodeURIComponent(escape(atob(q.get("access_token").split(".")[1].replace(/-/g,"+").replace(/_/g,"/"))))); u={id:p.sub,email:p.email}; }catch(e){}
+      S={at:q.get("access_token"),rt:q.get("refresh_token"),exp:Date.now()+((+q.get("expires_in")||3600)-60)*1000,user:u}; save(); window.__magic=1; try{ history.replaceState(null,"",location.pathname); }catch(e){} } })();
+  document.addEventListener("visibilitychange",()=>{ if(document.visibilityState==="hidden") flush(); });
+  return {user:()=>S&&S.user,sendCode,verify,queue,sync,flush,remove,signOut};
+})();
 
 const LETTER_URL=ORIGIN+"/letter";
 const REVEAL_URL=ORIGIN+"/pinata";
@@ -195,14 +231,14 @@ function pinDecode(code){ try{ const hex=code.slice(1), b=new Uint8Array(hex.len
 let canSave=true;
 function loadDB(){ try{ const v=JSON.parse(localStorage.getItem(SKEY)||"null"); if(v&&v.groups) return v; }catch(e){ canSave=false; } return {v:1,cur:null,ui:null,groups:{}}; }
 let DB=loadDB();
-function persist(){ try{ localStorage.setItem(SKEY,JSON.stringify(DB)); canSave=true; }catch(e){ canSave=false; } }
+function persist(){ const g=DB.groups&&DB.groups[DB.cur]; if(g) g.ut=Date.now(); try{ localStorage.setItem(SKEY,JSON.stringify(DB)); canSave=true; }catch(e){ canSave=false; } if(typeof AUTH!=="undefined") AUTH.queue(); }
 const G=()=>DB.groups[DB.cur]||null;
 const P=id=>G().people.find(p=>p.id===id);
 
 /* ---------- words ---------- */
 const W={
 en:{
-  appName:"Secret Santa HQ", heroK:"Free · No accounts · 5 minutes", heroT:"Run your own Secret Santa", heroP:"Add your family and friends, they write a letter to Santa, and everyone gets their match inside a piñata. All from your phone.",
+  appName:"Secret Santa HQ", heroK:"Free · 5 minutes · No apps", heroT:"Run your own Secret Santa", heroP:"Add your family and friends, they write a letter to Santa, and everyone gets their match inside a piñata. All from your phone.",
   how1:"Add your people",how1s:"Type them, paste a list, or pick from contacts",how2:"They write letters to Santa",how2s:"Sizes, wishes and gift hints. Sent back to you in one tap",how3:"Draw names, send piñatas",how3s:"Matches stay sealed, even from you",
   start:"Start my Secret Santa 🎄",restore:"Restore from a backup",haveGroups:"Your Secret Santas",open:"Open",
   s1:"Name your Secret Santa",s1p:"You can change any of this later.",gname:"Group name",gnamePh:"Familia García 2026",yname:"Your name",ynamePh:"Like Adán",yphone:"Your phone number",yphoneH:"Letters come back to this number on WhatsApp or text.",
@@ -249,7 +285,7 @@ en:{
   clear:"Starting over",msgLang:"Message language",sendOne:"Send",stReady:"Ready to send",autoT:"📮 Letters arrive here automatically",autoP:"When someone seals their letter, it shows up on this page. Got one by text instead? Paste it below.",syncNow:"Check for new letters",synced:"Up to date ✓",syncFail:"Couldn't reach the mailbox. Check your connection.",lbT:"Family game leaderboard",lbP:"Scores come in when someone shares theirs from the game. Paste their message above to update it.",lbEmpty:"No scores yet. Share the game and the board fills up as family plays.",lbPlay:"Play",lbShare:"Share the board",lbUpdated:"Leaderboard updated 🏆",groupP2:"Drop it in the family group chat. Everyone who opens it sees the board and can jump in.",
 },
 es:{
-  appName:"Secret Santa HQ", heroK:"Gratis · Sin cuentas · 5 minutos", heroT:"Organiza tu propio Secret Santa", heroP:"Agrega a tu familia y amigos, ellos escriben una carta a Santa, y cada quien recibe su Secret Santa dentro de una piñata. Todo desde tu teléfono.",
+  appName:"Secret Santa HQ", heroK:"Gratis · 5 minutos · Sin apps", heroT:"Organiza tu propio Secret Santa", heroP:"Agrega a tu familia y amigos, ellos escriben una carta a Santa, y cada quien recibe su Secret Santa dentro de una piñata. Todo desde tu teléfono.",
   how1:"Agrega a tu gente",how1s:"Escríbelos, pega una lista o escoge de tus contactos",how2:"Escriben su carta a Santa",how2s:"Tallas, deseos y pistas. Te llega con un toque",how3:"Sortea y manda piñatas",how3s:"Nadie ve quién le tocó a quién, ni tú",
   start:"Empezar mi Secret Santa 🎄",restore:"Restaurar un respaldo",haveGroups:"Tus Secret Santas",open:"Abrir",
   s1:"Ponle nombre a tu Secret Santa",s1p:"Todo esto se puede cambiar después.",gname:"Nombre del grupo",gnamePh:"Familia García 2026",yname:"Tu nombre",ynamePh:"Por ejemplo Adán",yphone:"Tu número de teléfono",yphoneH:"Las cartas te llegan a este número por WhatsApp o mensaje.",
@@ -295,6 +331,9 @@ es:{
   copied:"Copiado ✓",copyFail:"No se pudo copiar. Mantén presionado el texto para copiarlo.",pasteFail:"No se pudo leer el portapapeles. Pégalo en el cuadro.",
   clear:"Empezar de nuevo",msgLang:"Idioma del mensaje",sendOne:"Mandar",stReady:"Lista para mandar",autoT:"📮 Las cartas llegan aquí solitas",autoP:"Cuando alguien sella su carta, aparece en esta página. ¿Te la mandaron por mensaje? Pégala abajo.",syncNow:"Buscar cartas nuevas",synced:"Al día ✓",syncFail:"No se pudo conectar con el buzón. Revisa tu conexión.",lbT:"Tabla del juego familiar",lbP:"Los puntos llegan cuando alguien comparte los suyos desde el juego. Pega su mensaje arriba para actualizarla.",lbEmpty:"Todavía no hay puntos. Comparte el juego y la tabla se llena cuando la familia juegue.",lbPlay:"Jugar",lbShare:"Compartir la tabla",lbUpdated:"Tabla actualizada 🏆",groupP2:"Ponlo en el grupo de la familia. Quien lo abra ve la tabla y puede jugar.",
 }};
+Object.assign(W.en,{menuT:"Your Secret Santas",acctT:"Your account",login:"Log in",loginT:"Log in with your email",loginP:"We'll email you a 6-digit code. No password. Your Secret Santa opens on any phone or computer.",emailL:"Email",emailPh:"you@email.com",sendCode:"Email me a code",codeT:"Check your email",codeP:e=>`We sent a 6-digit code to ${e}. It can take a minute (check spam too).`,codeL:"Code",verify:"Log in",resend:"Send a new code",chEmail:"Use another email",signedAs:e=>`Saved to ${e}`,signedS:"Open it from any phone or computer at posadaxmas.com",signOut:"Log out",signedOut:"Logged out. Your groups stay on this phone too.",welcomeBack:"You're in ✓",codeBad:"That code didn't work. Check it or ask for a new one.",emailBad:"That email doesn't look right.",tooMany:"Too many tries. Wait a minute and try again.",netFail:"Couldn't connect. Check your internet and try again.",nudgeT:"Save your Secret Santa",nudgeP:"Log in with your email so you never lose it and can open it from any phone.",nudgeB:"Save with my email",haveAcct:"Already organizing? Log in",landing:"Back to posadaxmas.com",lang:"Language",advT:"Backup (advanced)",mailRow:"Got a letter by text or WhatsApp? Paste it here",playRow:"Play La Posada with the family",noPhone:"no phone",cloudOn:"Saved to your account ✓"});
+Object.assign(W.es,{menuT:"Tus Secret Santas",acctT:"Tu cuenta",login:"Entrar",loginT:"Entra con tu correo",loginP:"Te mandamos un código de 6 dígitos. Sin contraseña. Tu Secret Santa se abre en cualquier teléfono o computadora.",emailL:"Correo",emailPh:"tu@correo.com",sendCode:"Mándame el código",codeT:"Revisa tu correo",codeP:e=>`Mandamos un código de 6 dígitos a ${e}. Puede tardar un minuto (revisa también spam).`,codeL:"Código",verify:"Entrar",resend:"Mandar otro código",chEmail:"Usar otro correo",signedAs:e=>`Guardado en ${e}`,signedS:"Ábrelo desde cualquier teléfono o computadora en posadaxmas.com",signOut:"Cerrar sesión",signedOut:"Sesión cerrada. Tus grupos siguen en este teléfono.",welcomeBack:"¡Listo, ya entraste! ✓",codeBad:"Ese código no funcionó. Revísalo o pide otro.",emailBad:"Ese correo no se ve bien.",tooMany:"Demasiados intentos. Espera un minuto y vuelve a intentar.",netFail:"No se pudo conectar. Revisa tu internet e intenta otra vez.",nudgeT:"Guarda tu Secret Santa",nudgeP:"Entra con tu correo para no perderlo nunca y abrirlo desde cualquier teléfono.",nudgeB:"Guardar con mi correo",haveAcct:"¿Ya organizas uno? Entrar",landing:"Volver a posadaxmas.com",lang:"Idioma",advT:"Respaldo (avanzado)",mailRow:"¿Te mandaron una carta por mensaje o WhatsApp? Pégala aquí",playRow:"Jueguen La Posada en familia",noPhone:"sin teléfono",cloudOn:"Guardado en tu cuenta ✓"});
+const CLOUD=()=>typeof AUTH!=="undefined"?AUTH:null, ME=()=>{ const c=CLOUD(); return c&&c.user(); };
 const ui=()=>DB.ui||((navigator.language||"").startsWith("es")?"es":"en");
 const t=(k,...a)=>{ const v=W[ui()][k]??W.en[k]; return typeof v==="function"?v(...a):v; };
 function fmtDate(iso,l){ if(!iso) return ""; return new Date(iso+"T12:00:00").toLocaleDateString((l||ui())==="es"?"es-MX":undefined,{weekday:"short",month:"short",day:"numeric"}); }
@@ -347,7 +386,7 @@ function parseList(text){ const out=[]; String(text||"").split(/\r?\n/).forEach(
     line.split(/\s*[,;]\s*/).filter(Boolean).forEach(nm=>out.push([nm,""])); }); return out; }
 function addMany(list){ let a=0,d=0; list.forEach(([n,ph])=>{ const r=addPerson(n,ph); if(r) a++; else if(r===false) d++; }); persist(); toast(t("added",a)+(d?" · "+t("dupe",d):"")); return a; }
 const pending=D=>Object.keys(D.cards).filter(k=>(!D.sent[k]||D.redo[k])&&!(P(k)||{}).me);
-const status=p=>{ const D=G().draw; if(D&&D.cards[p.id]){ if(p.me) return ["sent",t("you")]; if(D.redo[p.id]) return ["redo",t("stRedo")]; if(D.sent[p.id]) return ["sent",t("stSent")]; return ["inv",t("stReady")]; } return p.letter?["in",t("stIn")]:p.inv?["inv",t("stInv")]:["new",t("stNew")]; };
+const status=p=>{ const D=G().draw; if(D&&D.cards[p.id]){ if(p.me) return ["sent",t("you")]; if(D.redo[p.id]) return ["redo",t("stRedo")]; if(D.sent[p.id]) return ["sent",t("stSent")]; return ["inv",t("stReady")]; } return p.letter?["in",t("stIn")]:p.me?["new",t("you")]:p.inv?["inv",t("stInv")]:["new",t("stNew")]; };
 
 /* ---------- letters coming in ---------- */
 function findLetters(text){ const s=String(text||""), out=[], seen=new Set();
@@ -425,7 +464,9 @@ const ICON={home:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" str
   people:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.8-3.6 3.4-5.5 6.5-5.5s5.7 1.9 6.5 5.5"/><circle cx="17" cy="9" r="2.6"/><path d="M16.5 14.6c2.6.2 4.4 1.9 5 4.8"/></svg>`,
   draw:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="9" width="18" height="12" rx="2"/><path d="M3 13h18M12 9v12"/><path d="M12 9c-2-4-6-4-6-1.5S10 9 12 9zm0 0c2-4 6-4 6-1.5S14 9 12 9z"/></svg>`,
   more:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>`};
-function topbar(){ const g=G(); return `<div class="top"><div class="brand">🎄 <b>${esc(g&&g.name||t("appName"))}</b></div><div class="seg" role="group" aria-label="Language / Idioma"><button type="button" data-act="ui" data-l="en" aria-pressed="${ui()==="en"}">EN</button><button type="button" data-act="ui" data-l="es" aria-pressed="${ui()==="es"}">ES</button></div></div>`; }
+function topbar(){ const g=G(), c=CLOUD(), me=ME();
+  if(g&&g.setup) return `<div class="top"><button type="button" class="brand menu" data-act="menu" aria-label="${esc(t("menuT"))}">🎄 <b>${esc(g.name)}</b><span class="caret" aria-hidden="true">▾</span></button>${c?(me?`<button type="button" class="acct on" data-act="menu" aria-label="${esc(t("acctT"))}">${esc((me.email||"?")[0].toUpperCase())}</button>`:`<button type="button" class="acct" data-act="login">${esc(t("login"))}</button>`):`<button type="button" class="acct" data-act="menu" aria-label="${esc(t("menuT"))}">☰</button>`}</div>`;
+  return `<div class="top"><div class="brand">🎄 <b>${esc(g&&g.name||t("appName"))}</b></div>${c&&!me&&!wiz?`<button type="button" class="acct" data-act="login" style="margin-left:auto">${esc(t("login"))}</button>`:""}<div class="seg" role="group" aria-label="Language / Idioma"><button type="button" data-act="ui" data-l="en" aria-pressed="${ui()==="en"}">EN</button><button type="button" data-act="ui" data-l="es" aria-pressed="${ui()==="es"}">ES</button></div></div>`; }
 function render(){ document.documentElement.lang=ui(); const g=G(), app=$("app");
   if(!g||!g.setup){ $("tabbar").hidden=true; app.innerHTML=topbar()+(g&&wiz>0?wizard():welcome()); wireInputs(); return; }
   $("tabbar").hidden=false; renderTabs();
@@ -437,7 +478,7 @@ function renderTabs(){ const g=G(), waiting=g.people.filter(p=>!p.letter).length
 function welcome(){ const gs=Object.values(DB.groups).filter(x=>x.setup);
   return `<div class="card hero in">${SLEIGH}<span class="kicker">${esc(t("heroK"))}</span><h1>${esc(t("heroT"))}</h1><p>${esc(t("heroP"))}</p>
     <ol class="how"><li><span class="n">👨‍👩‍👧‍👦</span><div><b>${esc(t("how1"))}</b><span>${esc(t("how1s"))}</span></div></li><li><span class="n">✉️</span><div><b>${esc(t("how2"))}</b><span>${esc(t("how2s"))}</span></div></li><li><span class="n">🪅</span><div><b>${esc(t("how3"))}</b><span>${esc(t("how3s"))}</span></div></li></ol>
-    <button class="cta" data-act="begin">${esc(t("start"))}</button><button class="ghost" data-act="restoreOpen">${esc(t("restore"))}</button></div>
+    <button class="cta" data-act="begin">${esc(t("start"))}</button>${CLOUD()&&!ME()?`<button class="cta alt" data-act="login">🔑 ${esc(t("haveAcct"))}</button>`:""}<button class="ghost" data-act="restoreOpen">${esc(t("restore"))}</button></div>
     ${gs.length?`<div class="card soft" style="margin-top:14px"><h3>${esc(t("haveGroups"))}</h3>${gs.map(x=>`<div class="pair"><span>🎄 ${esc(x.name)}</span><button class="cta sm alt" data-act="switch" data-g="${x.gid}">${esc(t("open"))}</button></div>`).join("")}</div>`:""}`; }
 
 function wizard(){ const g=G(), bars=`<div class="steps">${[1,2,3].map(i=>`<i class="${i<=wiz?"on":""}"></i>`).join("")}</div>`;
@@ -460,7 +501,7 @@ function adder(){ const hasC="contacts" in navigator&&"ContactsManager" in windo
   return `<div class="tabs2" role="tablist"><button class="pill" role="tab" data-act="amode" data-m="type" aria-selected="${addMode==="type"}" style="${addMode==="type"?"background:var(--cream);color:var(--night)":""}">✍️ ${esc(t("typeT"))}</button><button class="pill" role="tab" data-act="amode" data-m="paste" aria-selected="${addMode==="paste"}" style="${addMode==="paste"?"background:var(--cream);color:var(--night)":""}">📋 ${esc(t("pasteT"))}</button>${hasC?`<button class="pill" data-act="contacts">📇 ${esc(t("contactsT"))}</button>`:""}</div>
   ${addMode==="type"?`<form class="addrow" id="addForm"><div class="field"><label class="lbl" for="a_n">${esc(t("pname"))}</label><input type="text" id="a_n" placeholder="Tía Rosa" autocomplete="off" enterkeyhint="next"></div><div class="field"><label class="lbl" for="a_p">${esc(t("pphone"))}</label><input type="tel" id="a_p" placeholder="555 123 4567" inputmode="tel" autocomplete="off" enterkeyhint="done"></div><button class="cta" type="submit" aria-label="${esc(t("add"))}">+</button></form>`
   :`<div class="stack"><textarea id="a_list" placeholder="${esc(t("pasteH"))}"></textarea><button class="cta" data-act="pasteList">${esc(t("pasteBtn"))}</button></div>`}`; }
-function miniList(){ const ps=G().people; if(!ps.length) return ""; return `<div class="plist">${ps.map(p=>`<div class="person" style="cursor:default"><div class="av" style="--c:${colorOf(p.id)}">${esc(ini(p.name)||"?")}</div><div style="min-width:0"><b>${esc(p.name)}${p.me?` · ${esc(t("you"))}`:""}</b><small>${esc(pretty(p.phone)||"—")}</small></div>${p.me?"":`<button class="close" data-act="delQuick" data-id="${p.id}" aria-label="Remove">✕</button>`}</div>`).join("")}</div>`; }
+function miniList(){ const ps=G().people; if(!ps.length) return ""; return `<div class="plist">${ps.map(p=>`<div class="person" style="cursor:default"><div class="av" style="--c:${colorOf(p.id)}">${esc(ini(p.name)||"?")}</div><div style="min-width:0"><b>${esc(p.name)}${p.me?` · ${esc(t("you"))}`:""}</b>${p.phone?`<small>${esc(pretty(p.phone))}</small>`:""}</div>${p.me?"":`<button class="close" data-act="delQuick" data-id="${p.id}" aria-label="Remove">✕</button>`}</div>`).join("")}</div>`; }
 
 function homeV(){ const g=G(), ps=g.people, n=ps.length, inN=ps.filter(p=>p.letter).length, D=g.draw;
   let dl=""; if(g.deadline){ const d=Math.ceil((new Date(g.deadline+"T23:59")-new Date())/864e5); dl=t("daysLeft",d); }
@@ -480,18 +521,17 @@ function homeV(){ const g=G(), ps=g.people, n=ps.length, inN=ps.filter(p=>p.lett
   <div class="stats"><button class="stat" data-act="tab" data-v="people" style="font:inherit;color:inherit;text-align:left;cursor:pointer"><small>${esc(t("people"))}</small><b>${n}</b></button>
     <div class="stat"><small>${esc(t("letters"))}</small><b>${inN}<span style="font-size:14px;color:var(--muted)">/${n}</span></b><div class="meter"><i style="width:${n?inN/n*100:0}%"></i></div></div>
     <button class="stat" data-act="tab" data-v="draw" style="font:inherit;color:inherit;text-align:left;cursor:pointer"><small>${esc(t("draw"))}</small><b style="font-size:16px">${D?esc(t("done"))+" ✓":esc(t("notYet"))}</b><span>${D?esc(t("of",sentN,cardsN)):esc(dl)}</span></button></div>
-  ${mailCard()}
-  ${lbCard()}
-  <div class="facts">${fact("🎁",t("eBudget"),g.budget)}${fact("🎄",t("eEx"),g.party&&fmtDate(g.party)+(g.place?" · "+g.place:""))}${fact("📮",t("eDue"),g.deadline&&fmtDate(g.deadline))}</div></div>`; }
+  ${(()=>{ const F=[["🎁",t("eBudget"),g.budget],["🎄",t("eEx"),g.party&&fmtDate(g.party)+(g.place?" · "+g.place:"")],["📮",t("eDue"),g.deadline&&fmtDate(g.deadline)]], miss=F.filter(f=>!f[2]);
+    return `<div class="facts">${F.filter(f=>f[2]).map(f=>fact(...f)).join("")}${miss.length?`<button class="fact empty" data-act="tab" data-v="more">＋ ${esc(miss.map(f=>f[1]).join(", "))}</button>`:""}</div>`; })()}
+  ${CLOUD()&&!ME()&&!DB.nudgeX?`<div class="card soft nudge"><div class="row between"><h3>☁️ ${esc(t("nudgeT"))}</h3><button class="close" data-act="nudgeX" aria-label="Close">✕</button></div><p class="help">${esc(t("nudgeP"))}</p><button class="cta sm" data-act="login" style="width:100%">${esc(t("nudgeB"))}</button></div>`:""}
+  ${boardRows(g).length||D?lbCard():`<a class="row-link" href="${esc(GAME_SHARE(g))}" target="_blank" rel="noopener">🎮 ${esc(t("playRow"))}<span aria-hidden="true">›</span></a>`}
+  ${mailCard()}</div>`; }
 function lbCard(){ const g=G(), rs=boardRows(g).slice(0,5), medal=["🥇","🥈","🥉"];
   return `<div class="card soft"><div class="section-t"><div class="stack tight"><h3>🏆 ${esc(t("lbT"))}</h3><p class="help">${esc(rs.length?t("lbP"):t("lbEmpty"))}</p></div></div>
     ${rs.length?`<div class="plist">${rs.map((r,i)=>`<div class="pair"><span>${medal[i]||i+1} ${esc(r.n)}</span><b>${Number(r.s).toLocaleString()}</b></div>`).join("")}</div>`:""}
     <div class="two"><a class="cta sm" style="width:100%" href="${esc(GAME_SHARE(g))}" target="_blank" rel="noopener">🎮 ${esc(t("lbPlay"))}</a><button class="cta sm alt" style="width:100%" data-act="lbShare">📣 ${esc(t("lbShare"))}</button></div></div>`; }
 function fact(e,l,v){ return `<button class="fact ${v?"":"empty"}" data-act="tab" data-v="more">${e} ${esc(v?v:l+" · "+t("eAdd"))}</button>`; }
-function mailCard(){ const live=G()&&G().cloud===1; return `<div class="card soft mail"><div class="stack tight"><h3>${esc(live?t("autoT"):t("mailT"))}</h3><p class="help">${esc(live?t("autoP"):t("mailP"))}</p></div>
-  ${live?`<button class="cta alt" data-act="sync">🔄 ${esc(t("syncNow"))}</button>`:""}
-  <button class="cta ${live?"sm alt":"alt"}" ${live?'style="width:100%"':""} data-act="clipPaste">📋 ${esc(t("mailPaste"))}</button>
-  <details><summary>${esc(t("mailOr"))}</summary><div class="stack" style="margin-top:10px"><textarea id="mailBox" placeholder="📮 …"></textarea><button class="cta sm" data-act="mailAdd" style="width:100%">${esc(t("mailAdd"))}</button></div></details></div>`; }
+function mailCard(){ const live=G()&&G().cloud===1; return `<details class="mail row-link"><summary>${esc(live?t("autoT"):"📮 "+t("mailRow"))}</summary><div class="stack" style="margin-top:12px"><p class="help">${esc(live?t("autoP"):t("mailP"))}</p>${live?`<button class="cta sm" data-act="sync" style="width:100%">🔄 ${esc(t("syncNow"))}</button>`:""}<button class="cta alt sm" data-act="clipPaste" style="width:100%">📋 ${esc(t("mailPaste"))}</button><textarea id="mailBox" placeholder="📮 …"></textarea><button class="cta sm" data-act="mailAdd" style="width:100%">${esc(t("mailAdd"))}</button></div></details>`; }
 
 function peopleV(){ const g=G(), D=g.draw; let ps=g.people;
   if(filter==="wait") ps=ps.filter(p=>!p.letter); if(filter==="in") ps=ps.filter(p=>p.letter);
@@ -499,9 +539,9 @@ function peopleV(){ const g=G(), D=g.draw; let ps=g.people;
   return `<div class="stack"><div class="section-t"><h2>${esc(t("pTitle"))} · ${g.people.length}</h2><button class="cta sm" data-act="addOpen">${esc(t("pAdd"))}</button></div>
     <div class="tabs2">${[["all",t("fAll")],["wait",t("fWait")],["in",t("fIn")]].map(([k,l])=>`<button class="pill" data-act="filter" data-f="${k}" style="${filter===k?"background:var(--cream);color:var(--night)":""}">${esc(l)}</button>`).join("")}</div>
     ${!D&&notInv?`<button class="cta" data-act="qInv">✉️ ${esc(t("inviteAll",notInv))}</button>`:""}${!D&&!notInv&&waiting?`<button class="cta alt" data-act="qRem">⏰ ${esc(t("remindAll",waiting))}</button>`:""}
-    ${ps.length?`<div class="plist">${ps.map(p=>{ const [c,l]=status(p); return `<button class="person" data-act="person" data-id="${p.id}"><div class="av" style="--c:${colorOf(p.id)}">${esc(ini(p.name)||"?")}</div><div style="min-width:0"><b>${esc(p.name)}${p.me?` · ${esc(t("you"))}`:""}</b><small>${esc(pretty(p.phone)||"—")}${p.lang==="es"?" · ES":""}</small></div><span class="st ${c}">${esc(l)}</span></button>`; }).join("")}</div>`
+    ${ps.length?`<div class="plist">${ps.map(p=>{ const [c,l]=status(p); return `<button class="person" data-act="person" data-id="${p.id}"><div class="av" style="--c:${colorOf(p.id)}">${esc(ini(p.name)||"?")}</div><div style="min-width:0"><b>${esc(p.name)}${p.me?` · ${esc(t("you"))}`:""}</b><small>${esc(pretty(p.phone)||t("noPhone"))}</small></div><span class="st ${c}">${esc(l)}</span></button>`; }).join("")}</div>`
       :`<div class="card soft empty-st"><div class="e">🎅</div><h3>${esc(t("emptyP"))}</h3><p class="help">${esc(t("emptyPs"))}</p><button class="cta sm" data-act="addOpen">${esc(t("pAdd"))}</button></div>`}
-    ${!D?`<button class="cta alt" data-act="groupLink">🔗 ${esc(t("nInvG"))}</button>`:""}</div>`; }
+</div>`; }
 
 function drawV(){ const g=G(), D=g.draw;
   const pairs=g.pairs.map(([a,b])=>[P(a),P(b)]).filter(([a,b])=>a&&b);
@@ -521,7 +561,29 @@ function drawV(){ const g=G(), D=g.draw;
       ${p.me?`<a class="cta sm" href="${esc(REVEAL_URL+"#"+D.cards[id].code)}" target="_blank" rel="noopener">${esc(t("dOpenMine"))}</a>`:`<button class="cta sm ${D.sent[id]&&!D.redo[id]?"alt":""}" data-act="qOne" data-id="${id}">${esc(D.sent[id]&&!D.redo[id]?t("resend"):t("sendOne"))}</button>`}</div>`; }).join("")}</div>
     <button class="ghost" data-act="redrawQ">🔄 ${esc(t("dRedo"))}</button>${pairCard}</div>`; }
 
-function moreV(){ const g=G(), gs=Object.values(DB.groups).filter(x=>x.setup);
+function acctCard(){ const c=CLOUD(); if(!c) return ""; const me=ME();
+  return me?`<div class="card soft acctc"><div class="row between"><div class="stack tight" style="min-width:0"><h3>☁️ ${esc(t("signedAs",me.email))}</h3><p class="help">${esc(t("signedS"))}</p></div></div><button class="cta alt sm" data-act="signOut" style="width:100%">${esc(t("signOut"))}</button></div>`
+    :`<div class="card soft acctc"><h3>☁️ ${esc(t("nudgeT"))}</h3><p class="help">${esc(t("nudgeP"))}</p><button class="cta sm" data-act="login" style="width:100%">${esc(t("nudgeB"))}</button></div>`; }
+function menuSheet(){ const g=G(), gs=Object.values(DB.groups).filter(x=>x.setup).sort((a,b)=>(b.ut||0)-(a.ut||0)), c=CLOUD(), me=ME();
+  sheet(`<div class="sheethead"><h2>🗂️ ${esc(t("menuT"))}</h2>${closeBtn()}</div>
+    <div class="plist">${gs.map(x=>`<button class="person" data-act="switch" data-g="${x.gid}"><div class="av" style="--c:${colorOf(x.gid)}">🎄</div><div style="min-width:0"><b>${esc(x.name)}</b><small>${esc(t("people"))}: ${x.people.length}${x.draw?" · "+esc(t("done"))+" ✓":""}</small></div>${g&&x.gid===g.gid?`<span class="st in">✓</span>`:""}</button>`).join("")}</div>
+    <button class="cta alt" data-act="newGroup">${esc(t("mNew"))}</button>
+    ${c?(me?`<div class="pair"><span>☁️ ${esc(t("signedAs",me.email))}</span><button class="cta sm alt" data-act="signOut">${esc(t("signOut"))}</button></div>`:`<button class="cta" data-act="login">🔑 ${esc(t("nudgeB"))}</button>`):""}
+    <div class="row between"><span class="lbl">${esc(t("lang"))}</span><div class="seg"><button type="button" data-act="ui" data-l="en" aria-pressed="${ui()==="en"}">EN</button><button type="button" data-act="ui" data-l="es" aria-pressed="${ui()==="es"}">ES</button></div></div>
+    ${typeof ORIGIN!=="undefined"?`<a class="ghost" href="/" style="text-align:center">← ${esc(t("landing"))}</a>`:""}`); }
+let loginEmail="";
+function loginSheet(step){ const c=CLOUD(); if(!c) return;
+  if(step!=="code") sheet(`<div class="sheethead"><div class="stack tight"><span class="kicker">🔑</span><h2>${esc(t("loginT"))}</h2></div>${closeBtn()}</div><p>${esc(t("loginP"))}</p>
+    <form class="stack" id="loginForm"><div class="field"><label class="lbl" for="l_e">${esc(t("emailL"))}</label><input type="email" id="l_e" value="${esc(loginEmail)}" placeholder="${esc(t("emailPh"))}" autocomplete="email" inputmode="email" required></div><p class="err" id="lerr" hidden></p><button class="cta" type="submit" id="lgo">${esc(t("sendCode"))}</button></form>`);
+  else sheet(`<div class="sheethead"><div class="stack tight"><span class="kicker">📬</span><h2>${esc(t("codeT"))}</h2></div>${closeBtn()}</div><p>${esc(t("codeP",loginEmail))}</p>
+    <form class="stack" id="codeForm"><div class="field"><label class="lbl" for="l_c">${esc(t("codeL"))}</label><input type="text" id="l_c" class="code" placeholder="123456" autocomplete="one-time-code" inputmode="numeric" pattern="[0-9]*" maxlength="8" required></div><p class="err" id="lerr" hidden></p><button class="cta" type="submit" id="lgo">${esc(t("verify"))}</button></form>
+    <div class="two"><button class="ghost" data-act="resendCode">${esc(t("resend"))}</button><button class="ghost" data-act="login">${esc(t("chEmail"))}</button></div>`);
+  const err=k=>{ const e=$("lerr"); e.textContent=t(k); e.hidden=false; const b=$("lgo"); b.disabled=false; };
+  const f=$("loginForm"); if(f){ setTimeout(()=>$("l_e").focus(),60); f.onsubmit=async e=>{ e.preventDefault(); const v=$("l_e").value.trim().toLowerCase(); if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(v)) return err("emailBad"); loginEmail=v; $("lgo").disabled=true; const r=await c.sendCode(v); if(r==="ok") loginSheet("code"); else err(r==="rate"?"tooMany":"netFail"); }; }
+  const cf=$("codeForm"); if(cf){ setTimeout(()=>$("l_c").focus(),60); const go=async()=>{ const v=$("l_c").value.replace(/\D/g,""); if(v.length<6) return; $("lgo").disabled=true; const r=await c.verify(loginEmail,v); if(r==="ok"){ closeSheet(); await afterLogin(); } else err(r==="rate"?"tooMany":r==="net"?"netFail":"codeBad"); };
+    cf.onsubmit=e=>{ e.preventDefault(); go(); }; $("l_c").oninput=()=>{ if($("l_c").value.replace(/\D/g,"").length===6) go(); }; } }
+async function afterLogin(){ const c=CLOUD(); if(!c) return; await c.sync(); if(!G()||!G().setup){ const x=Object.values(DB.groups).filter(g=>g.setup).sort((a,b)=>(b.ut||0)-(a.ut||0))[0]; if(x){ DB.cur=x.gid; wiz=0; view="home"; } } persist(); render(); toast(t("welcomeBack")); }
+function moreV(){ const g=G();
   return `<div class="stack"><div class="card in"><h3>🎄 ${esc(t("mDetails"))}</h3>
     <div class="field"><label class="lbl" for="m_g">${esc(t("gname"))}</label><input type="text" id="m_g" value="${esc(g.name)}"></div>
     <div class="two"><div class="field"><label class="lbl" for="m_b">${esc(t("budget"))}</label><input type="text" id="m_b" value="${esc(g.budget)}" placeholder="$50"></div><div class="field"><label class="lbl" for="m_pl">${esc(t("place"))}</label><input type="text" id="m_pl" value="${esc(g.place)}" placeholder="${esc(t("placePh"))}"></div></div>
@@ -531,9 +593,9 @@ function moreV(){ const g=G(), gs=Object.values(DB.groups).filter(x=>x.setup);
     <label class="toggle"><span><b>${esc(t("playing"))}</b><small>${esc(t("playingS"))}</small></span><button type="button" class="sw" role="switch" id="m_play" aria-checked="${g.org.plays}" data-act="toggle" ${g.draw?"disabled":""}></button></label>
     <div class="stack tight"><span class="lbl">${esc(t("langQ"))}</span><div class="seg"><button type="button" data-act="glang" data-l="en" aria-pressed="${g.lang==="en"}">English</button><button type="button" data-act="glang" data-l="es" aria-pressed="${g.lang==="es"}">Español</button></div></div>
     <button class="cta" data-act="saveMore">${esc(t("mSave"))}</button></div>
-  <div class="card soft"><div class="stack tight"><h3>💾 ${esc(t("mBackup"))}</h3><p class="help">${esc(t("mBackupP"))}</p></div><button class="cta alt" data-act="backupDl">⬇️ ${esc(t("mDl"))}</button><button class="cta alt" data-act="backupCopy">📋 ${esc(t("mCopy"))}</button><button class="ghost" data-act="restoreOpen">${esc(t("mRestore"))}</button></div>
-  <div class="card soft"><h3>🗂️ ${esc(t("mGroups"))}</h3>${gs.map(x=>`<div class="pair"><span>${x.gid===g.gid?"✓ ":""}${esc(x.name)}</span>${x.gid===g.gid?"":`<button class="cta sm alt" data-act="switch" data-g="${x.gid}">${esc(t("mSwitch"))}</button>`}</div>`).join("")}
-    <button class="cta alt" data-act="newGroup">${esc(t("mNew"))}</button><button class="ghost" style="color:#ffb3a8" data-act="delGroupQ">${esc(t("mDelete"))}</button></div>
+  ${acctCard()}
+  <details class="card soft adv"><summary><h3>💾 ${esc(t("advT"))}</h3></summary><div class="stack" style="margin-top:12px"><p class="help">${esc(t("mBackupP"))}</p><button class="cta alt" data-act="backupDl">⬇️ ${esc(t("mDl"))}</button><button class="cta alt" data-act="backupCopy">📋 ${esc(t("mCopy"))}</button><button class="ghost" data-act="restoreOpen">${esc(t("mRestore"))}</button></div></details>
+  <p style="text-align:center"><button class="ghost" style="color:#ffb3a8" data-act="delGroupQ">${esc(t("mDelete"))}</button></p>
   <p class="fine" style="display:flex;align-items:center;justify-content:center;gap:7px;opacity:.7"><svg viewBox="40 20 120 165" width="14" height="19" aria-hidden="true"><path d="M91 174 Q97 146 95 108 L101 108 Q102 136 109 174 Z" fill="#6B4A33"/><g fill="#2F4A2F"><circle cx="100" cy="72" r="44"/><circle cx="64" cy="88" r="30"/><circle cx="136" cy="88" r="30"/><circle cx="78" cy="52" r="28"/><circle cx="122" cy="52" r="28"/><circle cx="100" cy="100" r="30"/></g><g fill="#E8782A"><circle cx="72" cy="78" r="7.5"/><circle cx="112" cy="60" r="7.5"/><circle cx="136" cy="94" r="7.5"/><circle cx="96" cy="96" r="7.5"/><circle cx="60" cy="106" r="7"/><circle cx="122" cy="114" r="7"/><circle cx="88" cy="42" r="7"/></g></svg> La Veci Productions</p></div>`; }
 
 /* ---------- sheets ---------- */
@@ -627,10 +689,13 @@ const ACT={
     try{ const a=document.createElement("a"); a.href=URL.createObjectURL(new Blob([txt],{type:"text/plain"})); a.download=name; document.body.appendChild(a); a.click(); a.remove(); }catch(e){ copy(txt); } },
   backupCopy:()=>copy(backupText()),
   restoreOpen:()=>restoreSheet(), restoreGo:()=>restoreFrom($("rsBox").value),
-  switch:a=>{ DB.cur=a.dataset.g; view="home"; persist(); render(); },
-  newGroup:()=>{ newGroup(); wiz=1; render(); },
+  switch:a=>{ DB.cur=a.dataset.g; view="home"; closeSheet(); persist(); render(); },
+  newGroup:()=>{ closeSheet(); newGroup(); wiz=1; render(); },
   delGroupQ:()=>confirmSheet(t("mDeleteQ"),t("mDeleteP"),t("mDeleteY"),"delGroupY"),
-  delGroupY:()=>{ delete DB.groups[DB.cur]; DB.cur=(Object.values(DB.groups).find(x=>x.setup)||{}).gid||null; persist(); closeSheet(); view="home"; render(); },
+  menu:()=>menuSheet(), login:()=>loginSheet(), resendCode:async()=>{ const c=CLOUD(); if(c&&loginEmail){ const r=await c.sendCode(loginEmail); toast(r==="ok"?t("codeT"):r==="rate"?t("tooMany"):t("netFail")); } },
+  nudgeX:()=>{ DB.nudgeX=1; persist(); render(); },
+  signOut:async()=>{ const c=CLOUD(); if(c){ await c.signOut(); } closeSheet(); render(); toast(t("signedOut")); },
+  delGroupY:()=>{ const c=CLOUD(); if(c) c.remove(DB.cur); delete DB.groups[DB.cur]; DB.cur=(Object.values(DB.groups).find(x=>x.setup)||{}).gid||null; persist(); closeSheet(); view="home"; render(); },
 };
 function refreshAfterAdd(){ if($("sheetRoot").innerHTML){ addSheet(); } render(); }
 document.addEventListener("click",e=>{ const a=e.target.closest("[data-act]"); if(!a) return; const fn=ACT[a.dataset.act]; if(!fn) return;
@@ -664,6 +729,7 @@ document.addEventListener("visibilitychange",()=>{ if(document.visibilityState==
   if(ls.length||bs.length){ try{ history.replaceState(null,"",location.pathname+location.search); }catch(e){} importAny(h); }
 })();
 setTimeout(()=>cloudPull(false),600);
+setTimeout(async()=>{ if(!AUTH.user()) return; if(window.__magic){ await afterLogin(); return; } await AUTH.sync(); if(!G()||!G().setup){ const x=Object.values(DB.groups).filter(g=>g.setup).sort((a,b)=>(b.ut||0)-(a.ut||0))[0]; if(x){ DB.cur=x.gid; wiz=0; view="home"; } } if(!document.activeElement||!/INPUT|TEXTAREA/.test(document.activeElement.tagName)) render(); },0);
 addEventListener("hashchange",()=>{ const ls=findLetters(decodeURIComponent(location.hash)); if(ls.length){ try{ history.replaceState(null,"",location.pathname+location.search); }catch(e){} importLetters(ls); } });
 </script>
 </body>
