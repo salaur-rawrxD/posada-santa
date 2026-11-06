@@ -74,6 +74,8 @@ h1,h2{font-family:var(--display);font-weight:400;letter-spacing:.005em}
 .row-link{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:14px 16px;border-radius:18px;border:1px solid var(--line);background:rgba(255,255,255,.04);color:var(--cream);font-weight:800;font-size:14px;text-decoration:none}
 details.row-link{display:block}details.row-link summary{cursor:pointer;list-style:none}details.row-link summary::-webkit-details-marker{display:none}
 details.adv summary{cursor:pointer;list-style:none}details.adv summary::-webkit-details-marker{display:none}details.adv summary h3{display:inline}
+ul.whys{list-style:none;margin:0;padding:0;display:grid;gap:8px}ul.whys li{background:rgba(255,255,255,.05);border:1px solid var(--line);border-radius:14px;padding:10px 12px;font-weight:800;font-size:14px}
+.acctban{border:1px solid rgba(245,165,36,.55);background:linear-gradient(180deg,rgba(245,165,36,.16),rgba(245,165,36,.06));margin-bottom:14px}
 input.code{font-size:28px;letter-spacing:.4em;text-align:center;font-weight:900}
 .brand b{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .hero{text-align:center;justify-items:center}
@@ -333,6 +335,8 @@ es:{
 }};
 Object.assign(W.en,{menuT:"Your Secret Santas",acctT:"Your account",login:"Log in",loginT:"Log in with your email",loginP:"We'll email you a 6-digit code. No password. Your Secret Santa opens on any phone or computer.",emailL:"Email",emailPh:"you@email.com",sendCode:"Email me a code",codeT:"Check your email",codeP:e=>`We sent a 6-digit code to ${e}. It can take a minute (check spam too).`,codeL:"Code",verify:"Log in",resend:"Send a new code",chEmail:"Use another email",signedAs:e=>`Saved to ${e}`,signedS:"Open it from any phone or computer at posadaxmas.com",signOut:"Log out",signedOut:"Logged out. Your groups stay on this phone too.",welcomeBack:"You're in ✓",codeBad:"That code didn't work. Check it or ask for a new one.",emailBad:"That email doesn't look right.",tooMany:"Too many tries. Wait a minute and try again.",netFail:"Couldn't connect. Check your internet and try again.",nudgeT:"Save your Secret Santa",nudgeP:"Log in with your email so you never lose it and can open it from any phone.",nudgeB:"Save with my email",haveAcct:"Already organizing? Log in",landing:"Back to posadaxmas.com",lang:"Language",advT:"Backup (advanced)",mailRow:"Got a letter by text or WhatsApp? Paste it here",playRow:"Play La Posada with the family",noPhone:"no phone",cloudOn:"Saved to your account ✓"});
 Object.assign(W.es,{menuT:"Tus Secret Santas",acctT:"Tu cuenta",login:"Entrar",loginT:"Entra con tu correo",loginP:"Te mandamos un código de 6 dígitos. Sin contraseña. Tu Secret Santa se abre en cualquier teléfono o computadora.",emailL:"Correo",emailPh:"tu@correo.com",sendCode:"Mándame el código",codeT:"Revisa tu correo",codeP:e=>`Mandamos un código de 6 dígitos a ${e}. Puede tardar un minuto (revisa también spam).`,codeL:"Código",verify:"Entrar",resend:"Mandar otro código",chEmail:"Usar otro correo",signedAs:e=>`Guardado en ${e}`,signedS:"Ábrelo desde cualquier teléfono o computadora en posadaxmas.com",signOut:"Cerrar sesión",signedOut:"Sesión cerrada. Tus grupos siguen en este teléfono.",welcomeBack:"¡Listo, ya entraste! ✓",codeBad:"Ese código no funcionó. Revísalo o pide otro.",emailBad:"Ese correo no se ve bien.",tooMany:"Demasiados intentos. Espera un minuto y vuelve a intentar.",netFail:"No se pudo conectar. Revisa tu internet e intenta otra vez.",nudgeT:"Guarda tu Secret Santa",nudgeP:"Entra con tu correo para no perderlo nunca y abrirlo desde cualquier teléfono.",nudgeB:"Guardar con mi correo",haveAcct:"¿Ya organizas uno? Entrar",landing:"Volver a posadaxmas.com",lang:"Idioma",advT:"Respaldo (avanzado)",mailRow:"¿Te mandaron una carta por mensaje o WhatsApp? Pégala aquí",playRow:"Jueguen La Posada en familia",noPhone:"sin teléfono",cloudOn:"Guardado en tu cuenta ✓"});
+Object.assign(W.en,{startT:"Create your organizer account",startP:"It takes 30 seconds: your email and a code. No password.",why1:"Open your posada from any phone or computer",why2:"Family letters land in your account, never lost",why3:"Keep tabs on invites, letters and the draw",onlyYou:"Only you, the organizer, need an account. Your family just opens their link.",gateT:"Save your posada first",gateP:"Before you send invites, create your organizer account so the letters come back to you, even if you switch phones.",startCta:"Create account & start",haveAcct2:"I already have an account · Log in",bannerT:"Your posada is only on this phone",bannerP:"Create your organizer account so you don't lose it and can track every letter.",bannerB:"Create my account",acctPill:"Account"});
+Object.assign(W.es,{startT:"Crea tu cuenta de organizador",startP:"Toma 30 segundos: tu correo y un código. Sin contraseña.",why1:"Abre tu posada desde cualquier teléfono o compu",why2:"Las cartas de tu familia llegan a tu cuenta, nunca se pierden",why3:"Sigue las invitaciones, las cartas y el sorteo",onlyYou:"Solo tú, el organizador, necesitas cuenta. Tu familia solo abre su link.",gateT:"Primero guarda tu posada",gateP:"Antes de mandar invitaciones, crea tu cuenta de organizador para que las cartas te lleguen a ti, aunque cambies de teléfono.",startCta:"Crear cuenta y empezar",haveAcct2:"Ya tengo cuenta · Entrar",bannerT:"Tu posada solo está en este teléfono",bannerP:"Crea tu cuenta de organizador para no perderla y seguir cada carta.",bannerB:"Crear mi cuenta",acctPill:"Cuenta"});
 const CLOUD=()=>typeof AUTH!=="undefined"?AUTH:null, ME=()=>{ const c=CLOUD(); return c&&c.user(); };
 const ui=()=>DB.ui||((navigator.language||"").startsWith("es")?"es":"en");
 const t=(k,...a)=>{ const v=W[ui()][k]??W.en[k]; return typeof v==="function"?v(...a):v; };
@@ -471,14 +475,14 @@ function render(){ document.documentElement.lang=ui(); const g=G(), app=$("app")
   if(!g||!g.setup){ $("tabbar").hidden=true; app.innerHTML=topbar()+(g&&wiz>0?wizard():welcome()); wireInputs(); return; }
   $("tabbar").hidden=false; renderTabs();
   const body={home:homeV,people:peopleV,draw:drawV,more:moreV}[view]||homeV;
-  app.innerHTML=topbar()+(canSave?"":`<div class="warn" style="margin-bottom:12px">${esc(t("noSave"))}</div>`)+body(); wireInputs(); }
+  app.innerHTML=topbar()+(canSave?"":`<div class="warn" style="margin-bottom:12px">${esc(t("noSave"))}</div>`)+(CLOUD()&&!ME()?`<div class="card acctban"><div class="stack tight"><h3>⚠️ ${esc(t("bannerT"))}</h3><p class="help">${esc(t("bannerP"))}</p></div><button class="cta sm" data-act="login" data-m="start" style="width:100%">🔑 ${esc(t("bannerB"))}</button></div>`:"")+body(); wireInputs(); }
 function renderTabs(){ const g=G(), waiting=g.people.filter(p=>!p.letter).length, D=g.draw, toSend=D?pending(D).length:0;
   $("tabs").innerHTML=[["home",t("tHome"),0],["people",t("tPeople"),!D&&waiting?0:0],["draw",t("tDraw"),toSend],["more",t("tMore"),0]].map(([k,l,n])=>`<button type="button" data-act="tab" data-v="${k}" ${view===k?'aria-current="page"':""}>${ICON[k]}<span>${esc(l)}</span>${n?`<span class="dot">${n}</span>`:""}</button>`).join(""); }
 
 function welcome(){ const gs=Object.values(DB.groups).filter(x=>x.setup);
   return `<div class="card hero in">${SLEIGH}<span class="kicker">${esc(t("heroK"))}</span><h1>${esc(t("heroT"))}</h1><p>${esc(t("heroP"))}</p>
-    <ol class="how"><li><span class="n">👨‍👩‍👧‍👦</span><div><b>${esc(t("how1"))}</b><span>${esc(t("how1s"))}</span></div></li><li><span class="n">✉️</span><div><b>${esc(t("how2"))}</b><span>${esc(t("how2s"))}</span></div></li><li><span class="n">🪅</span><div><b>${esc(t("how3"))}</b><span>${esc(t("how3s"))}</span></div></li></ol>
-    <button class="cta" data-act="begin">${esc(t("start"))}</button>${CLOUD()&&!ME()?`<button class="cta alt" data-act="login">🔑 ${esc(t("haveAcct"))}</button>`:""}<button class="ghost" data-act="restoreOpen">${esc(t("restore"))}</button></div>
+    <ol class="how">${CLOUD()&&!ME()?`<li><span class="n">🔑</span><div><b>${esc(t("startT"))}</b><span>${esc(t("startP"))}</span></div></li>`:""}<li><span class="n">👨‍👩‍👧‍👦</span><div><b>${esc(t("how1"))}</b><span>${esc(t("how1s"))}</span></div></li><li><span class="n">✉️</span><div><b>${esc(t("how2"))}</b><span>${esc(t("how2s"))}</span></div></li><li><span class="n">🪅</span><div><b>${esc(t("how3"))}</b><span>${esc(t("how3s"))}</span></div></li></ol>
+    ${CLOUD()&&!ME()?`<button class="cta" data-act="begin">🎄 ${esc(t("startCta"))}</button><p class="help" style="text-align:center;margin:-2px 0 0">🔑 ${esc(t("onlyYou"))}</p><button class="cta alt" data-act="login">${esc(t("haveAcct2"))}</button>`:`<button class="cta" data-act="begin">${esc(t("start"))}</button>`}<button class="ghost" data-act="restoreOpen">${esc(t("restore"))}</button></div>
     ${gs.length?`<div class="card soft" style="margin-top:14px"><h3>${esc(t("haveGroups"))}</h3>${gs.map(x=>`<div class="pair"><span>🎄 ${esc(x.name)}</span><button class="cta sm alt" data-act="switch" data-g="${x.gid}">${esc(t("open"))}</button></div>`).join("")}</div>`:""}`; }
 
 function wizard(){ const g=G(), bars=`<div class="steps">${[1,2,3].map(i=>`<i class="${i<=wiz?"on":""}"></i>`).join("")}</div>`;
@@ -523,7 +527,6 @@ function homeV(){ const g=G(), ps=g.people, n=ps.length, inN=ps.filter(p=>p.lett
     <button class="stat" data-act="tab" data-v="draw" style="font:inherit;color:inherit;text-align:left;cursor:pointer"><small>${esc(t("draw"))}</small><b style="font-size:16px">${D?esc(t("done"))+" ✓":esc(t("notYet"))}</b><span>${D?esc(t("of",sentN,cardsN)):esc(dl)}</span></button></div>
   ${(()=>{ const F=[["🎁",t("eBudget"),g.budget],["🎄",t("eEx"),g.party&&fmtDate(g.party)+(g.place?" · "+g.place:"")],["📮",t("eDue"),g.deadline&&fmtDate(g.deadline)]], miss=F.filter(f=>!f[2]);
     return `<div class="facts">${F.filter(f=>f[2]).map(f=>fact(...f)).join("")}${miss.length?`<button class="fact empty" data-act="tab" data-v="more">＋ ${esc(miss.map(f=>f[1]).join(", "))}</button>`:""}</div>`; })()}
-  ${CLOUD()&&!ME()&&!DB.nudgeX?`<div class="card soft nudge"><div class="row between"><h3>☁️ ${esc(t("nudgeT"))}</h3><button class="close" data-act="nudgeX" aria-label="Close">✕</button></div><p class="help">${esc(t("nudgeP"))}</p><button class="cta sm" data-act="login" style="width:100%">${esc(t("nudgeB"))}</button></div>`:""}
   ${boardRows(g).length||D?lbCard():`<a class="row-link" href="${esc(GAME_SHARE(g))}" target="_blank" rel="noopener">🎮 ${esc(t("playRow"))}<span aria-hidden="true">›</span></a>`}
   ${mailCard()}</div>`; }
 function lbCard(){ const g=G(), rs=boardRows(g).slice(0,5), medal=["🥇","🥈","🥉"];
@@ -571,9 +574,13 @@ function menuSheet(){ const g=G(), gs=Object.values(DB.groups).filter(x=>x.setup
     ${c?(me?`<div class="pair"><span>☁️ ${esc(t("signedAs",me.email))}</span><button class="cta sm alt" data-act="signOut">${esc(t("signOut"))}</button></div>`:`<button class="cta" data-act="login">🔑 ${esc(t("nudgeB"))}</button>`):""}
     <div class="row between"><span class="lbl">${esc(t("lang"))}</span><div class="seg"><button type="button" data-act="ui" data-l="en" aria-pressed="${ui()==="en"}">EN</button><button type="button" data-act="ui" data-l="es" aria-pressed="${ui()==="es"}">ES</button></div></div>
     ${typeof ORIGIN!=="undefined"?`<a class="ghost" href="/" style="text-align:center">← ${esc(t("landing"))}</a>`:""}`); }
-let loginEmail="";
-function loginSheet(step){ const c=CLOUD(); if(!c) return;
-  if(step!=="code") sheet(`<div class="sheethead"><div class="stack tight"><span class="kicker">🔑</span><h2>${esc(t("loginT"))}</h2></div>${closeBtn()}</div><p>${esc(t("loginP"))}</p>
+let loginEmail="", pendingAct=null, loginMode="";
+function loginSheet(step){ const c=CLOUD(); if(!c) return; if(step==="start"||step==="gate"||step==="login"){ loginMode=step; step=""; }
+  const big=loginMode==="start"||loginMode==="gate";
+  const head=big?`<div class="sheethead"><div class="stack tight"><span class="kicker">🔑 ${esc(t("acctPill"))}</span><h2>${esc(loginMode==="gate"?t("gateT"):t("startT"))}</h2></div>${closeBtn()}</div><p>${esc(loginMode==="gate"?t("gateP"):t("startP"))}</p>
+    <ul class="whys"><li>📱 ${esc(t("why1"))}</li><li>📮 ${esc(t("why2"))}</li><li>👀 ${esc(t("why3"))}</li></ul><p class="help">${esc(t("onlyYou"))}</p>`
+    :`<div class="sheethead"><div class="stack tight"><span class="kicker">🔑</span><h2>${esc(t("loginT"))}</h2></div>${closeBtn()}</div><p>${esc(t("loginP"))}</p>`;
+  if(step!=="code") sheet(`${head}
     <form class="stack" id="loginForm"><div class="field"><label class="lbl" for="l_e">${esc(t("emailL"))}</label><input type="email" id="l_e" value="${esc(loginEmail)}" placeholder="${esc(t("emailPh"))}" autocomplete="email" inputmode="email" required></div><p class="err" id="lerr" hidden></p><button class="cta" type="submit" id="lgo">${esc(t("sendCode"))}</button></form>`);
   else sheet(`<div class="sheethead"><div class="stack tight"><span class="kicker">📬</span><h2>${esc(t("codeT"))}</h2></div>${closeBtn()}</div><p>${esc(t("codeP",loginEmail))}</p>
     <form class="stack" id="codeForm"><div class="field"><label class="lbl" for="l_c">${esc(t("codeL"))}</label><input type="text" id="l_c" class="code" placeholder="123456" autocomplete="one-time-code" inputmode="numeric" pattern="[0-9]*" maxlength="8" required></div><p class="err" id="lerr" hidden></p><button class="cta" type="submit" id="lgo">${esc(t("verify"))}</button></form>
@@ -582,7 +589,11 @@ function loginSheet(step){ const c=CLOUD(); if(!c) return;
   const f=$("loginForm"); if(f){ setTimeout(()=>$("l_e").focus(),60); f.onsubmit=async e=>{ e.preventDefault(); const v=$("l_e").value.trim().toLowerCase(); if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(v)) return err("emailBad"); loginEmail=v; $("lgo").disabled=true; const r=await c.sendCode(v); if(r==="ok") loginSheet("code"); else err(r==="rate"?"tooMany":"netFail"); }; }
   const cf=$("codeForm"); if(cf){ setTimeout(()=>$("l_c").focus(),60); const go=async()=>{ const v=$("l_c").value.replace(/\D/g,""); if(v.length<6) return; $("lgo").disabled=true; const r=await c.verify(loginEmail,v); if(r==="ok"){ closeSheet(); await afterLogin(); } else err(r==="rate"?"tooMany":r==="net"?"netFail":"codeBad"); };
     cf.onsubmit=e=>{ e.preventDefault(); go(); }; $("l_c").oninput=()=>{ if($("l_c").value.replace(/\D/g,"").length===6) go(); }; } }
-async function afterLogin(){ const c=CLOUD(); if(!c) return; await c.sync(); if(!G()||!G().setup){ const x=Object.values(DB.groups).filter(g=>g.setup).sort((a,b)=>(b.ut||0)-(a.ut||0))[0]; if(x){ DB.cur=x.gid; wiz=0; view="home"; } } persist(); render(); toast(t("welcomeBack")); }
+async function afterLogin(){ const c=CLOUD(); if(!c) return; await c.sync(); const pa=pendingAct; pendingAct=null;
+  const has=Object.values(DB.groups).some(g=>g.setup);
+  if(pa&&pa.act==="begin"&&!has){ toast(t("welcomeBack")); ACT.begin(); return; }
+  if(pa&&pa.act!=="begin"&&G()&&G().setup){ persist(); render(); toast(t("welcomeBack")); const fn=ACT[pa.act]; if(fn) setTimeout(()=>fn({dataset:pa.data,getAttribute:()=>null}),350); return; }
+  if(!G()||!G().setup){ const x=Object.values(DB.groups).filter(g=>g.setup).sort((a,b)=>(b.ut||0)-(a.ut||0))[0]; if(x){ DB.cur=x.gid; wiz=0; view="home"; } } persist(); render(); toast(t("welcomeBack")); }
 function moreV(){ const g=G();
   return `<div class="stack"><div class="card in"><h3>🎄 ${esc(t("mDetails"))}</h3>
     <div class="field"><label class="lbl" for="m_g">${esc(t("gname"))}</label><input type="text" id="m_g" value="${esc(g.name)}"></div>
@@ -634,7 +645,7 @@ function readWiz(){ const g=G(), v=id=>($(id)||{}).value;
 const ACT={
   ui:a=>{ if(wiz&&G()&&!G().setup) readWiz(); DB.ui=a.dataset.l; if(G()&&!G().setup) G().lang=DB.ui; persist(); render(); },
   tab:a=>go(a.dataset.v), tabDraw:()=>go("draw"),
-  begin:()=>{ const g=Object.values(DB.groups).find(x=>!x.setup)||newGroup(); DB.cur=g.gid; g.lang=ui(); wiz=1; persist(); render(); setTimeout(()=>$("w_g")&&$("w_g").focus(),200); },
+  begin:()=>{ if(CLOUD()&&!ME()){ pendingAct={act:"begin",data:{}}; loginSheet("start"); return; } const g=Object.values(DB.groups).find(x=>!x.setup)||newGroup(); DB.cur=g.gid; g.lang=ui(); wiz=1; persist(); render(); setTimeout(()=>$("w_g")&&$("w_g").focus(),200); },
   toggle:a=>{ a.setAttribute("aria-checked",String(a.getAttribute("aria-checked")!=="true")); },
   bud:a=>{ const g=G(); g.budget=g.budget===a.dataset.b?"":a.dataset.b; $("w_bc").value=""; persist(); document.querySelectorAll("[data-act=bud]").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.b===g.budget))); },
   glang:a=>{ G().lang=a.dataset.l; persist(); document.querySelectorAll("[data-act=glang]").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.l===a.dataset.l))); },
@@ -692,13 +703,15 @@ const ACT={
   switch:a=>{ DB.cur=a.dataset.g; view="home"; closeSheet(); persist(); render(); },
   newGroup:()=>{ closeSheet(); newGroup(); wiz=1; render(); },
   delGroupQ:()=>confirmSheet(t("mDeleteQ"),t("mDeleteP"),t("mDeleteY"),"delGroupY"),
-  menu:()=>menuSheet(), login:()=>loginSheet(), resendCode:async()=>{ const c=CLOUD(); if(c&&loginEmail){ const r=await c.sendCode(loginEmail); toast(r==="ok"?t("codeT"):r==="rate"?t("tooMany"):t("netFail")); } },
+  menu:()=>menuSheet(), login:a=>loginSheet(a&&a.dataset&&a.dataset.m==="start"?"start":"login"), resendCode:async()=>{ const c=CLOUD(); if(c&&loginEmail){ const r=await c.sendCode(loginEmail); toast(r==="ok"?t("codeT"):r==="rate"?t("tooMany"):t("netFail")); } },
   nudgeX:()=>{ DB.nudgeX=1; persist(); render(); },
   signOut:async()=>{ const c=CLOUD(); if(c){ await c.signOut(); } closeSheet(); render(); toast(t("signedOut")); },
   delGroupY:()=>{ const c=CLOUD(); if(c) c.remove(DB.cur); delete DB.groups[DB.cur]; DB.cur=(Object.values(DB.groups).find(x=>x.setup)||{}).gid||null; persist(); closeSheet(); view="home"; render(); },
 };
 function refreshAfterAdd(){ if($("sheetRoot").innerHTML){ addSheet(); } render(); }
+const NEEDACCT=new Set(["qInv","qRem","qPin","qOne","groupLink","draw"]);
 document.addEventListener("click",e=>{ const a=e.target.closest("[data-act]"); if(!a) return; const fn=ACT[a.dataset.act]; if(!fn) return;
+  if(CLOUD()&&!ME()&&NEEDACCT.has(a.dataset.act)&&G()&&G().setup){ pendingAct={act:a.dataset.act,data:{...a.dataset}}; loginSheet("gate"); return; }
   fn(a,e); });
 function wireInputs(){ const f=$("addForm"); if(f) f.onsubmit=e=>{ e.preventDefault(); const n=$("a_n"), p=$("a_p"); const r=addPerson(n.value,p.value); if(r===false) toast(t("dupe",1)); else if(r){ persist(); toast(t("added",1)); }
   n.value=""; p.value=""; if($("sheetRoot").innerHTML){ addSheet(); render(); } else { render(); } setTimeout(()=>$("a_n")&&$("a_n").focus(),50); };
