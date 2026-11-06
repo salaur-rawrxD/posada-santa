@@ -59,7 +59,7 @@ h1{font-family:var(--display);font-weight:400;font-size:clamp(25px,7vw,32px);lin
 /* the game */
 .stage{position:relative;height:clamp(300px,54vh,410px);border-radius:18px;overflow:hidden;cursor:pointer;background:#16224a;touch-action:manipulation;outline:none}
 .stage canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
-.bubble{position:absolute;left:50%;top:8px;transform:translateX(-50%);z-index:4;width:max-content;max-width:calc(100% - 24px);background:var(--card);color:var(--ink);font-weight:800;font-size:15px;line-height:1.3;text-align:center;padding:8px 14px;border-radius:14px;box-shadow:0 6px 18px rgba(0,0,0,.3);pointer-events:none;transition:opacity .4s}
+.bubble{position:absolute;left:50%;top:42px;transform:translateX(-50%);z-index:4;width:max-content;max-width:calc(100% - 24px);background:var(--card);color:var(--ink);font-weight:800;font-size:15px;line-height:1.3;text-align:center;padding:8px 14px;border-radius:14px;box-shadow:0 6px 18px rgba(0,0,0,.3);pointer-events:none;transition:opacity .4s}
 .bubble.pop{animation:bpop .35s cubic-bezier(.3,1.7,.5,1)}
 .bubble.off{opacity:0}
 @keyframes bpop{from{transform:translateX(-50%) scale(.8)}to{transform:translateX(-50%)}}
@@ -926,7 +926,7 @@ function collide(){
       hud("mStar"); setTimeout(()=>say("starDone",3.4),400); startBuzon(); } });
 }
 const FATS={tamal:.27,bunuelo:.21,champ:.17};   // about 4 antojitos and he's stuffed
-function eat(f){ const was=fat; fat=Math.min(1,fat+(FATS[f]||.1)); hud();
+function eat(f){ const was=fat; fat=Math.min(1,fat+(FATS[f]||.1)); kid.eatT=.35; hud();
   if(fat>=.45&&fatMsg<1){ fatMsg=1; setTimeout(()=>say("fat1",2.6),250); }
   else if(fat>=.8&&fatMsg<2){ fatMsg=2; burp(); setTimeout(()=>say("burp",1.6),150); setTimeout(()=>say("fat2",3.4),1700); }
   if(was<1&&fat>=1&&!RM){ const pz=$("panza"); pz.classList.remove("full"); void pz.offsetWidth; pz.classList.add("full"); } }
@@ -959,25 +959,35 @@ function draw(){
   stars.forEach(s=>{ if(!s.got) drawStar(s.x-camX,s.y+Math.sin(clock*2)*6,true); });
   drawParts();
   // the kid and a soft shadow on the snow
-  const lift=GY-kid.y; ctx.fillStyle="rgba(120,140,190,.45)"; ctx.beginPath(); ctx.ellipse(kidSX,GY+2,KW*.42*Math.max(.4,1-lift/200),4,0,0,6.283); ctx.fill();
+  const lift=GY-kid.y; ctx.fillStyle="rgba(120,140,190,.45)"; ctx.beginPath(); ctx.ellipse(kidSX,GY+2,KW*(.42+.3*fat)*Math.max(.4,1-lift/200),4+2*fat,0,0,6.283); ctx.fill();
   const moving=state==="play"||state==="arriving", L=kid.letter?"L":"";
   if(kid.burp>0) kid.burp-=1/60;
   const frame=kid.ouch>0||kid.burp>0?"ouch":!kid.ground?"air":moving?(Math.floor(kid.walk)%2?"a":"b"):"stand";
   const img=kidImg(frame+L); const bob=kid.ground&&moving?Math.abs(Math.sin(kid.walk*Math.PI))*-2:0;
   const rot=dance>0?Math.sin(clock*24)*.3:kid.spin>0?(1-kid.spin)*6.283:(!kid.ground?Math.max(-.3,Math.min(.35,kid.vy/700)):0);
-  if(img&&img.complete){ const sx=1+.2*fat+(dance>0?Math.sin(clock*24)*.06:0), sy=1+.03*fat, jig=fat>.05&&kid.ground&&moving?Math.sin(kid.walk*Math.PI*2)*fat*1.2:0;
+  if(img&&img.complete){
+    // the more he eats, the rounder he gets: wider body, a big panza out front, puffy cheeks, a wobble when he walks
+    if(kid.eatT>0) kid.eatT-=1/60; const gulp=kid.eatT>0?Math.sin((1-kid.eatT/.35)*Math.PI)*.12:0;
+    const jig=fat>.05&&kid.ground&&moving?Math.sin(kid.walk*Math.PI*2)*fat*2.2:0;
+    const sx=1+.5*fat+gulp+(dance>0?Math.sin(clock*24)*.06:0), sy=1-.05*fat+gulp*.4;
     ctx.save(); ctx.translate(kidSX,kid.y-KH/2*sy+bob); ctx.rotate(rot); ctx.scale(sx,sy);
-    // the panza: a round belly that pokes out of the sweater as he eats
-    if(fat>.03){ const bw=KW*(.19+.21*fat)+jig, bh=KH*(.13+.09*fat), by=KH*.23;
-      ctx.save(); ctx.beginPath(); ctx.ellipse(0,by,bw,bh,0,0,6.283); ctx.fillStyle=bellyNow().c; ctx.fill(); ctx.clip();
-      // the sweater's stripes stretch around the belly
-      [[bellyNow().s[0],-.25,.16],[bellyNow().s[1],.02,.07],[bellyNow().s[2],.2,.06]].forEach(([c,o,h])=>{ ctx.fillStyle=c; ctx.beginPath(); ctx.ellipse(0,by+bh*o-bh*.9,bw*1.3,bh*.9,0,.15*Math.PI,.85*Math.PI); ctx.lineWidth=bh*h*2; ctx.strokeStyle=c; ctx.stroke(); });
-      ctx.fillStyle="rgba(0,0,0,.14)"; ctx.beginPath(); ctx.ellipse(0,by+bh*.7,bw,bh*.5,0,0,6.283); ctx.fill(); ctx.restore();
-      ctx.fillStyle="rgba(255,255,255,.16)"; ctx.beginPath(); ctx.ellipse(-bw*.45,by-bh*.3,bw*.22,bh*.22,-.4,0,6.283); ctx.fill(); }
     ctx.drawImage(img,-KW/2,-KH/2,KW,KH); drawOutfit(outfitNow);
-    if(fat>.55){ const pw=KW*(.06+.08*(fat-.55)); ctx.fillStyle=SKINS[avNow.skin]||"#f0b98a"; ctx.beginPath(); ctx.ellipse(-KW*.04,KH*.34,pw,KH*.025,0,0,6.283); ctx.fill(); // a little belly peeking out under the sweater
-      ctx.fillStyle="#c98a5c"; ctx.beginPath(); ctx.arc(-KW*.04,KH*.34,.9,0,6.283); ctx.fill(); }
-    ctx.restore(); }
+    ctx.restore();
+    // drawn unscaled on top of the sprite so the belly really sticks out
+    if(fat>.03){ ctx.save(); ctx.translate(kidSX,kid.y-KH/2*sy+bob); ctx.rotate(rot);
+      const bw=KW*(.16+.4*fat)+jig, bh=KH*(.09+.13*fat), by=KH*(.33+.02*fat), bx=KW*.03*fat;
+      ctx.beginPath(); ctx.ellipse(bx,by,bw,bh,0,0,6.283); ctx.fillStyle=bellyNow().c; ctx.fill();
+      ctx.save(); ctx.clip(); [[bellyNow().s[0],-.25,.16],[bellyNow().s[1],.02,.07],[bellyNow().s[2],.2,.06]].forEach(([c,o,h])=>{ ctx.strokeStyle=c; ctx.lineWidth=bh*h*2; ctx.beginPath(); ctx.ellipse(bx,by+bh*o-bh*.9,bw*1.3,bh*.9,0,.15*Math.PI,.85*Math.PI); ctx.stroke(); });
+        ctx.fillStyle="rgba(0,0,0,.16)"; ctx.beginPath(); ctx.ellipse(bx,by+bh*.75,bw,bh*.5,0,0,6.283); ctx.fill(); ctx.restore();
+      ctx.strokeStyle="rgba(0,0,0,.22)"; ctx.lineWidth=1.2; ctx.beginPath(); ctx.ellipse(bx,by,bw,bh,0,0,6.283); ctx.stroke();
+      ctx.fillStyle="rgba(255,255,255,.2)"; ctx.beginPath(); ctx.ellipse(bx-bw*.45,by-bh*.35,bw*.22,bh*.22,-.4,0,6.283); ctx.fill();
+      // past halfway the sweater rides up and the panza peeks out, ombligo and all
+      if(fat>.45){ const pw=bw*(.35+.4*(fat-.45)), ph=bh*(.22+.25*(fat-.45)); ctx.fillStyle=SKINS[avNow.skin]||"#f0b98a"; ctx.beginPath(); ctx.ellipse(bx,by+bh*.78,pw,ph,0,0,Math.PI); ctx.fill();
+        ctx.fillStyle="rgba(120,70,40,.55)"; ctx.beginPath(); ctx.ellipse(bx,by+bh*.9,1.4,1.8,0,0,6.283); ctx.fill(); }
+      // puffy cheeks
+      if(fat>.25){ const cr=KW*(.04+.07*fat); ctx.fillStyle="rgba(255,120,130,"+(.25+.35*fat).toFixed(2)+")"; [-1,1].forEach(sd=>{ ctx.beginPath(); ctx.arc(sd*KW*(.2+.12*fat),KH*.05,cr,0,6.283); ctx.fill(); }); }
+      ctx.restore(); }
+  }
   if(env){ const k=Math.min(1,env.t/env.d), e=1-Math.pow(1-k,2), x=env.x0+(env.x1-env.x0)*e, y=env.y0+(env.y1-env.y0)*e-60*Math.sin(Math.PI*k); drawEnvelope(x-camX,y,-.35+.35*k,1-.45*k); }
   ctx.textAlign="center"; floats.forEach(f=>{ ctx.globalAlpha=1-f.life; ctx.fillStyle=f.c; ctx.font="16px 'Lilita One', sans-serif"; ctx.strokeStyle="rgba(22,34,74,.7)"; ctx.lineWidth=3;
     ctx.strokeText(f.txt,f.x-camX,f.y-f.life*30); ctx.fillText(f.txt,f.x-camX,f.y-f.life*30); }); ctx.globalAlpha=1;
@@ -2097,7 +2107,7 @@ function tossSound(){ const t=now(); noise(t,.12,.12,"bandpass",1800); }
 
 /* ---------- HUD bits inside the stage ---------- */
 (function(){ const st=document.createElement("style"); st.textContent=`
-.hearts{position:absolute;left:8px;bottom:40px;z-index:3;display:flex;gap:3px;padding:5px 8px;border-radius:99px;background:rgba(22,34,74,.78);pointer-events:none}
+.hearts{position:absolute;left:8px;top:8px;z-index:3;display:flex;gap:3px;padding:5px 8px;border-radius:99px;background:rgba(22,34,74,.78);pointer-events:none}
 .hearts svg{width:18px;height:18px;display:block}.hearts.pop{animation:mpop .45s cubic-bezier(.3,1.8,.5,1)}
 .hearts.low svg.on{animation:hb .7s ease-in-out infinite}@keyframes hb{50%{transform:scale(1.22)}}
 .cbar{display:block;height:3px;border-radius:3px;background:rgba(255,255,255,.15);margin-top:3px;overflow:hidden}.cbar i{display:block;height:100%;width:0;background:linear-gradient(90deg,#f5a524,#ffd34d);border-radius:3px}
