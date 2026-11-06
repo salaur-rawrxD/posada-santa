@@ -1,0 +1,663 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="description" content="Run your family Secret Santa with Mexican-Christmas flavor: letters to Santa, piñata reveals and a posada game. Free, no accounts.">
+<meta property="og:title" content="Posada Santa · Secret Santa con sabor">
+<meta property="og:description" content="Letters to Santa, piñata reveals and La Posada game. Free, no accounts.">
+<meta name="theme-color" content="#16224a">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Posada Santa · Organizer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lilita+One&family=Nunito:wght@500;700;800&display=swap">
+<style>
+:root{
+  --night:#16224a; --night2:#22336b; --cream:#fff8ec; --ink:#2a1d14; --muted:#9aa6cf; --gold:#f5c66a; --marigold:#f5a524; --red:#d7372f; --rosa:#e2337f; --pine:#2f8f4e; --turq:#22a9c4;
+  --glass:rgba(255,255,255,.05); --line:rgba(255,255,255,.09);
+  --display:"Lilita One","Arial Rounded MT Bold",system-ui,sans-serif; --body:"Nunito",system-ui,-apple-system,"Segoe UI",sans-serif; color-scheme:dark;
+}
+[hidden]{display:none!important}
+*{box-sizing:border-box}
+html,body{min-height:100%}
+body{margin:0;background:radial-gradient(120% 60% at 50% 0%,var(--night2),var(--night) 70%) fixed,var(--night);color:var(--cream);font-family:var(--body);font-size:16px;line-height:1.45;-webkit-tap-highlight-color:transparent}
+.snowbg{position:fixed;inset:0;pointer-events:none;z-index:0;opacity:.55;background-image:radial-gradient(1.6px 1.6px at 12% 18%,#fff,transparent),radial-gradient(1.2px 1.2px at 78% 12%,#fff,transparent),radial-gradient(1.8px 1.8px at 40% 6%,#fff,transparent),radial-gradient(1.2px 1.2px at 90% 40%,#fff,transparent),radial-gradient(1.6px 1.6px at 6% 52%,#fff,transparent),radial-gradient(1.2px 1.2px at 62% 30%,#fff,transparent),radial-gradient(1.4px 1.4px at 28% 72%,#fff,transparent),radial-gradient(1.2px 1.2px at 84% 78%,#fff,transparent)}
+.picado{position:relative;z-index:1;display:flex;justify-content:center;gap:5px;padding-top:6px;overflow:hidden;height:52px}
+.picado::before{content:"";position:absolute;left:0;right:0;top:6px;height:2px;background:#2e5a3e}
+.picado .flag{flex:0 0 30px;height:40px;clip-path:polygon(0 0,100% 0,100% 82%,88% 100%,75% 82%,62% 100%,50% 82%,38% 100%,25% 82%,12% 100%,0 82%)}
+.picado .bulb{flex:0 0 9px;height:15px;border-radius:50% 50% 50% 50%/40% 40% 60% 60%;background:var(--c);box-shadow:0 0 10px 2px var(--c);margin-top:-1px}
+@media (prefers-reduced-motion:no-preference){.picado .bulb{animation:glow 2.4s ease-in-out infinite;animation-delay:var(--d)}@keyframes glow{50%{opacity:.45}}}
+.wrap{position:relative;z-index:1;max-width:560px;margin:0 auto;padding:6px max(16px,env(safe-area-inset-left,0px)) 110px max(16px,env(safe-area-inset-right,0px))}
+.kicker{display:inline-flex;align-items:center;gap:8px;font-size:11px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:var(--gold)}
+.kicker::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--marigold);box-shadow:0 0 10px var(--marigold)}
+h1,h2,h3{margin:0;font-weight:800;letter-spacing:-.02em;line-height:1.1;color:var(--cream)}
+h1{font-size:clamp(28px,8vw,36px)}h2{font-size:clamp(22px,6.4vw,27px)}h3{font-size:17px}
+p{margin:0;color:#b8c1e0;font-weight:600}
+.card{position:relative;padding:18px;border-radius:24px;background:linear-gradient(180deg,rgba(38,54,112,.92),rgba(22,32,72,.94));border:1px solid rgba(255,255,255,.1);box-shadow:0 20px 50px rgba(0,0,0,.35),inset 0 1px 0 rgba(255,255,255,.07);display:grid;gap:14px}
+.card.soft{background:var(--glass);box-shadow:none;border-color:var(--line)}
+.stack{display:grid;gap:12px}.stack.tight{gap:6px}.row{display:flex;gap:10px;align-items:center}.between{justify-content:space-between}
+.cta{font:inherit;font-weight:800;font-size:17px;width:100%;min-height:54px;padding:0 18px;border:0;border-radius:16px;cursor:pointer;color:#1c1430;background:linear-gradient(180deg,#ffc95e,#f5a524);box-shadow:0 12px 26px rgba(245,165,36,.25),inset 0 1px 0 rgba(255,255,255,.55);display:flex;gap:8px;align-items:center;justify-content:center;text-decoration:none;transition:transform .12s,filter .2s}
+.cta:active{transform:translateY(1px) scale(.99)}.cta:disabled{opacity:.45;cursor:not-allowed}
+.cta.alt{background:rgba(255,255,255,.07);color:var(--cream);box-shadow:inset 0 1px 0 rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12)}
+.cta.wa{background:linear-gradient(180deg,#3ad46a,#20b356);color:#06280f;box-shadow:0 10px 22px rgba(32,179,86,.25)}
+.cta.im{background:linear-gradient(180deg,#4aa8ff,#1d84f0);color:#fff;box-shadow:0 10px 22px rgba(29,132,240,.25)}
+.cta.sm{min-height:42px;font-size:14px;border-radius:13px;width:auto;padding:0 14px}
+.ghost{font:inherit;font-weight:700;font-size:14px;background:none;border:0;color:var(--muted);cursor:pointer;padding:8px;text-decoration:underline;text-decoration-color:rgba(170,180,214,.35);text-underline-offset:4px}
+.pill{font:inherit;font-weight:800;font-size:13px;height:34px;padding:0 13px;border-radius:99px;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.06);color:var(--cream);cursor:pointer;display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
+.seg{justify-self:start;display:inline-flex;padding:3px;border-radius:99px;background:rgba(255,255,255,.07);border:1px solid var(--line)}
+.seg button{font:inherit;font-weight:800;font-size:12px;height:28px;min-width:36px;padding:0 10px;border:0;border-radius:99px;background:none;color:var(--muted);cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--cream);color:var(--night)}
+label.lbl,.lbl{font-size:12px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+input[type=text],input[type=tel],input[type=date],input[type=time],textarea,select{font:inherit;font-size:16px;font-weight:700;width:100%;min-height:48px;padding:10px 14px;border-radius:14px;border:1px solid rgba(255,255,255,.16);background:rgba(10,16,40,.45);color:var(--cream);-webkit-user-select:text;user-select:text}
+textarea{min-height:110px;resize:vertical}
+input::placeholder,textarea::placeholder{color:#7f8ab8}
+input:focus,textarea:focus,select:focus{outline:none;border-color:var(--gold);box-shadow:0 0 0 3px rgba(245,198,106,.25)}
+.field{display:grid;gap:6px}.help{font-size:13px;color:var(--muted);font-weight:600}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{font:inherit;font-weight:700;font-size:14px;min-height:40px;padding:6px 13px;border-radius:99px;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.05);color:var(--cream);cursor:pointer;text-align:left}
+.chip[aria-pressed="true"]{background:rgba(245,165,36,.2);border-color:var(--gold);color:#fff}
+.toast{position:fixed;left:50%;bottom:calc(96px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);z-index:80;background:var(--cream);color:var(--ink);font-weight:800;padding:11px 16px;border-radius:14px;box-shadow:0 12px 30px rgba(0,0,0,.35);max-width:calc(100% - 32px);text-align:center}
+button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+@media (prefers-reduced-motion:no-preference){.in{animation:in .45s cubic-bezier(.3,1.4,.5,1) both}@keyframes in{from{transform:translateY(14px);opacity:0}}}
+
+h1,h2{font-family:var(--display);font-weight:400;letter-spacing:.005em}
+.top{display:flex;justify-content:space-between;align-items:center;gap:10px;margin:2px 0 16px}
+.brand{display:flex;align-items:center;gap:8px;font-weight:800;font-size:14px;min-width:0}
+.brand b{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.hero{text-align:center;justify-items:center}
+.hero .sleigh{width:min(260px,70%);height:auto;margin:-4px auto -2px}
+.how{display:grid;gap:10px;text-align:left;width:100%}
+.how li{list-style:none;display:grid;grid-template-columns:40px 1fr;gap:12px;align-items:center;padding:10px 12px;border-radius:16px;background:rgba(255,255,255,.04);border:1px solid var(--line)}
+.how .n{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;font-size:20px;background:rgba(245,165,36,.14)}
+.how b{display:block;font-size:15px}.how span{font-size:13px;color:var(--muted);font-weight:700}
+.how ol,.how ul{margin:0;padding:0}
+/* wizard */
+.steps{display:flex;gap:6px;margin-bottom:12px}.steps i{flex:1;height:5px;border-radius:9px;background:rgba(255,255,255,.12)}.steps i.on{background:linear-gradient(90deg,var(--marigold),var(--gold))}
+.two{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px}.two>*,.field,.addrow>*{min-width:0}input,select,textarea{min-width:0;max-width:100%}input[type=date]{-webkit-appearance:none;appearance:none}
+.wdock{position:sticky;bottom:0;z-index:5;padding:12px 0 calc(10px + env(safe-area-inset-bottom,0px));margin-top:6px;background:linear-gradient(180deg,rgba(22,34,74,0),rgba(22,34,74,.95) 35%)}
+.toggle{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 14px;border-radius:14px;background:rgba(255,255,255,.04);border:1px solid var(--line);cursor:pointer}
+.toggle b{font-size:15px}.toggle small{display:block;font-size:13px;color:var(--muted);font-weight:700}
+.sw{flex:0 0 50px;height:30px;border-radius:99px;background:rgba(255,255,255,.18);position:relative;transition:background .2s;border:0;padding:0;cursor:pointer}
+.sw::after{content:"";position:absolute;top:3px;left:3px;width:24px;height:24px;border-radius:50%;background:#fff;transition:transform .2s}
+.sw[aria-checked="true"]{background:var(--pine)}.sw[aria-checked="true"]::after{transform:translateX(20px)}
+/* people */
+.plist{display:grid;gap:8px}
+.person{display:grid;grid-template-columns:42px 1fr auto;gap:12px;align-items:center;padding:10px 12px;border-radius:16px;background:rgba(255,255,255,.04);border:1px solid var(--line);cursor:pointer;width:100%;font:inherit;color:inherit;text-align:left}
+.person:active{background:rgba(255,255,255,.08)}
+.av{width:42px;height:42px;border-radius:50%;display:grid;place-items:center;font-weight:800;font-size:17px;color:#1c1430;background:var(--c,#f5c66a)}
+.person b{display:block;font-size:15px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.person small{font-size:12px;color:var(--muted);font-weight:700}
+.st{font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;padding:5px 9px;border-radius:99px;white-space:nowrap}
+.st.in{background:rgba(47,143,78,.25);color:#8ff0ac}.st.inv{background:rgba(245,165,36,.18);color:#ffd27a}.st.new{background:rgba(255,255,255,.08);color:var(--muted)}.st.sent{background:rgba(34,169,196,.2);color:#8fe3f5}.st.redo{background:rgba(215,55,47,.25);color:#ffb3a8}
+.addrow{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr) auto;gap:8px;align-items:end}
+.addrow .cta{width:48px;min-height:48px;padding:0;font-size:22px}
+.tabs2{display:flex;gap:6px;flex-wrap:wrap}
+/* home */
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.stat{padding:12px;border-radius:16px;background:rgba(255,255,255,.05);border:1px solid var(--line);display:grid;gap:2px}
+.stat small{font-size:10px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}.stat b{font-size:20px;font-weight:800}.stat span{font-size:12px;color:var(--muted);font-weight:700}
+.meter{height:8px;border-radius:9px;background:rgba(255,255,255,.1);overflow:hidden}.meter i{display:block;height:100%;background:linear-gradient(90deg,var(--pine),#5fd486);border-radius:9px;transition:width .4s}
+.next{background:linear-gradient(160deg,rgba(245,165,36,.22),rgba(226,51,127,.12));border-color:rgba(245,198,106,.45)}
+.next .big{font-size:40px;line-height:1}
+.mail{display:grid;gap:10px}
+.facts{display:flex;flex-wrap:wrap;gap:8px}
+.fact{display:inline-flex;gap:6px;align-items:center;font-size:13px;font-weight:800;padding:7px 11px;border-radius:99px;background:rgba(255,255,255,.06);border:1px solid var(--line);color:var(--cream);cursor:pointer;font-family:inherit}
+.fact.empty{color:var(--muted);border-style:dashed}
+/* tab bar */
+.tabbar{position:fixed;left:0;right:0;bottom:0;z-index:40;padding:8px max(10px,env(safe-area-inset-left,0px)) calc(8px + env(safe-area-inset-bottom,0px));background:rgba(16,24,56,.86);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-top:1px solid var(--line)}
+.tabbar .inner{max-width:560px;margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr);gap:4px}
+.tabbar button{font:inherit;font-size:11px;font-weight:800;color:var(--muted);background:none;border:0;border-radius:14px;padding:6px 0;display:grid;justify-items:center;gap:3px;cursor:pointer;position:relative}
+.tabbar svg{width:24px;height:24px}
+.tabbar button[aria-current="page"]{color:var(--gold);background:rgba(245,198,106,.1)}
+.tabbar .dot{position:absolute;top:2px;left:calc(50% + 8px);min-width:18px;height:18px;padding:0 5px;border-radius:99px;background:var(--red);color:#fff;font-size:11px;display:grid;place-items:center}
+/* sheet */
+.scrim{position:fixed;inset:0;z-index:60;background:rgba(6,10,28,.6);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);display:flex;align-items:flex-end;justify-content:center}
+.sheet{width:100%;max-width:560px;max-height:92vh;overflow:auto;padding:10px 18px calc(20px + env(safe-area-inset-bottom,0px));border-radius:26px 26px 0 0;background:linear-gradient(180deg,#26366f,#1a2759);border:1px solid rgba(255,255,255,.12);border-bottom:0;box-shadow:0 -20px 50px rgba(0,0,0,.4);display:grid;gap:14px}
+.sheet .grab{width:44px;height:5px;border-radius:9px;background:rgba(255,255,255,.25);justify-self:center}
+.sheet .x{position:absolute}
+@media (prefers-reduced-motion:no-preference){.sheet{animation:up .32s cubic-bezier(.2,1.1,.4,1) both}@keyframes up{from{transform:translateY(40px);opacity:0}}}
+.sheethead{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
+.close{flex:0 0 38px;width:38px;height:38px;border-radius:50%;border:0;background:rgba(255,255,255,.08);color:var(--cream);font-size:18px;cursor:pointer}
+.send3{display:grid;grid-template-columns:1fr 1fr;gap:8px}.send3 .alt{grid-column:1/-1}
+.preview{font-size:13px;font-weight:600;color:#cfd6f0;white-space:pre-wrap;padding:12px;border-radius:14px;background:rgba(0,0,0,.22);max-height:150px;overflow:auto;-webkit-user-select:text;user-select:text}
+details summary{cursor:pointer;font-weight:800;font-size:13px;color:var(--muted)}
+.qcount{font-size:12px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--gold)}
+.big-name{display:flex;gap:12px;align-items:center}.big-name .av{width:54px;height:54px;font-size:22px}
+.lettersum{display:grid;gap:6px;padding:12px;border-radius:14px;background:rgba(47,143,78,.12);border:1px solid rgba(47,143,78,.35)}
+.lettersum small{font-size:11px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:#8ff0ac}
+.lettersum b{font-size:14px;font-weight:700}
+.pair{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:10px 12px;border-radius:14px;background:rgba(255,255,255,.04);border:1px solid var(--line);font-weight:800}
+.pair button{flex:0 0 auto}
+.warn{padding:12px 14px;border-radius:14px;background:rgba(215,55,47,.14);border:1px solid rgba(215,55,47,.4);font-weight:700;font-size:14px;color:#ffd0c8}
+.ok{padding:12px 14px;border-radius:14px;background:rgba(47,143,78,.14);border:1px solid rgba(47,143,78,.4);font-weight:700;font-size:14px;color:#c4f5d2}
+.section-t{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.empty-st{text-align:center;padding:26px 10px;display:grid;gap:8px;justify-items:center}.empty-st .e{font-size:42px}
+.err{color:#ffb3a8;font-weight:800;font-size:14px}
+.fine{font-size:12px;color:var(--muted);font-weight:700;text-align:center}
+.drawn{display:grid;gap:8px}
+.giver{display:grid;grid-template-columns:42px 1fr auto;gap:12px;align-items:center;padding:10px 12px;border-radius:16px;background:rgba(255,255,255,.04);border:1px solid var(--line)}
+@media (prefers-reduced-motion:no-preference){.shake{animation:shk .5s}@keyframes shk{20%,60%{transform:rotate(-6deg)}40%,80%{transform:rotate(6deg)}}}
+.confetti{position:fixed;inset:0;pointer-events:none;z-index:70;overflow:hidden}.confetti span{position:absolute;top:-40px;font-size:24px}
+</style>
+</head>
+<body>
+<div class="snowbg" aria-hidden="true"></div>
+<div class="picado" id="picado" aria-hidden="true"></div>
+<main class="wrap" id="app"></main>
+<nav class="tabbar" id="tabbar" hidden><div class="inner" id="tabs"></div></nav>
+<div id="sheetRoot"></div>
+<div class="confetti" id="confetti" aria-hidden="true"></div>
+<div class="toast" id="toast" role="status" hidden></div>
+
+<script>
+const SB_URL="https://ktssnlyspwzhdhffpgqm.supabase.co", SB_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt0c3NubHlzcHd6aGRoZmZwZ3FtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTM5MjYwMDgsImV4cCI6MjEwOTUwMjAwOH0.3lHaJYRYCyeqcdgS2EIfT1_6qr0B5CxNqYQNHkyevCk";
+async function rpc(fn,args){ const c=new AbortController(), tm=setTimeout(()=>c.abort(),9000);
+  try{ const r=await fetch(SB_URL+"/rest/v1/rpc/"+fn,{method:"POST",headers:{"Content-Type":"application/json",apikey:SB_KEY,Authorization:"Bearer "+SB_KEY},body:JSON.stringify(args),signal:c.signal});
+    if(!r.ok) throw new Error("rpc "+r.status); return await r.json(); } finally{ clearTimeout(tm); } }
+const ORIGIN=location.origin;
+
+const LETTER_URL=ORIGIN+"/letter";
+const REVEAL_URL=ORIGIN+"/pinata";
+const GAME_URL=ORIGIN+"/play";
+const KEY="eva-santa-2026-wrap", SKEY="santa-host-v1";
+const $=id=>document.getElementById(id);
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const norm=s=>String(s||"").normalize("NFD").replace(/[̀-ͯ]/g,"").toLowerCase().replace(/[^a-z0-9 ]/g," ").replace(/\s+/g," ").trim();
+const TITLES=new Set(["tia","tio","abuela","abuelo","abue","abuelita","abuelito","prima","primo","cousin","aunt","auntie","uncle","grandma","grandpa","nana","tata","don","dona","mama","papa","mom","dad","madrina","padrino","comadre","compadre","nino","nina","sr","sra"]);
+const first=n=>{ const w=String(n||"").trim().split(/\s+/).filter(Boolean); if(!w.length) return ""; const k=w[0].normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase().replace(/\.$/,""); return TITLES.has(k)&&w[1]?w[0]+" "+w[1]:w[0]; };
+const ini=n=>(first(n).split(" ").pop()||"?")[0].toUpperCase();
+const digits=p=>String(p||"").replace(/\D/g,"");
+const phoneKey=p=>{ const d=digits(p); return d.length>=10?d.slice(-10):d; };
+const intl=p=>{ let d=digits(p); if(d.length===10) d="1"+d; return d; };
+const pretty=p=>{ const d=digits(p); if(d.length===10) return `(${d.slice(0,3)}) ${d.slice(3,6)}-${d.slice(6)}`; if(d.length===11&&d[0]==="1") return `(${d.slice(1,4)}) ${d.slice(4,7)}-${d.slice(7)}`; return p||""; };
+const isApple=/iPhone|iPad|Mac/i.test(navigator.userAgent);
+const waLink=(phone,text)=>`https://wa.me/${phone?intl(phone):""}?text=${encodeURIComponent(text)}`;
+const imLink=(phone,text)=>`sms:${phone?"+"+intl(phone):""}${isApple?"&":"?"}body=${encodeURIComponent(text)}`;
+const uid=()=>Math.random().toString(36).slice(2,8)+Date.now().toString(36).slice(-4);
+const COLORS=["#f5c66a","#ff8fa3","#8fe3a4","#8fd3f5","#c9a7ff","#ffb36b","#f5e08f","#9ff0e0"];
+const colorOf=id=>{ let h=0; for(const c of String(id)) h=(h*31+c.charCodeAt(0))>>>0; return COLORS[h%COLORS.length]; };
+(function(){ const p=$("picado"), fl=["#d7372f","#2f8f4e","#f5a524","#e2337f","#f4efe4","#22a9c4"], bl=["#ff4d4d","#ffd34d","#4ddc7a","#5ac8ff","#ff6fb5"];
+  for(let i=0;i<22;i++){ const f=document.createElement("span"); if(i%2){ f.className="bulb"; f.style.setProperty("--c",bl[(i>>1)%5]); f.style.setProperty("--d",(i*.17)+"s"); } else { f.className="flag"; f.style.background=fl[(i>>1)%6]; } p.appendChild(f); } })();
+
+/* ---------- sealed codes ---------- */
+function seal(o,pre){ const b=new TextEncoder().encode(JSON.stringify(o)); let s=""; for(let i=0;i<b.length;i++) s+=String.fromCharCode(b[i]^KEY.charCodeAt(i%KEY.length)); return pre+btoa(s).replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/,""); }
+function unseal(c,pre){ try{ if(!c||c[0]!==pre) return null; let s=c.slice(1).replace(/-/g,"+").replace(/_/g,"/"); while(s.length%4) s+="="; const bin=atob(s), b=new Uint8Array(bin.length); for(let i=0;i<b.length;i++) b[i]=bin.charCodeAt(i)^KEY.charCodeAt(i%KEY.length); return JSON.parse(new TextDecoder().decode(b)); }catch(e){ return null; } }
+// piñata codes use the reveal page's hex format
+function pinCode(obj){ const b=new TextEncoder().encode(JSON.stringify(obj)); let h="x"; for(let i=0;i<b.length;i++) h+=(b[i]^KEY.charCodeAt(i%KEY.length)).toString(16).padStart(2,"0"); return h; }
+function pinDecode(code){ try{ const hex=code.slice(1), b=new Uint8Array(hex.length/2); for(let i=0;i<b.length;i++) b[i]=parseInt(hex.substr(i*2,2),16)^KEY.charCodeAt(i%KEY.length); return JSON.parse(new TextDecoder().decode(b)); }catch(e){ return null; } }
+
+/* ---------- storage ---------- */
+let canSave=true;
+function loadDB(){ try{ const v=JSON.parse(localStorage.getItem(SKEY)||"null"); if(v&&v.groups) return v; }catch(e){ canSave=false; } return {v:1,cur:null,ui:null,groups:{}}; }
+let DB=loadDB();
+function persist(){ try{ localStorage.setItem(SKEY,JSON.stringify(DB)); canSave=true; }catch(e){ canSave=false; } }
+const G=()=>DB.groups[DB.cur]||null;
+const P=id=>G().people.find(p=>p.id===id);
+
+/* ---------- words ---------- */
+const W={
+en:{
+  appName:"Secret Santa HQ", heroK:"Free · No accounts · 5 minutes", heroT:"Run your own Secret Santa", heroP:"Add your family and friends, they write a letter to Santa, and everyone gets their match inside a piñata. All from your phone.",
+  how1:"Add your people",how1s:"Type them, paste a list, or pick from contacts",how2:"They write letters to Santa",how2s:"Sizes, wishes and gift hints. Sent back to you in one tap",how3:"Draw names, send piñatas",how3s:"Matches stay sealed, even from you",
+  start:"Start my Secret Santa 🎄",restore:"Restore from a backup",haveGroups:"Your Secret Santas",open:"Open",
+  s1:"Name your Secret Santa",s1p:"You can change any of this later.",gname:"Group name",gnamePh:"Familia García 2026",yname:"Your name",ynamePh:"Like Adán",yphone:"Your phone number",yphoneH:"Letters come back to this number on WhatsApp or text.",
+  playing:"I'm playing too",playingS:"Turn off if you're only organizing",
+  s2:"The details",s2p:"Optional, but people love knowing. Skip anything.",budget:"Gift budget",custom:"Other",customPh:"Like $40 or 500 MXN",exDate:"Gift exchange date",place:"Where",placePh:"Casa de Tía Lupe",due:"Letters due by",langQ:"Messages go out in",
+  s3:"Add your people",s3p:"Everyone who's playing. Phone numbers make sending one tap.",typeT:"Type",pasteT:"Paste a list",contactsT:"From contacts",
+  pname:"Name",pphone:"Phone (optional)",add:"Add",pasteH:"One person per line. Like:\nTía Rosa, 555 123 4567\nTío Beto 555 987 6543\nCousin Ana",pasteBtn:"Add everyone",added:n=>`Added ${n} ${n===1?"person":"people"} ✓`,dupe:n=>`${n} already on the list`,
+  contactsBtn:"Pick from my contacts",contactsNo:"Your browser can't open contacts here. Paste a list instead.",
+  next:"Next",back:"Back",skip:"Skip for now",finish:"Finish setup ✨",needG:"Give your Secret Santa a name.",needY:"Type your name.",
+  tHome:"Home",tPeople:"People",tDraw:"Draw",tMore:"Settings",
+  people:"People",letters:"Letters",draw:"Draw",notYet:"Not yet",done:"Done",of:(a,b)=>`${a} of ${b}`,daysLeft:d=>d>1?`${d} days left`:d===1?"Tomorrow":d===0?"Today":"Passed",
+  nextK:"Next step",
+  nAddT:"Add your people",nAddP:"You need at least 3 people to draw names.",nAddB:"Add people",
+  nInvT:n=>`Invite ${n} ${n===1?"person":"people"}`,nInvP:"Each invite opens their letter to Santa. Send them one by one, or drop one link in the family group chat.",nInvB:"Send invites one by one",nInvG:"Share one link in a group chat",
+  nWaitT:n=>`Waiting on ${n} ${n===1?"letter":"letters"}`,nWaitP:"When a letter arrives on WhatsApp or text, tap its link, or copy the message and paste it below.",nWaitB:"Send reminders",nWaitD:"Draw names anyway",
+  nDrawT:"Everyone's in! Time to draw 🎲",nDrawP:"Matches are sealed, so even you won't see who got who.",nDrawB:"Draw names",
+  nSendT:n=>`Send ${n} ${n===1?"piñata":"piñatas"}`,nSendP:"Each person gets their own secret link with their match inside a piñata.",nSendB:"Send piñatas one by one",
+  nDoneT:"All set! ¡Feliz Navidad! 🎉",nDoneP:"Everyone has their match. Keep this page in case someone loses their link.",nDoneB:"See who's been sent",
+  mailT:"📮 Got a letter or a score?",mailP:"Copy the message they sent you and paste it here.",mailPaste:"Paste from clipboard",mailOr:"Or paste it here",mailAdd:"Add it",mailBad:"No letter found in that text. Copy their whole message and try again.",
+  eBudget:"Budget",eEx:"Exchange",eDue:"Letters due",eAdd:"Add",
+  pTitle:"People",pAdd:"+ Add",fAll:"All",fWait:"Waiting",fIn:"Letter in",inviteAll:n=>`Invite ${n} not yet invited`,remindAll:n=>`Remind ${n} still waiting`,
+  stIn:"Letter in",stInv:"Invited",stNew:"Not invited",stSent:"Piñata sent",stRedo:"Resend",you:"You",
+  emptyP:"No one here yet",emptyPs:"Add the people who are playing.",
+  invite:"Send invite",remind:"Send reminder",resend:"Send again",waBtn:"WhatsApp",imBtn:"Text / iMessage",cpBtn:"Copy message",msgPrev:"See the message",
+  writeMine:"Write my letter",writeFor:"Fill in their letter",writeForS:"For someone without a phone. Opens their letter on this phone.",
+  edit:"Edit",save:"Save",remove:"Remove from Secret Santa",removeQ:n=>`Remove ${n}?`,removeY:"Yes, remove",cancel:"Cancel",removed:"Removed",
+  removeAfter:"Names are already drawn. Removing someone means you'll need to redraw and resend everyone's piñata.",
+  letterIn:"Their letter",wishes:"Wishes",sizes:"Sizes",noLetter:"No letter yet",clearLetter:"Delete this letter",
+  avoidT:"Can't draw each other",avoidP:"Partners or siblings who shouldn't get each other.",avoidAdd:"Add a pair",avoidPick:"Pick two people",avoidNone:"No pairs yet. Everyone can draw anyone.",
+  qInv:"Invites",qRem:"Reminders",qPin:"Piñatas",qOf:(i,n)=>`${i} of ${n}`,qNext:"Next →",qSkip:"Skip",qDone:"All done!",qDoneP:"You're all caught up.",qNoPhone:"No phone number. WhatsApp will ask who to send it to.",qClose:"Close",qSentMark:"Sent ✓",
+  groupT:"Share one link",groupP:"Drop this in your family group chat. Each person writes their own letter, and anyone not on your list gets added when their letter arrives.",
+  dReady:"Ready to draw",dNeed3:"You need at least 3 people to draw names.",dWaiting:n=>`${n} ${n===1?"person hasn't":"people haven't"} sent a letter.`,
+  dInclude:"Include people without letters",dIncludeS:"Their Santa gets their name but no wish list.",dBtn:"Draw names 🎲",dImpossible:"There's no way to draw with these pairs. Remove a pair and try again.",
+  dDone:"Names drawn ✓",dDoneP:"Every match is sealed in its own link. Send each person theirs.",dSendAll:"Send piñatas one by one",dRedo:"Redraw names",dRedoQ:"Redraw everything?",dRedoP:"Everyone gets a new match, so you'll need to send every piñata again. Links you already sent will show the old match.",dRedoY:"Yes, redraw",
+  dLate:n=>`${n} joined after the draw: ${""}`,dLateP:"Redraw to include them.",dUpdated:"Letter updated after you sent this piñata. Send it again so their Santa sees the new wishes.",
+  dOpenMine:"Open my piñata",drew:"Names drawn 🎲 Matches are sealed.",
+  mDetails:"Event details",mYou:"Organizer",mSave:"Save changes",saved:"Saved ✓",mLang:"Language",mLangP:"For this page. Each person's messages use their own language.",
+  mBackup:"Backup",mBackupP:"Everything lives on this phone. Save a backup so nothing gets lost if you clear your browser or switch phones.",mDl:"Download backup",mCopy:"Copy backup code",mRestore:"Restore a backup",mRestoreP:"Paste a backup code, or pick a backup file.",mRestoreBtn:"Restore",mFile:"Choose file",restored:"Backup restored ✓",badBackup:"That isn't a Secret Santa backup.",
+  mGroups:"Your Secret Santas",mNew:"+ Start another Secret Santa",mSwitch:"Switch",mDelete:"Delete this Secret Santa",mDeleteQ:"Delete it from this phone?",mDeleteP:"People, letters and the draw are removed from this phone. Links you already sent keep working.",mDeleteY:"Yes, delete",
+  noSave:"This browser isn't saving. Keep this page open, and download a backup before you leave.",
+  lAdded:n=>`Letter from ${n} added 📮`,lUpdated:n=>`${n}'s letter updated`,lNew:n=>`${n} wasn't on your list, so we added them.`,lOther:"This letter is for a different Secret Santa",lOtherP:"It belongs to a Secret Santa that isn't set up in this browser. Open the page where you set it up and paste the message there. If you set it up on another phone, open it there.",
+  lRedo:"Their Santa's piñata needs to be sent again with the new wishes.",lLate:"Names were already drawn. Redraw to include them.",lOk:"Got it",lSee:"See their letter",
+  copied:"Copied ✓",copyFail:"Couldn't copy. Press and hold the text to copy it.",pasteFail:"Couldn't read your clipboard. Paste into the box instead.",
+  clear:"Starting over",msgLang:"Message language",sendOne:"Send",stReady:"Ready to send",autoT:"📮 Letters arrive here automatically",autoP:"When someone seals their letter, it shows up on this page. Got one by text instead? Paste it below.",syncNow:"Check for new letters",synced:"Up to date ✓",syncFail:"Couldn't reach the mailbox. Check your connection.",lbT:"Family game leaderboard",lbP:"Scores come in when someone shares theirs from the game. Paste their message above to update it.",lbEmpty:"No scores yet. Share the game and the board fills up as family plays.",lbPlay:"Play",lbShare:"Share the board",lbUpdated:"Leaderboard updated 🏆",groupP2:"Drop it in the family group chat. Everyone who opens it sees the board and can jump in.",
+},
+es:{
+  appName:"Secret Santa HQ", heroK:"Gratis · Sin cuentas · 5 minutos", heroT:"Organiza tu propio Secret Santa", heroP:"Agrega a tu familia y amigos, ellos escriben una carta a Santa, y cada quien recibe su Secret Santa dentro de una piñata. Todo desde tu teléfono.",
+  how1:"Agrega a tu gente",how1s:"Escríbelos, pega una lista o escoge de tus contactos",how2:"Escriben su carta a Santa",how2s:"Tallas, deseos y pistas. Te llega con un toque",how3:"Sortea y manda piñatas",how3s:"Nadie ve quién le tocó a quién, ni tú",
+  start:"Empezar mi Secret Santa 🎄",restore:"Restaurar un respaldo",haveGroups:"Tus Secret Santas",open:"Abrir",
+  s1:"Ponle nombre a tu Secret Santa",s1p:"Todo esto se puede cambiar después.",gname:"Nombre del grupo",gnamePh:"Familia García 2026",yname:"Tu nombre",ynamePh:"Por ejemplo Adán",yphone:"Tu número de teléfono",yphoneH:"Las cartas te llegan a este número por WhatsApp o mensaje.",
+  playing:"Yo también juego",playingS:"Apágalo si solo vas a organizar",
+  s2:"Los detalles",s2p:"Opcional, pero a todos les gusta saber. Salta lo que quieras.",budget:"Presupuesto",custom:"Otro",customPh:"Por ejemplo $40 o 500 MXN",exDate:"Fecha del intercambio",place:"Dónde",placePh:"Casa de Tía Lupe",due:"Cartas antes del",langQ:"Los mensajes salen en",
+  s3:"Agrega a tu gente",s3p:"Todos los que juegan. Con su teléfono mandas todo con un toque.",typeT:"Escribir",pasteT:"Pegar lista",contactsT:"Contactos",
+  pname:"Nombre",pphone:"Teléfono (opcional)",add:"Agregar",pasteH:"Una persona por línea. Por ejemplo:\nTía Rosa, 555 123 4567\nTío Beto 555 987 6543\nPrima Ana",pasteBtn:"Agregar a todos",added:n=>`${n} ${n===1?"persona agregada":"personas agregadas"} ✓`,dupe:n=>`${n} ya estaban en la lista`,
+  contactsBtn:"Escoger de mis contactos",contactsNo:"Tu navegador no puede abrir contactos aquí. Mejor pega una lista.",
+  next:"Siguiente",back:"Atrás",skip:"Saltar por ahora",finish:"Terminar ✨",needG:"Ponle nombre a tu Secret Santa.",needY:"Escribe tu nombre.",
+  tHome:"Inicio",tPeople:"Gente",tDraw:"Sorteo",tMore:"Ajustes",
+  people:"Gente",letters:"Cartas",draw:"Sorteo",notYet:"Aún no",done:"Listo",of:(a,b)=>`${a} de ${b}`,daysLeft:d=>d>1?`Faltan ${d} días`:d===1?"Mañana":d===0?"Hoy":"Ya pasó",
+  nextK:"Siguiente paso",
+  nAddT:"Agrega a tu gente",nAddP:"Necesitas al menos 3 personas para sortear.",nAddB:"Agregar gente",
+  nInvT:n=>`Invita a ${n} ${n===1?"persona":"personas"}`,nInvP:"Cada invitación abre su carta a Santa. Mándalas una por una o pon un solo link en el grupo de la familia.",nInvB:"Mandar invitaciones una por una",nInvG:"Compartir un link en el grupo",
+  nWaitT:n=>`Faltan ${n} ${n===1?"carta":"cartas"}`,nWaitP:"Cuando te llegue una carta por WhatsApp o mensaje, toca su link, o copia el mensaje y pégalo abajo.",nWaitB:"Mandar recordatorios",nWaitD:"Sortear de todos modos",
+  nDrawT:"¡Ya están todos! A sortear 🎲",nDrawP:"Cada pareja queda sellada, ni tú vas a ver quién le tocó a quién.",nDrawB:"Sortear nombres",
+  nSendT:n=>`Manda ${n} ${n===1?"piñata":"piñatas"}`,nSendP:"Cada quien recibe su propio link secreto con su Secret Santa dentro de una piñata.",nSendB:"Mandar piñatas una por una",
+  nDoneT:"¡Todo listo! ¡Feliz Navidad! 🎉",nDoneP:"Todos tienen su Secret Santa. Guarda esta página por si alguien pierde su link.",nDoneB:"Ver a quién ya le mandaste",
+  mailT:"📮 ¿Te llegó una carta o unos puntos?",mailP:"Copia el mensaje que te mandaron y pégalo aquí.",mailPaste:"Pegar del portapapeles",mailOr:"O pégalo aquí",mailAdd:"Agregar",mailBad:"No encontramos una carta en ese texto. Copia todo su mensaje y vuelve a intentar.",
+  eBudget:"Presupuesto",eEx:"Intercambio",eDue:"Cartas hasta",eAdd:"Agregar",
+  pTitle:"Gente",pAdd:"+ Agregar",fAll:"Todos",fWait:"Faltan",fIn:"Con carta",inviteAll:n=>`Invitar a ${n} sin invitación`,remindAll:n=>`Recordar a ${n} que faltan`,
+  stIn:"Con carta",stInv:"Invitado",stNew:"Sin invitar",stSent:"Piñata enviada",stRedo:"Reenviar",you:"Tú",
+  emptyP:"Todavía no hay nadie",emptyPs:"Agrega a los que van a jugar.",
+  invite:"Mandar invitación",remind:"Mandar recordatorio",resend:"Mandar otra vez",waBtn:"WhatsApp",imBtn:"Mensaje / iMessage",cpBtn:"Copiar mensaje",msgPrev:"Ver el mensaje",
+  writeMine:"Escribir mi carta",writeFor:"Llenar su carta",writeForS:"Para alguien sin teléfono. Abre su carta en este teléfono.",
+  edit:"Editar",save:"Guardar",remove:"Quitar del Secret Santa",removeQ:n=>`¿Quitar a ${n}?`,removeY:"Sí, quitar",cancel:"Cancelar",removed:"Quitado",
+  removeAfter:"Ya se sortearon los nombres. Si quitas a alguien, hay que volver a sortear y reenviar todas las piñatas.",
+  letterIn:"Su carta",wishes:"Deseos",sizes:"Tallas",noLetter:"Todavía no hay carta",clearLetter:"Borrar esta carta",
+  avoidT:"No se pueden tocar entre sí",avoidP:"Parejas o hermanos que no deben tocarse.",avoidAdd:"Agregar pareja",avoidPick:"Escoge a dos personas",avoidNone:"No hay parejas. Cualquiera le puede tocar a cualquiera.",
+  qInv:"Invitaciones",qRem:"Recordatorios",qPin:"Piñatas",qOf:(i,n)=>`${i} de ${n}`,qNext:"Siguiente →",qSkip:"Saltar",qDone:"¡Listo!",qDoneP:"Ya quedó todo.",qNoPhone:"No tiene teléfono. WhatsApp te va a preguntar a quién mandarlo.",qClose:"Cerrar",qSentMark:"Enviado ✓",
+  groupT:"Compartir un link",groupP:"Ponlo en el grupo de la familia. Cada quien escribe su carta, y si alguien no está en tu lista se agrega solito cuando llegue su carta.",
+  dReady:"Listo para sortear",dNeed3:"Necesitas al menos 3 personas para sortear.",dWaiting:n=>`${n} ${n===1?"persona no ha":"personas no han"} mandado carta.`,
+  dInclude:"Incluir a quien no tiene carta",dIncludeS:"Su Santa recibe su nombre pero sin lista de deseos.",dBtn:"Sortear nombres 🎲",dImpossible:"No se puede sortear con estas parejas. Quita una y vuelve a intentar.",
+  dDone:"Nombres sorteados ✓",dDoneP:"Cada pareja va sellada en su propio link. Mándale a cada quien el suyo.",dSendAll:"Mandar piñatas una por una",dRedo:"Volver a sortear",dRedoQ:"¿Sortear todo otra vez?",dRedoP:"A todos les toca alguien nuevo, así que hay que mandar todas las piñatas otra vez. Los links que ya mandaste van a mostrar lo anterior.",dRedoY:"Sí, sortear otra vez",
+  dLate:n=>"",dLateP:"Vuelve a sortear para incluirlos.",dUpdated:"La carta cambió después de mandar esta piñata. Mándala otra vez para que su Santa vea los nuevos deseos.",
+  dOpenMine:"Abrir mi piñata",drew:"Nombres sorteados 🎲 Todo va sellado.",
+  mDetails:"Detalles del evento",mYou:"Quien organiza",mSave:"Guardar cambios",saved:"Guardado ✓",mLang:"Idioma",mLangP:"Para esta página. Los mensajes de cada persona salen en su idioma.",
+  mBackup:"Respaldo",mBackupP:"Todo se guarda en este teléfono. Guarda un respaldo para no perder nada si borras el navegador o cambias de teléfono.",mDl:"Descargar respaldo",mCopy:"Copiar código de respaldo",mRestore:"Restaurar un respaldo",mRestoreP:"Pega un código de respaldo o escoge un archivo.",mRestoreBtn:"Restaurar",mFile:"Escoger archivo",restored:"Respaldo restaurado ✓",badBackup:"Eso no es un respaldo del Secret Santa.",
+  mGroups:"Tus Secret Santas",mNew:"+ Organizar otro Secret Santa",mSwitch:"Cambiar",mDelete:"Borrar este Secret Santa",mDeleteQ:"¿Borrarlo de este teléfono?",mDeleteP:"La gente, las cartas y el sorteo se borran de este teléfono. Los links que ya mandaste siguen funcionando.",mDeleteY:"Sí, borrar",
+  noSave:"Este navegador no está guardando. Deja esta página abierta y descarga un respaldo antes de salir.",
+  lAdded:n=>`Llegó la carta de ${n} 📮`,lUpdated:n=>`Se actualizó la carta de ${n}`,lNew:n=>`${n} no estaba en tu lista, así que lo agregamos.`,lOther:"Esta carta es de otro Secret Santa",lOtherP:"Es de un Secret Santa que no está en este navegador. Abre la página donde lo organizaste y pega ahí el mensaje. Si lo hiciste en otro teléfono, ábrelo allá.",
+  lRedo:"Hay que mandar otra vez la piñata de su Santa con los nuevos deseos.",lLate:"Ya se sortearon los nombres. Vuelve a sortear para incluirlo.",lOk:"Va",lSee:"Ver su carta",
+  copied:"Copiado ✓",copyFail:"No se pudo copiar. Mantén presionado el texto para copiarlo.",pasteFail:"No se pudo leer el portapapeles. Pégalo en el cuadro.",
+  clear:"Empezar de nuevo",msgLang:"Idioma del mensaje",sendOne:"Mandar",stReady:"Lista para mandar",autoT:"📮 Las cartas llegan aquí solitas",autoP:"Cuando alguien sella su carta, aparece en esta página. ¿Te la mandaron por mensaje? Pégala abajo.",syncNow:"Buscar cartas nuevas",synced:"Al día ✓",syncFail:"No se pudo conectar con el buzón. Revisa tu conexión.",lbT:"Tabla del juego familiar",lbP:"Los puntos llegan cuando alguien comparte los suyos desde el juego. Pega su mensaje arriba para actualizarla.",lbEmpty:"Todavía no hay puntos. Comparte el juego y la tabla se llena cuando la familia juegue.",lbPlay:"Jugar",lbShare:"Compartir la tabla",lbUpdated:"Tabla actualizada 🏆",groupP2:"Ponlo en el grupo de la familia. Quien lo abra ve la tabla y puede jugar.",
+}};
+const ui=()=>DB.ui||((navigator.language||"").startsWith("es")?"es":"en");
+const t=(k,...a)=>{ const v=W[ui()][k]??W.en[k]; return typeof v==="function"?v(...a):v; };
+function fmtDate(iso,l){ if(!iso) return ""; return new Date(iso+"T12:00:00").toLocaleDateString((l||ui())==="es"?"es-MX":undefined,{weekday:"short",month:"short",day:"numeric"}); }
+function toast(s){ const el=$("toast"); el.textContent=s; el.hidden=false; clearTimeout(toast.t); toast.t=setTimeout(()=>el.hidden=true,2600); }
+async function copy(text){ try{ await navigator.clipboard.writeText(text); toast(t("copied")); return true; }catch(e){ try{ const ta=document.createElement("textarea"); ta.value=text; document.body.appendChild(ta); ta.select(); const ok=document.execCommand("copy"); ta.remove(); if(ok){ toast(t("copied")); return true; } }catch(_){} toast(t("copyFail")); return false; } }
+
+/* ---------- the family game leaderboard (travels inside links, no server) ---------- */
+function boardRows(g){ g=g||G(); return Object.values(g.board||{}).filter(r=>r.s>0).sort((a,b)=>b.s-a.s||a.n.localeCompare(b.n)); }
+function boardEntries(g){ return boardRows(g).slice(0,20).map(r=>[r.n,r.s,r.st||0,r.lv||0,r.t||0]); }
+function boardCode(g){ g=g||G(); return seal({gid:g.gid,gn:g.name,e:boardEntries(g)},"S"); }
+function mergeBoard(g,entries){ g.board=g.board||{}; let ch=0; (entries||[]).forEach(([n,sc,st,lv,ts])=>{ const k=norm(n); if(!k) return; const o=g.board[k]; if(!o||sc>o.s){ g.board[k]={n,s:+sc||0,st:+st||0,lv:+lv||0,t:+ts||0}; ch++; } }); return ch; }
+function findBoards(text){ const out=[]; (String(text||"").match(/sb=(S[A-Za-z0-9_-]{8,})/g)||[]).forEach(m=>{ const o=unseal(m.slice(3),"S"); if(o&&o.gid) out.push(o); }); return out; }
+function importBoards(list){ let n=0; list.forEach(o=>{ const g=DB.groups[o.gid]; if(g) n+=mergeBoard(g,o.e)||0.0001; }); if(n){ persist(); render(); toast(t("lbUpdated")); } return n>0; }
+function importAny(text){ const a=importLetters(findLetters(text)), b=importBoards(findBoards(text)); return a||b; }
+const GAME_SHARE=g=>`${GAME_URL}#sb=${boardCode(g)}&me=${encodeURIComponent(g.org.name||"")}`;
+
+/* ---------- messages ---------- */
+function groupCode(g){ const o={gid:g.gid,gn:g.name,on:g.org.name,op:g.org.phone||"",b:g.budget||"",d:g.party||"",pl:g.place||"",dl:g.deadline||"",l:g.lang||"en"}; const e=boardEntries(g).slice(0,8); if(e.length) o.sb=e; return seal(o,"G"); }
+function inviteURL(p){ const g=G(); return `${LETTER_URL}#g=${groupCode(g)}${p?`&n=${encodeURIComponent(p.name)}&l=${p.lang||g.lang}`:""}`; }
+function lines(g,l){ const es=l==="es", a=[];
+  if(g.deadline) a.push((es?"📮 Cartas antes del ":"📮 Letters due ")+fmtDate(g.deadline,l));
+  if(g.budget) a.push((es?"🎁 Presupuesto: ":"🎁 Gift budget: ")+g.budget);
+  if(g.party) a.push((es?"🎄 Intercambio: ":"🎄 Gift exchange: ")+fmtDate(g.party,l)+(g.place?(es?" en ":" at ")+g.place:""));
+  return a.join("\n"); }
+function msgInvite(p,reminder){ const g=G(), l=p?p.lang||g.lang:g.lang, o=first(g.org.name), n=p?first(p.name):"", x=lines(g,l), url=inviteURL(p);
+  if(l==="es") return reminder
+    ? `🎄 ¡Hola ${n}! Un recordatorio de ${o}: todavía falta tu carta a Santa para ${g.name} 🎁\n\nSolo toma 3 minutos:\n${url}\n${x?"\n"+x+"\n":""}\nAl terminar, un toque me la manda. ¡Gracias! 🌟`
+    : `🎄✨ ¡Feliz Navidad${n?", "+n:""}! ✨🎄\n\n${o} está organizando el Secret Santa de ${g.name} 🎁 Escribe aquí tu carta a Santa, toma unos 3 minutos:\n\n${url}\n${x?"\n"+x+"\n":""}\nAl terminar, un toque me la manda. ¡Nos vemos! 🌟`;
+  return reminder
+    ? `🎄 Hi ${n}! Friendly reminder from ${o}: your letter to Santa for ${g.name} is still missing 🎁\n\nIt only takes 3 minutes:\n${url}\n${x?"\n"+x+"\n":""}\nWhen you finish, one tap sends it to me. Thank you! 🌟`
+    : `🎄✨ ¡Feliz Navidad${n?", "+n:""}! ✨🎄\n\n${o} is running the Secret Santa for ${g.name} 🎁 Write your letter to Santa here, it takes about 3 minutes:\n\n${url}\n${x?"\n"+x+"\n":""}\nWhen you finish, one tap sends it to me. ¡Nos vemos! 🌟`; }
+function msgPinata(p,code){ const g=G(), l=p.lang||g.lang, n=first(p.name), x=[g.budget&&((l==="es"?"🎁 Presupuesto: ":"🎁 Gift budget: ")+g.budget),g.party&&((l==="es"?"🎄 Intercambio: ":"🎄 Gift exchange: ")+fmtDate(g.party,l)+(g.place?(l==="es"?" en ":" at ")+g.place:""))].filter(Boolean).join("\n");
+  if(l==="es") return `🎄✨ ¡Feliz Navidad, ${n}! ✨🎄\n\n¡Ya se sortearon los nombres de ${g.name}! Tu Secret Santa está dentro de una piñata 🪅 Toca abajo y pégale hasta que se rompa 👇\n\n${REVEAL_URL}#${code}&sb=${boardCode(g)}\n${x?"\n"+x+"\n":""}\n🤫 Shhh… este link es solo para ti. ¡No se vale espiar ni compartir! 🌟\n\n(Si la página te pide tu código, copia todo este mensaje y pégalo ahí.)`;
+  return `🎄✨ ¡Feliz Navidad, ${n}! ✨🎄\n\nNames have been drawn for ${g.name}! Your Secret Santa match is inside a piñata 🪅 Tap below and keep swinging until it breaks 👇\n\n${REVEAL_URL}#${code}&sb=${boardCode(g)}\n${x?"\n"+x+"\n":""}\n🤫 Shhh… this link is only for you. No peeking, no sharing! 🌟\n\n(If the page asks for your code, copy this whole text and paste it in.)`; }
+
+/* ---------- groups & people ---------- */
+function newGroup(){ const gid=uid(); DB.groups[gid]={gid,name:"",org:{name:"",phone:"",plays:true,id:uid()},lang:ui(),budget:"",party:"",place:"",deadline:"",people:[],pairs:[],draw:null,created:Date.now()}; DB.cur=gid; persist(); return DB.groups[gid]; }
+function syncOrganizer(){ const g=G(), o=g.org; let me=g.people.find(p=>p.me);
+  if(o.plays){ if(!me){ me={id:o.id,me:true,name:o.name,phone:o.phone,lang:g.lang,inv:Date.now(),letter:null}; g.people.unshift(me); } else { me.name=o.name; me.phone=o.phone; } }
+  else if(me){ g.people=g.people.filter(p=>!p.me); g.pairs=g.pairs.filter(pr=>!pr.includes(me.id)); } }
+function findPerson(name,phone){ const g=G(), pk=phoneKey(phone);
+  if(pk.length>=7){ const m=g.people.find(p=>phoneKey(p.phone)===pk); if(m) return m; }
+  const nn=norm(name); let m=g.people.find(p=>norm(p.name)===nn); if(m) return m;
+  const f=norm(first(name)); const fm=g.people.filter(p=>norm(first(p.name))===f); return fm.length===1&&(!pk||!fm[0].phone)?fm[0]:null; }
+function addPerson(name,phone){ name=String(name||"").trim().replace(/\s+/g," "); if(!name) return null; const g=G();
+  if(g.people.some(p=>norm(p.name)===norm(name)||(phoneKey(phone).length>=7&&phoneKey(p.phone)===phoneKey(phone)))) return false;
+  const p={id:uid(),name,phone:String(phone||"").trim(),lang:g.lang,inv:0,letter:null}; g.people.push(p); return p; }
+function parseList(text){ const out=[]; String(text||"").split(/\r?\n/).forEach(line=>{ line=line.trim().replace(/^[-•*\d.)\s]+(?=\D)/,""); if(!line) return;
+    const m=line.match(/(\+?[\d][\d\s().-]{6,}\d)\s*$/); if(m){ const nm=line.slice(0,m.index).replace(/[,;:\-–—\t|]+\s*$/,"").trim(); if(nm) out.push([nm,m[1]]); return; }
+    line.split(/\s*[,;]\s*/).filter(Boolean).forEach(nm=>out.push([nm,""])); }); return out; }
+function addMany(list){ let a=0,d=0; list.forEach(([n,ph])=>{ const r=addPerson(n,ph); if(r) a++; else if(r===false) d++; }); persist(); toast(t("added",a)+(d?" · "+t("dupe",d):"")); return a; }
+const pending=D=>Object.keys(D.cards).filter(k=>(!D.sent[k]||D.redo[k])&&!(P(k)||{}).me);
+const status=p=>{ const D=G().draw; if(D&&D.cards[p.id]){ if(p.me) return ["sent",t("you")]; if(D.redo[p.id]) return ["redo",t("stRedo")]; if(D.sent[p.id]) return ["sent",t("stSent")]; return ["inv",t("stReady")]; } return p.letter?["in",t("stIn")]:p.inv?["inv",t("stInv")]:["new",t("stNew")]; };
+
+/* ---------- letters coming in ---------- */
+function findLetters(text){ const s=String(text||""), out=[], seen=new Set();
+  (s.match(/letter=(L[A-Za-z0-9_-]{20,})/g)||[]).forEach(m=>seen.add(m.slice(7)));
+  (s.match(/\bL[A-Za-z0-9_-]{60,}/g)||[]).forEach(m=>seen.add(m));
+  seen.forEach(c=>{ const o=unseal(c,"L"); if(o&&o.gid&&o.n) out.push(o); }); return out; }
+function importLetters(list){ if(!list.length) return false; const results=[];
+  list.forEach(L=>{ const g=DB.groups[L.gid]; if(!g){ results.push({other:true}); return; } DB.cur=L.gid;
+    let p=findPerson(L.n,L.ph), isNew=false, had=false;
+    if(p&&p.letter&&p.letter.t&&p.letter.t===L.t) return;
+    if(!p){ p=addPerson(L.n,L.ph)||findPerson(L.n,L.ph); isNew=true; }
+    had=!!p.letter; p.letter=L; p.la=Date.now(); p.lang=L.l||p.lang; if(L.ph&&!p.phone) p.phone=L.ph;
+    if(p.me) p.lang=L.l||p.lang;
+    let redo=false, late=false; const D=g.draw;
+    if(D){ const giver=Object.keys(D.cards).find(k=>D.cards[k].r===p.id);
+      if(giver){ D.cards[giver].code=codeFor(P(giver),p); if(D.sent[giver]){ D.redo[giver]=true; redo=true; } } else late=true; }
+    results.push({p,isNew,had,redo,late}); });
+  persist(); render(); if(results.length) showImport(results); return true; }
+function showImport(rs){ const r=rs.find(x=>!x.other)||rs[0];
+  if(r.other){ sheet(`<div class="sheethead"><div class="stack tight"><span class="kicker">📮</span><h2>${esc(t("lOther"))}</h2></div>${closeBtn()}</div><p>${esc(t("lOtherP"))}</p><button class="cta" data-act="closeSheet">${esc(t("lOk"))}</button>`); return; }
+  burst(["📮","🎁","✨","⭐","🎄"]);
+  const L=r.p.letter, extra=rs.filter(x=>!x.other).length-1;
+  sheet(`<div class="sheethead"><div class="big-name"><div class="av" style="--c:${colorOf(r.p.id)}">${esc(ini(r.p.name)||"?")}</div><div class="stack tight"><span class="kicker">${esc(r.had?t("lUpdated",first(r.p.name)):t("lAdded",first(r.p.name)))}</span><h2>${esc(r.p.name)}</h2></div></div>${closeBtn()}</div>
+    ${letterSummary(L)}
+    ${r.isNew?`<div class="ok">${esc(t("lNew",first(r.p.name)))}</div>`:""}${r.redo?`<div class="warn">${esc(t("lRedo"))}</div>`:""}${r.late?`<div class="warn">${esc(t("lLate"))}</div>`:""}
+    ${extra>0?`<p class="fine">+${extra} ${ui()==="es"?"cartas más":"more letters"} ✓</p>`:""}
+    <button class="cta" data-act="closeSheet">${esc(t("lOk"))}</button>`); }
+function letterSummary(L){ if(!L) return `<p class="fine">${esc(t("noLetter"))}</p>`; const sz=[L.s&&"👕 "+L.s,L.p&&"👖 "+L.p,L.h&&"👟 "+L.h].filter(Boolean).join("  ");
+  return `<div class="lettersum">${sz?`<small>${esc(t("sizes"))}</small><b>${esc(sz)}</b>`:""}<small>${esc(t("wishes"))}</small><b>${(L.g||[]).map((w,i)=>esc((i+1)+". "+w)).join("<br>")||"—"}</b>
+    ${L.x&&(L.x.vb||L.x.lv)?`<small>✨</small><b>${esc([L.x.vb,L.x.lv].filter(Boolean).join(" · "))}</b>`:""}</div>`; }
+
+/* ---------- the draw ---------- */
+function rand(n){ const u=new Uint32Array(1); crypto.getRandomValues(u); return u[0]%n; }
+function blocked(a,b){ return G().pairs.some(([x,y])=>(x===a&&y===b)||(x===b&&y===a)); }
+function makeDraw(ids){ for(let tr=0;tr<40000;tr++){ const r=[...ids]; for(let i=r.length-1;i>0;i--){ const j=rand(i+1); [r[i],r[j]]=[r[j],r[i]]; }
+    if(ids.every((g,i)=>g!==r[i]&&!blocked(g,r[i]))) return ids.map((g,i)=>[g,r[i]]); } return null; }
+function codeFor(giver,rec){ const L=rec.letter||{}, o={n:first(giver.name),l:giver.lang||G().lang,r:rec.name,s:L.s||"",p:L.p||"",h:L.h||"",g:L.g||[]}; if(L.x&&Object.keys(L.x).length) o.x=L.x; return pinCode(o); }
+function drawPool(){ const g=G(); return g.people.filter(p=>p.letter||g.includeAll); }
+function doDraw(){ const g=G(), pool=drawPool(); if(pool.length<3){ toast(t("dNeed3")); return; }
+  const pairs=makeDraw(pool.map(p=>p.id)); if(!pairs){ sheet(`<div class="sheethead"><h2>🎲</h2>${closeBtn()}</div><div class="warn">${esc(t("dImpossible"))}</div><button class="cta" data-act="closeSheet">${esc(t("lOk"))}</button>`); return; }
+  const cards={}; pairs.forEach(([a,b])=>{ cards[a]={r:b,code:codeFor(P(a),P(b))}; });
+  g.draw={at:Date.now(),cards,sent:{},redo:{}}; persist(); closeSheet(); go("draw"); burst(["🪅","🎁","⭐","✨","🎉"]); toast(t("drew")); }
+
+/* ---------- send queue ---------- */
+let Q=null;
+function startQueue(kind,ids){ if(!ids.length) return; Q={kind,ids,i:0,tapped:false}; renderQueue(); }
+function qMessage(p){ const D=G().draw; return Q.kind==="pin"?msgPinata(p,D.cards[p.id].code):msgInvite(p,Q.kind==="rem"); }
+function markSent(p){ const g=G(); if(Q.kind==="pin"){ g.draw.sent[p.id]=Date.now(); delete g.draw.redo[p.id]; } else if(Q.kind==="rem"){ p.rem=Date.now(); p.inv=p.inv||Date.now(); } else p.inv=Date.now(); persist(); render(); }
+function renderQueue(){ if(!Q) return; const title={inv:t("qInv"),rem:t("qRem"),pin:t("qPin")}[Q.kind];
+  if(Q.i>=Q.ids.length){ burst(["🎉","✨","🎄"]); sheet(`<div class="empty-st"><div class="e">🎉</div><h2>${esc(t("qDone"))}</h2><p>${esc(t("qDoneP"))}</p></div><button class="cta" data-act="closeSheet">${esc(t("qClose"))}</button>`); Q=null; return; }
+  const p=P(Q.ids[Q.i]); if(!p){ Q.i++; renderQueue(); return; } const m=qMessage(p);
+  sheet(`<div class="sheethead"><div class="stack tight"><span class="qcount">${esc(title)} · ${esc(t("qOf",Q.i+1,Q.ids.length))}</span>
+      <div class="big-name"><div class="av" style="--c:${colorOf(p.id)}">${esc(ini(p.name)||"?")}</div><div><h2>${esc(p.name)}</h2><small class="help">${esc(p.phone?pretty(p.phone):t("qNoPhone"))}</small></div></div></div>${closeBtn()}</div>
+    <div class="send3"><a class="cta wa" data-act="qSend" href="${esc(waLink(p.phone,m))}" target="_blank" rel="noopener">${esc(t("waBtn"))}</a><a class="cta im" data-act="qSend" href="${esc(imLink(p.phone,m))}">${esc(t("imBtn"))}</a><button class="cta alt" data-act="qCopy">${esc(t("cpBtn"))}</button></div>
+    <details><summary>${esc(t("msgPrev"))}</summary><div class="preview">${esc(m)}</div></details>
+    <div class="row"><button class="cta alt" data-act="qSkip" style="flex:1">${esc(t("qSkip"))}</button><button class="cta" id="qNext" data-act="qNext" style="flex:2" ${Q.tapped?"":"disabled"}>${esc(Q.tapped?t("qNext"):t("qNext"))}</button></div>`); }
+
+/* ---------- sheet ---------- */
+function closeBtn(){ return `<button class="close" data-act="closeSheet" aria-label="Close">✕</button>`; }
+function sheet(html){ $("sheetRoot").innerHTML=`<div class="scrim" data-act="scrim"><div class="sheet" role="dialog" aria-modal="true"><div class="grab"></div>${html}</div></div>`; document.body.style.overflow="hidden"; }
+function closeSheet(){ $("sheetRoot").innerHTML=""; document.body.style.overflow=""; Q=null; }
+function burst(list){ if(matchMedia("(prefers-reduced-motion: reduce)").matches) return; const fx=$("confetti");
+  for(let i=0;i<16;i++) setTimeout(()=>{ const s=document.createElement("span"); s.textContent=list[i%list.length]; fx.appendChild(s); const x=Math.random()*innerWidth, dr=(Math.random()*2-1)*80;
+    s.animate([{transform:`translate(${x}px,-40px) rotate(0)`},{transform:`translate(${x+dr}px,${innerHeight+40}px) rotate(${(Math.random()*2-1)*360}deg)`}],{duration:2600+Math.random()*1600,easing:"cubic-bezier(.3,.1,.7,1)",fill:"forwards"}).onfinish=()=>s.remove(); },i*60); }
+
+/* ---------- views ---------- */
+let view="home", wiz=0, addMode="type", filter="all";
+function go(v){ view=v; DB.view=v; persist(); render(); window.scrollTo(0,0); }
+const SLEIGH=`<svg class="sleigh" viewBox="0 0 260 120" aria-hidden="true"><defs><linearGradient id="sl" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e2453c"/><stop offset="1" stop-color="#b5261f"/></linearGradient></defs>
+<path d="M40 96 q-14 0 -14 -12" fill="none" stroke="#f5c66a" stroke-width="4" stroke-linecap="round"/><path d="M30 100 H196 q16 0 22 -12" fill="none" stroke="#f5c66a" stroke-width="5" stroke-linecap="round"/>
+<path d="M52 92 l-6 -38 h112 q30 0 34 20 l3 18z" fill="url(#sl)"/><path d="M52 92 l-6 -38 h112" fill="none" stroke="#f5c66a" stroke-width="3"/><rect x="62" y="22" width="34" height="32" rx="4" fill="#2f8f4e"/><rect x="76" y="22" width="6" height="32" fill="#f5c66a"/><path d="M79 22 q-10 -12 -16 -4 q6 6 16 4 q10 -12 16 -4 q-6 6 -16 4" fill="#f5c66a"/>
+<rect x="100" y="32" width="28" height="22" rx="3" fill="#22a9c4"/><rect x="111" y="32" width="5" height="22" fill="#fff8ec"/><rect x="128" y="38" width="22" height="16" rx="3" fill="#e2337f"/><rect x="137" y="38" width="4" height="16" fill="#f5c66a"/>
+<g fill="#fff"><circle cx="210" cy="20" r="1.6"/><circle cx="230" cy="44" r="1.2"/><circle cx="20" cy="30" r="1.4"/><circle cx="246" cy="16" r="1"/></g><path d="M236 30 l2.6 5.4 5.9.8 -4.3 4.1 1 5.9 -5.2-2.8 -5.2 2.8 1-5.9 -4.3-4.1 5.9-.8z" fill="#f5c66a"/></svg>`;
+const ICON={home:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/><path d="M10 20v-5h4v5"/></svg>`,
+  people:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.8-3.6 3.4-5.5 6.5-5.5s5.7 1.9 6.5 5.5"/><circle cx="17" cy="9" r="2.6"/><path d="M16.5 14.6c2.6.2 4.4 1.9 5 4.8"/></svg>`,
+  draw:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="9" width="18" height="12" rx="2"/><path d="M3 13h18M12 9v12"/><path d="M12 9c-2-4-6-4-6-1.5S10 9 12 9zm0 0c2-4 6-4 6-1.5S14 9 12 9z"/></svg>`,
+  more:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>`};
+function topbar(){ const g=G(); return `<div class="top"><div class="brand">🎄 <b>${esc(g&&g.name||t("appName"))}</b></div><div class="seg" role="group" aria-label="Language / Idioma"><button type="button" data-act="ui" data-l="en" aria-pressed="${ui()==="en"}">EN</button><button type="button" data-act="ui" data-l="es" aria-pressed="${ui()==="es"}">ES</button></div></div>`; }
+function render(){ document.documentElement.lang=ui(); const g=G(), app=$("app");
+  if(!g||!g.setup){ $("tabbar").hidden=true; app.innerHTML=topbar()+(g&&wiz>0?wizard():welcome()); wireInputs(); return; }
+  $("tabbar").hidden=false; renderTabs();
+  const body={home:homeV,people:peopleV,draw:drawV,more:moreV}[view]||homeV;
+  app.innerHTML=topbar()+(canSave?"":`<div class="warn" style="margin-bottom:12px">${esc(t("noSave"))}</div>`)+body(); wireInputs(); }
+function renderTabs(){ const g=G(), waiting=g.people.filter(p=>!p.letter).length, D=g.draw, toSend=D?pending(D).length:0;
+  $("tabs").innerHTML=[["home",t("tHome"),0],["people",t("tPeople"),!D&&waiting?0:0],["draw",t("tDraw"),toSend],["more",t("tMore"),0]].map(([k,l,n])=>`<button type="button" data-act="tab" data-v="${k}" ${view===k?'aria-current="page"':""}>${ICON[k]}<span>${esc(l)}</span>${n?`<span class="dot">${n}</span>`:""}</button>`).join(""); }
+
+function welcome(){ const gs=Object.values(DB.groups).filter(x=>x.setup);
+  return `<div class="card hero in">${SLEIGH}<span class="kicker">${esc(t("heroK"))}</span><h1>${esc(t("heroT"))}</h1><p>${esc(t("heroP"))}</p>
+    <ol class="how"><li><span class="n">👨‍👩‍👧‍👦</span><div><b>${esc(t("how1"))}</b><span>${esc(t("how1s"))}</span></div></li><li><span class="n">✉️</span><div><b>${esc(t("how2"))}</b><span>${esc(t("how2s"))}</span></div></li><li><span class="n">🪅</span><div><b>${esc(t("how3"))}</b><span>${esc(t("how3s"))}</span></div></li></ol>
+    <button class="cta" data-act="begin">${esc(t("start"))}</button><button class="ghost" data-act="restoreOpen">${esc(t("restore"))}</button></div>
+    ${gs.length?`<div class="card soft" style="margin-top:14px"><h3>${esc(t("haveGroups"))}</h3>${gs.map(x=>`<div class="pair"><span>🎄 ${esc(x.name)}</span><button class="cta sm alt" data-act="switch" data-g="${x.gid}">${esc(t("open"))}</button></div>`).join("")}</div>`:""}`; }
+
+function wizard(){ const g=G(), bars=`<div class="steps">${[1,2,3].map(i=>`<i class="${i<=wiz?"on":""}"></i>`).join("")}</div>`;
+  if(wiz===1) return `${bars}<div class="card in"><div class="stack tight"><span class="kicker">1 / 3</span><h2>${esc(t("s1"))}</h2><p>${esc(t("s1p"))}</p></div>
+    <div class="field"><label class="lbl" for="w_g">${esc(t("gname"))}</label><input type="text" id="w_g" value="${esc(g.name)}" placeholder="${esc(t("gnamePh"))}" autocomplete="off"></div>
+    <div class="field"><label class="lbl" for="w_y">${esc(t("yname"))}</label><input type="text" id="w_y" value="${esc(g.org.name)}" placeholder="${esc(t("ynamePh"))}" autocomplete="given-name"></div>
+    <div class="field"><label class="lbl" for="w_p">${esc(t("yphone"))}</label><input type="tel" id="w_p" value="${esc(g.org.phone)}" placeholder="(555) 123-4567" autocomplete="tel" inputmode="tel"><span class="help">${esc(t("yphoneH"))}</span></div>
+    <label class="toggle"><span><b>${esc(t("playing"))}</b><small>${esc(t("playingS"))}</small></span><button type="button" class="sw" role="switch" id="w_play" aria-checked="${g.org.plays}" data-act="toggle"></button></label>
+    <p class="err" id="werr" hidden></p></div>${wizDock(false)}`;
+  if(wiz===2){ const B=["$20","$25","$30","$50","$75","$100"], isC=g.budget&&!B.includes(g.budget);
+    return `${bars}<div class="card in"><div class="stack tight"><span class="kicker">2 / 3</span><h2>${esc(t("s2"))}</h2><p>${esc(t("s2p"))}</p></div>
+    <div class="q stack tight"><span class="lbl">${esc(t("budget"))}</span><div class="chips" id="budChips">${B.map(b=>`<button type="button" class="chip" data-act="bud" data-b="${b}" aria-pressed="${g.budget===b}">${b}</button>`).join("")}</div><input type="text" id="w_bc" value="${esc(isC?g.budget:"")}" placeholder="${esc(t("custom")+": "+t("customPh"))}"></div>
+    <div class="two"><div class="field"><label class="lbl" for="w_d">${esc(t("exDate"))}</label><input type="date" id="w_d" value="${esc(g.party)}"></div><div class="field"><label class="lbl" for="w_dl">${esc(t("due"))}</label><input type="date" id="w_dl" value="${esc(g.deadline)}"></div></div>
+    <div class="field"><label class="lbl" for="w_pl">${esc(t("place"))}</label><input type="text" id="w_pl" value="${esc(g.place)}" placeholder="${esc(t("placePh"))}"></div>
+    <div class="stack tight"><span class="lbl">${esc(t("langQ"))}</span><div class="seg"><button type="button" data-act="glang" data-l="en" aria-pressed="${g.lang==="en"}">English</button><button type="button" data-act="glang" data-l="es" aria-pressed="${g.lang==="es"}">Español</button></div></div>
+    </div>${wizDock(true)}`; }
+  return `${bars}<div class="card in"><div class="stack tight"><span class="kicker">3 / 3</span><h2>${esc(t("s3"))}</h2><p>${esc(t("s3p"))}</p></div>${adder()}${miniList()}</div>${wizDock(false,true)}`; }
+function wizDock(skip,last){ return `<div class="wdock"><div class="row"><button class="cta alt" data-act="wback" style="flex:0 0 54px;padding:0" aria-label="${esc(t("back"))}">←</button><button class="cta" data-act="wnext" style="flex:1">${esc(last?t("finish"):t("next"))}</button></div></div>${skip?`<p style="text-align:center"><button class="ghost" data-act="wskip">${esc(t("skip"))}</button></p>`:""}`; }
+function adder(){ const hasC="contacts" in navigator&&"ContactsManager" in window;
+  return `<div class="tabs2" role="tablist"><button class="pill" role="tab" data-act="amode" data-m="type" aria-selected="${addMode==="type"}" style="${addMode==="type"?"background:var(--cream);color:var(--night)":""}">✍️ ${esc(t("typeT"))}</button><button class="pill" role="tab" data-act="amode" data-m="paste" aria-selected="${addMode==="paste"}" style="${addMode==="paste"?"background:var(--cream);color:var(--night)":""}">📋 ${esc(t("pasteT"))}</button>${hasC?`<button class="pill" data-act="contacts">📇 ${esc(t("contactsT"))}</button>`:""}</div>
+  ${addMode==="type"?`<form class="addrow" id="addForm"><div class="field"><label class="lbl" for="a_n">${esc(t("pname"))}</label><input type="text" id="a_n" placeholder="Tía Rosa" autocomplete="off" enterkeyhint="next"></div><div class="field"><label class="lbl" for="a_p">${esc(t("pphone"))}</label><input type="tel" id="a_p" placeholder="555 123 4567" inputmode="tel" autocomplete="off" enterkeyhint="done"></div><button class="cta" type="submit" aria-label="${esc(t("add"))}">+</button></form>`
+  :`<div class="stack"><textarea id="a_list" placeholder="${esc(t("pasteH"))}"></textarea><button class="cta" data-act="pasteList">${esc(t("pasteBtn"))}</button></div>`}`; }
+function miniList(){ const ps=G().people; if(!ps.length) return ""; return `<div class="plist">${ps.map(p=>`<div class="person" style="cursor:default"><div class="av" style="--c:${colorOf(p.id)}">${esc(ini(p.name)||"?")}</div><div style="min-width:0"><b>${esc(p.name)}${p.me?` · ${esc(t("you"))}`:""}</b><small>${esc(pretty(p.phone)||"—")}</small></div>${p.me?"":`<button class="close" data-act="delQuick" data-id="${p.id}" aria-label="Remove">✕</button>`}</div>`).join("")}</div>`; }
+
+function homeV(){ const g=G(), ps=g.people, n=ps.length, inN=ps.filter(p=>p.letter).length, D=g.draw;
+  let dl=""; if(g.deadline){ const d=Math.ceil((new Date(g.deadline+"T23:59")-new Date())/864e5); dl=t("daysLeft",d); }
+  const notInv=ps.filter(p=>!p.inv&&!p.letter&&!p.me), waiting=ps.filter(p=>!p.letter), meNo=ps.find(p=>p.me&&!p.letter);
+  let nx;
+  if(D){ const toSend=pending(D);
+    nx=toSend.length?{e:"🪅",T:t("nSendT",toSend.length),p:t("nSendP"),b:[[t("nSendB"),"qPin"]]}:{e:"🎉",T:t("nDoneT"),p:t("nDoneP"),b:[[t("nDoneB"),"tabDraw",1]]}; }
+  else if(n<3) nx={e:"👨‍👩‍👧‍👦",T:t("nAddT"),p:t("nAddP"),b:[[t("nAddB"),"addOpen"]]};
+  else if(notInv.length) nx={e:"✉️",T:t("nInvT",notInv.length),p:t("nInvP"),b:[[t("nInvB"),"qInv"],[t("nInvG"),"groupLink",1]]};
+  else if(waiting.length) nx={e:"⏳",T:t("nWaitT",waiting.length),p:t("nWaitP"),b:[[t("nWaitB"),"qRem"],[t("nWaitD"),"tabDraw",1]]};
+  else nx={e:"🎲",T:t("nDrawT"),p:t("nDrawP"),b:[[t("nDrawB"),"tabDraw"]]};
+  const cardsN=D?Object.keys(D.cards).filter(k=>!(P(k)||{}).me).length:0, sentN=D?cardsN-pending(D).length:0;
+  return `<div class="stack">
+  <div class="card next in"><div class="row between"><span class="kicker">${esc(t("nextK"))}</span><span class="big" aria-hidden="true">${nx.e}</span></div><div class="stack tight"><h2>${esc(nx.T)}</h2><p>${esc(nx.p)}</p></div>
+    ${nx.b.map(([l,a,alt])=>`<button class="cta ${alt?"alt":""}" data-act="${a}">${esc(l)}</button>`).join("")}
+    ${meNo&&!D?`<a class="ghost" style="justify-self:start" href="${esc(inviteURL(meNo))}" target="_blank" rel="noopener">✍️ ${esc(t("writeMine"))}</a>`:""}</div>
+  <div class="stats"><button class="stat" data-act="tab" data-v="people" style="font:inherit;color:inherit;text-align:left;cursor:pointer"><small>${esc(t("people"))}</small><b>${n}</b></button>
+    <div class="stat"><small>${esc(t("letters"))}</small><b>${inN}<span style="font-size:14px;color:var(--muted)">/${n}</span></b><div class="meter"><i style="width:${n?inN/n*100:0}%"></i></div></div>
+    <button class="stat" data-act="tab" data-v="draw" style="font:inherit;color:inherit;text-align:left;cursor:pointer"><small>${esc(t("draw"))}</small><b style="font-size:16px">${D?esc(t("done"))+" ✓":esc(t("notYet"))}</b><span>${D?esc(t("of",sentN,cardsN)):esc(dl)}</span></button></div>
+  ${mailCard()}
+  ${lbCard()}
+  <div class="facts">${fact("🎁",t("eBudget"),g.budget)}${fact("🎄",t("eEx"),g.party&&fmtDate(g.party)+(g.place?" · "+g.place:""))}${fact("📮",t("eDue"),g.deadline&&fmtDate(g.deadline))}</div></div>`; }
+function lbCard(){ const g=G(), rs=boardRows(g).slice(0,5), medal=["🥇","🥈","🥉"];
+  return `<div class="card soft"><div class="section-t"><div class="stack tight"><h3>🏆 ${esc(t("lbT"))}</h3><p class="help">${esc(rs.length?t("lbP"):t("lbEmpty"))}</p></div></div>
+    ${rs.length?`<div class="plist">${rs.map((r,i)=>`<div class="pair"><span>${medal[i]||i+1} ${esc(r.n)}</span><b>${Number(r.s).toLocaleString()}</b></div>`).join("")}</div>`:""}
+    <div class="two"><a class="cta sm" style="width:100%" href="${esc(GAME_SHARE(g))}" target="_blank" rel="noopener">🎮 ${esc(t("lbPlay"))}</a><button class="cta sm alt" style="width:100%" data-act="lbShare">📣 ${esc(t("lbShare"))}</button></div></div>`; }
+function fact(e,l,v){ return `<button class="fact ${v?"":"empty"}" data-act="tab" data-v="more">${e} ${esc(v?v:l+" · "+t("eAdd"))}</button>`; }
+function mailCard(){ const live=G()&&G().cloud===1; return `<div class="card soft mail"><div class="stack tight"><h3>${esc(live?t("autoT"):t("mailT"))}</h3><p class="help">${esc(live?t("autoP"):t("mailP"))}</p></div>
+  ${live?`<button class="cta alt" data-act="sync">🔄 ${esc(t("syncNow"))}</button>`:""}
+  <button class="cta ${live?"sm alt":"alt"}" ${live?'style="width:100%"':""} data-act="clipPaste">📋 ${esc(t("mailPaste"))}</button>
+  <details><summary>${esc(t("mailOr"))}</summary><div class="stack" style="margin-top:10px"><textarea id="mailBox" placeholder="📮 …"></textarea><button class="cta sm" data-act="mailAdd" style="width:100%">${esc(t("mailAdd"))}</button></div></details></div>`; }
+
+function peopleV(){ const g=G(), D=g.draw; let ps=g.people;
+  if(filter==="wait") ps=ps.filter(p=>!p.letter); if(filter==="in") ps=ps.filter(p=>p.letter);
+  const notInv=g.people.filter(p=>!p.inv&&!p.letter&&!p.me).length, waiting=g.people.filter(p=>p.inv&&!p.letter&&!p.me).length;
+  return `<div class="stack"><div class="section-t"><h2>${esc(t("pTitle"))} · ${g.people.length}</h2><button class="cta sm" data-act="addOpen">${esc(t("pAdd"))}</button></div>
+    <div class="tabs2">${[["all",t("fAll")],["wait",t("fWait")],["in",t("fIn")]].map(([k,l])=>`<button class="pill" data-act="filter" data-f="${k}" style="${filter===k?"background:var(--cream);color:var(--night)":""}">${esc(l)}</button>`).join("")}</div>
+    ${!D&&notInv?`<button class="cta" data-act="qInv">✉️ ${esc(t("inviteAll",notInv))}</button>`:""}${!D&&!notInv&&waiting?`<button class="cta alt" data-act="qRem">⏰ ${esc(t("remindAll",waiting))}</button>`:""}
+    ${ps.length?`<div class="plist">${ps.map(p=>{ const [c,l]=status(p); return `<button class="person" data-act="person" data-id="${p.id}"><div class="av" style="--c:${colorOf(p.id)}">${esc(ini(p.name)||"?")}</div><div style="min-width:0"><b>${esc(p.name)}${p.me?` · ${esc(t("you"))}`:""}</b><small>${esc(pretty(p.phone)||"—")}${p.lang==="es"?" · ES":""}</small></div><span class="st ${c}">${esc(l)}</span></button>`; }).join("")}</div>`
+      :`<div class="card soft empty-st"><div class="e">🎅</div><h3>${esc(t("emptyP"))}</h3><p class="help">${esc(t("emptyPs"))}</p><button class="cta sm" data-act="addOpen">${esc(t("pAdd"))}</button></div>`}
+    ${!D?`<button class="cta alt" data-act="groupLink">🔗 ${esc(t("nInvG"))}</button>`:""}</div>`; }
+
+function drawV(){ const g=G(), D=g.draw;
+  const pairs=g.pairs.map(([a,b])=>[P(a),P(b)]).filter(([a,b])=>a&&b);
+  const pairCard=`<div class="card soft"><div class="stack tight"><h3>💑 ${esc(t("avoidT"))}</h3><p class="help">${esc(t("avoidP"))}</p></div>
+    ${pairs.length?pairs.map(([a,b],i)=>`<div class="pair"><span>${esc(first(a.name))} ✕ ${esc(first(b.name))}</span><button class="close" data-act="delPair" data-i="${i}" aria-label="Remove">✕</button></div>`).join(""):`<p class="fine" style="text-align:left">${esc(t("avoidNone"))}</p>`}
+    ${g.people.length>=2?`<div class="two"><select id="pa" aria-label="1"><option value="">—</option>${g.people.map(p=>`<option value="${p.id}">${esc(p.name)}</option>`).join("")}</select><select id="pb" aria-label="2"><option value="">—</option>${g.people.map(p=>`<option value="${p.id}">${esc(p.name)}</option>`).join("")}</select></div><button class="cta alt sm" data-act="addPair" style="width:100%">${esc(t("avoidAdd"))}</button>`:""}</div>`;
+  if(!D){ const n=g.people.length, waiting=g.people.filter(p=>!p.letter).length, pool=drawPool().length;
+    return `<div class="stack"><div class="card in"><div class="stack tight"><span class="kicker">${esc(t("dReady"))}</span><h2>🎲 ${esc(t("tDraw"))}</h2></div>
+      ${n<3?`<div class="warn">${esc(t("dNeed3"))}</div>`:waiting?`<div class="warn">${esc(t("dWaiting",waiting))}</div>
+        <label class="toggle"><span><b>${esc(t("dInclude"))}</b><small>${esc(t("dIncludeS"))}</small></span><button type="button" class="sw" role="switch" aria-checked="${!!g.includeAll}" data-act="incAll"></button></label>`:`<div class="ok">✓ ${esc(t("of",n,n))} ${esc(t("letters").toLowerCase())}</div>`}
+      <button class="cta" data-act="draw" ${pool<3?"disabled":""}>${esc(t("dBtn"))}</button></div>${pairCard}</div>`; }
+  const ids=Object.keys(D.cards), late=g.people.filter(p=>!D.cards[p.id]);
+  return `<div class="stack"><div class="card in"><div class="stack tight"><span class="kicker">${esc(t("dDone"))}</span><h2>🪅 ${esc(t("qPin"))} · ${esc(t("of",ids.filter(k=>!(P(k)||{}).me).length-pending(D).length,ids.filter(k=>!(P(k)||{}).me).length))}</h2><p>${esc(t("dDoneP"))}</p></div>
+    ${pending(D).length?`<button class="cta" data-act="qPin">${esc(t("dSendAll"))}</button>`:""}</div>
+    ${late.length?`<div class="warn">${esc(late.map(p=>first(p.name)).join(", "))}: ${esc(t("dLateP"))}</div>`:""}
+    <div class="drawn">${ids.map(id=>{ const p=P(id); if(!p) return ""; const [c,l]=status(p); return `<div class="giver"><div class="av" style="--c:${colorOf(id)}">${esc(ini(p.name)||"?")}</div><div style="min-width:0"><b style="display:block">${esc(p.name)}</b><span class="st ${c}">${esc(l)}</span></div>
+      ${p.me?`<a class="cta sm" href="${esc(REVEAL_URL+"#"+D.cards[id].code)}" target="_blank" rel="noopener">${esc(t("dOpenMine"))}</a>`:`<button class="cta sm ${D.sent[id]&&!D.redo[id]?"alt":""}" data-act="qOne" data-id="${id}">${esc(D.sent[id]&&!D.redo[id]?t("resend"):t("sendOne"))}</button>`}</div>`; }).join("")}</div>
+    <button class="ghost" data-act="redrawQ">🔄 ${esc(t("dRedo"))}</button>${pairCard}</div>`; }
+
+function moreV(){ const g=G(), gs=Object.values(DB.groups).filter(x=>x.setup);
+  return `<div class="stack"><div class="card in"><h3>🎄 ${esc(t("mDetails"))}</h3>
+    <div class="field"><label class="lbl" for="m_g">${esc(t("gname"))}</label><input type="text" id="m_g" value="${esc(g.name)}"></div>
+    <div class="two"><div class="field"><label class="lbl" for="m_b">${esc(t("budget"))}</label><input type="text" id="m_b" value="${esc(g.budget)}" placeholder="$50"></div><div class="field"><label class="lbl" for="m_pl">${esc(t("place"))}</label><input type="text" id="m_pl" value="${esc(g.place)}" placeholder="${esc(t("placePh"))}"></div></div>
+    <div class="two"><div class="field"><label class="lbl" for="m_d">${esc(t("exDate"))}</label><input type="date" id="m_d" value="${esc(g.party)}"></div><div class="field"><label class="lbl" for="m_dl">${esc(t("due"))}</label><input type="date" id="m_dl" value="${esc(g.deadline)}"></div></div>
+    <h3 style="margin-top:6px">🎅 ${esc(t("mYou"))}</h3>
+    <div class="two"><div class="field"><label class="lbl" for="m_y">${esc(t("yname"))}</label><input type="text" id="m_y" value="${esc(g.org.name)}"></div><div class="field"><label class="lbl" for="m_p">${esc(t("yphone"))}</label><input type="tel" id="m_p" value="${esc(g.org.phone)}" inputmode="tel"></div></div>
+    <label class="toggle"><span><b>${esc(t("playing"))}</b><small>${esc(t("playingS"))}</small></span><button type="button" class="sw" role="switch" id="m_play" aria-checked="${g.org.plays}" data-act="toggle" ${g.draw?"disabled":""}></button></label>
+    <div class="stack tight"><span class="lbl">${esc(t("langQ"))}</span><div class="seg"><button type="button" data-act="glang" data-l="en" aria-pressed="${g.lang==="en"}">English</button><button type="button" data-act="glang" data-l="es" aria-pressed="${g.lang==="es"}">Español</button></div></div>
+    <button class="cta" data-act="saveMore">${esc(t("mSave"))}</button></div>
+  <div class="card soft"><div class="stack tight"><h3>💾 ${esc(t("mBackup"))}</h3><p class="help">${esc(t("mBackupP"))}</p></div><button class="cta alt" data-act="backupDl">⬇️ ${esc(t("mDl"))}</button><button class="cta alt" data-act="backupCopy">📋 ${esc(t("mCopy"))}</button><button class="ghost" data-act="restoreOpen">${esc(t("mRestore"))}</button></div>
+  <div class="card soft"><h3>🗂️ ${esc(t("mGroups"))}</h3>${gs.map(x=>`<div class="pair"><span>${x.gid===g.gid?"✓ ":""}${esc(x.name)}</span>${x.gid===g.gid?"":`<button class="cta sm alt" data-act="switch" data-g="${x.gid}">${esc(t("mSwitch"))}</button>`}</div>`).join("")}
+    <button class="cta alt" data-act="newGroup">${esc(t("mNew"))}</button><button class="ghost" style="color:#ffb3a8" data-act="delGroupQ">${esc(t("mDelete"))}</button></div></div>`; }
+
+/* ---------- sheets ---------- */
+function addSheet(){ sheet(`<div class="sheethead"><h2>${esc(t("s3"))}</h2>${closeBtn()}</div>${adder()}`); wireInputs(); const n=$("a_n"); if(n) setTimeout(()=>n.focus(),250); }
+function personSheet(id){ const g=G(), p=P(id); if(!p) return; const D=g.draw, [c,l]=status(p), m=msgInvite(p,!!p.inv);
+  sheet(`<div class="sheethead"><div class="big-name"><div class="av" style="--c:${colorOf(p.id)}">${esc(ini(p.name)||"?")}</div><div class="stack tight"><span class="st ${c}" style="justify-self:start">${esc(l)}</span><h2>${esc(p.name)}</h2></div></div>${closeBtn()}</div>
+    ${p.letter?`<div class="stack tight"><span class="lbl">${esc(t("letterIn"))}</span>${letterSummary(p.letter)}</div>`:""}
+    ${!p.letter&&!D&&!p.me?`<div class="stack tight"><span class="lbl">${esc(p.inv?t("remind"):t("invite"))}</span><div class="send3"><a class="cta wa" data-act="pSend" data-id="${p.id}" href="${esc(waLink(p.phone,m))}" target="_blank" rel="noopener">${esc(t("waBtn"))}</a><a class="cta im" data-act="pSend" data-id="${p.id}" href="${esc(imLink(p.phone,m))}">${esc(t("imBtn"))}</a><button class="cta alt" data-act="pCopy" data-id="${p.id}">${esc(t("cpBtn"))}</button></div>
+      <details><summary>${esc(t("msgPrev"))}</summary><div class="preview">${esc(m)}</div></details></div>`:""}
+    ${!p.letter?`<a class="cta alt" href="${esc(inviteURL(p))}" target="_blank" rel="noopener">✍️ ${esc(p.me?t("writeMine"):t("writeFor"))}</a>${p.me?"":`<p class="fine" style="margin-top:-6px">${esc(t("writeForS"))}</p>`}`:""}
+    ${D&&D.cards[p.id]&&!p.me?`<button class="cta" data-act="qOne" data-id="${p.id}">🪅 ${esc(D.sent[p.id]&&!D.redo[p.id]?t("resend"):t("qPin"))}</button>`:""}
+    <details><summary>✏️ ${esc(t("edit"))}</summary><div class="stack" style="margin-top:10px">
+      <div class="field"><label class="lbl" for="e_n">${esc(t("pname"))}</label><input type="text" id="e_n" value="${esc(p.name)}" ${p.me?"disabled":""}></div>
+      <div class="field"><label class="lbl" for="e_p">${esc(t("pphone"))}</label><input type="tel" id="e_p" value="${esc(p.phone)}" inputmode="tel" ${p.me?"disabled":""}></div>
+      <div class="stack tight"><span class="lbl">${esc(t("msgLang"))}</span><div class="seg"><button type="button" data-act="plang" data-id="${p.id}" data-l="en" aria-pressed="${p.lang!=="es"}">English</button><button type="button" data-act="plang" data-id="${p.id}" data-l="es" aria-pressed="${p.lang==="es"}">Español</button></div></div>
+      ${p.me?"":`<button class="cta sm" data-act="pSave" data-id="${p.id}" style="width:100%">${esc(t("save"))}</button>`}
+      ${p.letter?`<button class="ghost" data-act="clearLetter" data-id="${p.id}">${esc(t("clearLetter"))}</button>`:""}
+      ${p.me?"":`<button class="ghost" style="color:#ffb3a8" data-act="delQ" data-id="${p.id}">${esc(t("remove"))}</button>`}</div></details>`); }
+function confirmSheet(title,body,yes,act,data=""){ sheet(`<div class="sheethead"><h2>${esc(title)}</h2>${closeBtn()}</div>${body?`<div class="warn">${esc(body)}</div>`:""}<button class="cta" style="background:linear-gradient(180deg,#ef5a4f,#d7372f);color:#fff" data-act="${act}" ${data}>${esc(yes)}</button><button class="cta alt" data-act="closeSheet">${esc(t("cancel"))}</button>`); }
+function groupSheet(){ const g=G(), m=msgInvite(null,false), url=inviteURL(null);
+  sheet(`<div class="sheethead"><div class="stack tight"><span class="kicker">🔗</span><h2>${esc(t("groupT"))}</h2></div>${closeBtn()}</div><p>${esc(t("groupP"))}</p>
+    <div class="send3"><a class="cta wa" href="${esc(waLink("",m))}" target="_blank" rel="noopener" data-act="groupSent">${esc(t("waBtn"))}</a><a class="cta im" href="${esc(imLink("",m))}" data-act="groupSent">${esc(t("imBtn"))}</a><button class="cta alt" data-act="copyText" data-text="${esc(m)}">${esc(t("cpBtn"))}</button></div>
+    <details><summary>${esc(t("msgPrev"))}</summary><div class="preview">${esc(m)}</div></details>`); void url; void g; }
+function restoreSheet(){ sheet(`<div class="sheethead"><h2>💾 ${esc(t("mRestore"))}</h2>${closeBtn()}</div><p>${esc(t("mRestoreP"))}</p><textarea id="rsBox" placeholder="B…"></textarea>
+  <button class="cta" data-act="restoreGo">${esc(t("mRestoreBtn"))}</button><label class="cta alt" style="cursor:pointer">📁 ${esc(t("mFile"))}<input type="file" id="rsFile" accept=".txt,.json,text/plain,application/json" hidden></label>`);
+  $("rsFile").onchange=async e=>{ const f=e.target.files[0]; if(f){ restoreFrom(await f.text()); } }; }
+function backupText(){ return seal({k:"santa-backup",v:1,groups:DB.groups,cur:DB.cur},"B"); }
+function restoreFrom(text){ const m=String(text||"").match(/B[A-Za-z0-9_-]{20,}/); const o=m&&unseal(m[0],"B"); if(!o||o.k!=="santa-backup"){ toast(t("badBackup")); return; }
+  Object.assign(DB.groups,o.groups); DB.cur=o.cur||Object.keys(o.groups)[0]; persist(); closeSheet(); view="home"; render(); toast(t("restored")); }
+
+/* ---------- actions ---------- */
+function readWiz(){ const g=G(), v=id=>($(id)||{}).value;
+  if(wiz===1){ g.name=(v("w_g")||"").trim(); g.org.name=(v("w_y")||"").trim(); g.org.phone=(v("w_p")||"").trim(); g.org.plays=$("w_play").getAttribute("aria-checked")==="true"; }
+  if(wiz===2){ const c=(v("w_bc")||"").trim(); if(c) g.budget=c; g.party=v("w_d")||""; g.deadline=v("w_dl")||""; g.place=(v("w_pl")||"").trim(); }
+  persist(); }
+const ACT={
+  ui:a=>{ if(wiz&&G()&&!G().setup) readWiz(); DB.ui=a.dataset.l; if(G()&&!G().setup) G().lang=DB.ui; persist(); render(); },
+  tab:a=>go(a.dataset.v), tabDraw:()=>go("draw"),
+  begin:()=>{ const g=Object.values(DB.groups).find(x=>!x.setup)||newGroup(); DB.cur=g.gid; g.lang=ui(); wiz=1; persist(); render(); setTimeout(()=>$("w_g")&&$("w_g").focus(),200); },
+  toggle:a=>{ a.setAttribute("aria-checked",String(a.getAttribute("aria-checked")!=="true")); },
+  bud:a=>{ const g=G(); g.budget=g.budget===a.dataset.b?"":a.dataset.b; $("w_bc").value=""; persist(); document.querySelectorAll("[data-act=bud]").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.b===g.budget))); },
+  glang:a=>{ G().lang=a.dataset.l; persist(); document.querySelectorAll("[data-act=glang]").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.l===a.dataset.l))); },
+  wnext:()=>{ readWiz(); const g=G();
+    if(wiz===1){ const e=$("werr"); if(!g.name){ e.textContent=t("needG"); e.hidden=false; $("w_g").focus(); return; } if(!g.org.name){ e.textContent=t("needY"); e.hidden=false; $("w_y").focus(); return; } syncOrganizer(); persist(); }
+    if(wiz===3){ const n=$("a_n"); if(n&&n.value.trim()){ addPerson(n.value,$("a_p").value); } g.setup=true; view="home"; wiz=0; persist(); render(); burst(["🎄","✨","🎁","⭐"]); cloudRegister(g).then(()=>render()); return; }
+    wiz++; render(); window.scrollTo(0,0); },
+  wback:()=>{ readWiz(); if(wiz<=1){ wiz=0; } else wiz--; render(); },
+  wskip:()=>{ wiz++; render(); },
+  amode:a=>{ addMode=a.dataset.m; if($("sheetRoot").innerHTML) addSheet(); else render(); },
+  pasteList:()=>{ const list=parseList($("a_list").value); if(!list.length) return; addMany(list); $("a_list").value=""; addMode="type"; refreshAfterAdd(); },
+  contacts:async()=>{ try{ const cs=await navigator.contacts.select(["name","tel"],{multiple:true}); addMany(cs.map(c=>[(c.name||[])[0]||"",(c.tel||[])[0]||""]).filter(x=>x[0])); refreshAfterAdd(); }catch(e){ toast(t("contactsNo")); } },
+  delQuick:a=>{ const g=G(); g.people=g.people.filter(p=>p.id!==a.dataset.id); g.pairs=g.pairs.filter(pr=>!pr.includes(a.dataset.id)); persist(); render(); },
+  addOpen:()=>{ addMode="type"; addSheet(); },
+  qInv:()=>startQueue("inv",G().people.filter(p=>!p.inv&&!p.letter&&!p.me).map(p=>p.id)),
+  qRem:()=>startQueue("rem",G().people.filter(p=>!p.letter&&!p.me).map(p=>p.id)),
+  qPin:()=>startQueue("pin",pending(G().draw)),
+  qOne:a=>startQueue("pin",[a.dataset.id]),
+  qSend:a=>{ if(!Q) return; const p=P(Q.ids[Q.i]); markSent(p); Q.tapped=true; setTimeout(()=>{ const b=$("qNext"); if(b){ b.disabled=false; b.textContent=t("qNext"); } },200); return "follow"; },
+  qCopy:async()=>{ if(!Q) return; const p=P(Q.ids[Q.i]); if(await copy(qMessage(p))){ markSent(p); Q.tapped=true; const b=$("qNext"); if(b) b.disabled=false; } },
+  qNext:()=>{ if(!Q) return; Q.i++; Q.tapped=false; renderQueue(); }, qSkip:()=>{ if(!Q) return; Q.i++; Q.tapped=false; renderQueue(); },
+  closeSheet:()=>closeSheet(), scrim:(a,e)=>{ if(e.target===a) closeSheet(); },
+  clipPaste:async()=>{ try{ const s=await navigator.clipboard.readText(); if(!importAny(s)) toast(t("mailBad")); }catch(e){ toast(t("pasteFail")); const d=document.querySelector(".mail details"); if(d){ d.open=true; $("mailBox").focus(); } } },
+  mailAdd:()=>{ if(!importAny($("mailBox").value)) toast(t("mailBad")); },
+  filter:a=>{ filter=a.dataset.f; render(); },
+  person:a=>personSheet(a.dataset.id),
+  pSend:a=>{ const p=P(a.dataset.id); if(p.inv) p.rem=Date.now(); p.inv=p.inv||Date.now(); persist(); render(); return "follow"; },
+  pCopy:async a=>{ const p=P(a.dataset.id); if(await copy(msgInvite(p,!!p.inv))){ p.inv=p.inv||Date.now(); persist(); render(); } },
+  pSave:a=>{ const p=P(a.dataset.id), n=$("e_n").value.trim(); if(n) p.name=n; p.phone=$("e_p").value.trim(); persist(); closeSheet(); render(); toast(t("saved")); },
+  plang:a=>{ const g=G(), p=P(a.dataset.id); p.lang=a.dataset.l; if(g.draw){ Object.keys(g.draw.cards).forEach(k=>{ if(k===p.id){ g.draw.cards[k].code=codeFor(p,P(g.draw.cards[k].r)); } }); } persist(); render(); personSheet(p.id); },
+  clearLetter:a=>{ const p=P(a.dataset.id); p.letter=null; persist(); closeSheet(); render(); },
+  delQ:a=>{ const p=P(a.dataset.id); confirmSheet(t("removeQ",first(p.name)),G().draw?t("removeAfter"):"",t("removeY"),"delY",`data-id="${p.id}"`); },
+  delY:a=>{ const g=G(), id=a.dataset.id; g.people=g.people.filter(p=>p.id!==id); g.pairs=g.pairs.filter(pr=>!pr.includes(id)); if(g.draw&&g.draw.cards[id]!==undefined||g.draw&&Object.values(g.draw.cards).some(c=>c.r===id)) g.draw=null; persist(); closeSheet(); render(); toast(t("removed")); },
+  groupLink:()=>groupSheet(), groupSent:()=>"follow", sync:()=>cloudPull(true),
+  lbShare:()=>{ const g=G(), rs=boardRows(g), es=g.lang==="es", url=`${GAME_URL}#sb=${boardCode(g)}`;
+    const m=es?(rs.length?`🏆 ¡Así va la tabla de La Posada de ${g.name}! ${rs[0].n} va ganando con ${Number(rs[0].s).toLocaleString()} puntos 🪅 ¿Quién le gana? 👇\n\n${url}`:`🎮 ¡Ya está La Posada para ${g.name}! Juega, haz puntos y sube a la tabla de la familia 🪅👇\n\n${url}`)
+      :(rs.length?`🏆 Here's the ${g.name} La Posada leaderboard! ${rs[0].n} is winning with ${Number(rs[0].s).toLocaleString()} points 🪅 Who can beat them? 👇\n\n${url}`:`🎮 La Posada is live for ${g.name}! Play, rack up points and get on the family leaderboard 🪅👇\n\n${url}`);
+    sheet(`<div class="sheethead"><div class="stack tight"><span class="kicker">🏆</span><h2>${esc(t("lbShare"))}</h2></div>${closeBtn()}</div><p>${esc(t("groupP2"))}</p>
+      <div class="send3"><a class="cta wa" href="${esc(waLink("",m))}" target="_blank" rel="noopener">${esc(t("waBtn"))}</a><a class="cta im" href="${esc(imLink("",m))}">${esc(t("imBtn"))}</a><button class="cta alt" data-act="copyText" data-text="${esc(m)}">${esc(t("cpBtn"))}</button></div>
+      <details><summary>${esc(t("msgPrev"))}</summary><div class="preview">${esc(m)}</div></details>`); },
+  copyText:a=>copy(a.dataset.text),
+  incAll:a=>{ G().includeAll=a.getAttribute("aria-checked")!=="true"; persist(); render(); },
+  draw:()=>doDraw(),
+  addPair:()=>{ const a=$("pa").value, b=$("pb").value; if(!a||!b||a===b){ toast(t("avoidPick")); return; } if(!blocked(a,b)) G().pairs.push([a,b]); if(G().draw){ /* pairs only affect the next draw */ } persist(); render(); },
+  delPair:a=>{ G().pairs.splice(+a.dataset.i,1); persist(); render(); },
+  redrawQ:()=>confirmSheet(t("dRedoQ"),t("dRedoP"),t("dRedoY"),"redrawY"),
+  redrawY:()=>{ G().draw=null; persist(); doDraw(); },
+  saveMore:()=>{ const g=G(), v=id=>$(id).value.trim(); if(v("m_g")) g.name=v("m_g"); g.budget=v("m_b"); g.place=v("m_pl"); g.party=$("m_d").value; g.deadline=$("m_dl").value; if(v("m_y")) g.org.name=v("m_y"); g.org.phone=v("m_p");
+    if(!g.draw) g.org.plays=$("m_play").getAttribute("aria-checked")==="true"; syncOrganizer(); persist(); render(); toast(t("saved")); cloudRegister(g); },
+  backupDl:async()=>{ const txt=backupText(), name=`secret-santa-backup-${(G().name||"group").toLowerCase().replace(/[^a-z0-9]+/g,"-")}.txt`;
+    try{ const dl=null; if(dl){ await dl.save({filename:name,data:new Blob([txt],{type:"text/plain"})}); return; } }catch(e){}
+    try{ const a=document.createElement("a"); a.href=URL.createObjectURL(new Blob([txt],{type:"text/plain"})); a.download=name; document.body.appendChild(a); a.click(); a.remove(); }catch(e){ copy(txt); } },
+  backupCopy:()=>copy(backupText()),
+  restoreOpen:()=>restoreSheet(), restoreGo:()=>restoreFrom($("rsBox").value),
+  switch:a=>{ DB.cur=a.dataset.g; view="home"; persist(); render(); },
+  newGroup:()=>{ newGroup(); wiz=1; render(); },
+  delGroupQ:()=>confirmSheet(t("mDeleteQ"),t("mDeleteP"),t("mDeleteY"),"delGroupY"),
+  delGroupY:()=>{ delete DB.groups[DB.cur]; DB.cur=(Object.values(DB.groups).find(x=>x.setup)||{}).gid||null; persist(); closeSheet(); view="home"; render(); },
+};
+function refreshAfterAdd(){ if($("sheetRoot").innerHTML){ addSheet(); } render(); }
+document.addEventListener("click",e=>{ const a=e.target.closest("[data-act]"); if(!a) return; const fn=ACT[a.dataset.act]; if(!fn) return;
+  fn(a,e); });
+function wireInputs(){ const f=$("addForm"); if(f) f.onsubmit=e=>{ e.preventDefault(); const n=$("a_n"), p=$("a_p"); const r=addPerson(n.value,p.value); if(r===false) toast(t("dupe",1)); else if(r){ persist(); toast(t("added",1)); }
+  n.value=""; p.value=""; if($("sheetRoot").innerHTML){ addSheet(); render(); } else { render(); } setTimeout(()=>$("a_n")&&$("a_n").focus(),50); };
+  const an=$("a_n"); if(an) an.onkeydown=e=>{ if(e.key==="Enter"){ e.preventDefault(); $("a_p").focus(); } };
+  const bc=$("w_bc"); if(bc) bc.oninput=()=>{ document.querySelectorAll("[data-act=bud]").forEach(b=>b.setAttribute("aria-pressed","false")); G().budget=bc.value.trim(); persist(); }; }
+addEventListener("keydown",e=>{ if(e.key==="Escape"&&$("sheetRoot").innerHTML) closeSheet(); });
+
+/* ---------- cloud: letters arrive by themselves, the leaderboard is live ---------- */
+function ensureKey(g){ if(!g.key){ const a=new Uint8Array(18); crypto.getRandomValues(a); g.key=[...a].map(b=>b.toString(16).padStart(2,"0")).join(""); persist(); } return g.key; }
+async function cloudRegister(g){ if(!g||!g.setup) return; try{ const ok=await rpc("register_group",{p_gid:g.gid,p_name:g.name||"",p_key:ensureKey(g)}); g.cloud=ok===true?1:-1; persist(); }catch(e){} }
+let pulling=false;
+async function cloudPull(show){ const g=G(); if(!g||!g.setup||pulling) return; pulling=true;
+  try{ if(g.cloud!==1){ await cloudRegister(g); if(g.cloud!==1){ if(show) toast(t("syncFail")); return; } render(); }
+    const rows=await rpc("fetch_letters",{p_gid:g.gid,p_key:g.key,p_after:g.lastL||0});
+    if(Array.isArray(rows)&&rows.length){ g.lastL=rows[rows.length-1].id; persist(); const ls=[]; rows.forEach(r=>{ const o=unseal(r.code,"L"); if(o&&o.gid===g.gid&&o.n) ls.push(o); }); if(ls.length) importLetters(ls); }
+    const bd=await rpc("get_board",{p_gid:g.gid});
+    if(Array.isArray(bd)&&bd.length&&mergeBoard(g,bd.map(r=>[r.player,r.score,r.stars,r.top_level,Date.parse(r.updated_at)||0]))){ persist(); render(); }
+    if(show) toast(t("synced"));
+  }catch(e){ if(show) toast(t("syncFail")); } finally{ pulling=false; } }
+setInterval(()=>{ if(document.visibilityState==="visible") cloudPull(false); },20000);
+document.addEventListener("visibilitychange",()=>{ if(document.visibilityState==="visible") cloudPull(false); });
+
+/* ---------- start ---------- */
+(function boot(){ if(DB.view) view=DB.view; if(DB.cur&&!DB.groups[DB.cur]) DB.cur=null;
+  const g=G(); if(g&&!g.setup&&!Object.values(DB.groups).some(x=>x.setup)) wiz=0;
+  render();
+  const h=decodeURIComponent(location.hash+" "+location.href), ls=findLetters(h), bs=findBoards(h);
+  if(ls.length||bs.length){ try{ history.replaceState(null,"",location.pathname+location.search); }catch(e){} importAny(h); }
+})();
+setTimeout(()=>cloudPull(false),600);
+addEventListener("hashchange",()=>{ const ls=findLetters(decodeURIComponent(location.hash)); if(ls.length){ try{ history.replaceState(null,"",location.pathname+location.search); }catch(e){} importLetters(ls); } });
+</script>
+</body>
+</html>

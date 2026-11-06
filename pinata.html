@@ -1,0 +1,784 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="description" content="Run your family Secret Santa with Mexican-Christmas flavor: letters to Santa, piñata reveals and a posada game. Free, no accounts.">
+<meta property="og:title" content="Posada Santa · Secret Santa con sabor">
+<meta property="og:description" content="Letters to Santa, piñata reveals and La Posada game. Free, no accounts.">
+<meta name="theme-color" content="#16224a">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<title>Posada Santa · Your Secret Santa</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lilita+One&family=Nunito:wght@500;700;800&display=swap">
+<style>
+/* Layout: posada night — papel picado across the top, a piñata game stage (tap to swing), then the gift tag with the match */
+:root{
+  --night:#16224a; --night2:#22336b; --card:#fff8ec; --ink:#2a1d14; --muted:#7a6553;
+  --rosa:#e2337f; --marigold:#f5a524; --lime:#53b84a; --turq:#22a9c4; --red:#d7372f; --cream:#fff8ec;
+  --display:"Lilita One", "Arial Rounded MT Bold", system-ui, sans-serif;
+  --body:"Nunito", system-ui, -apple-system, "Segoe UI", sans-serif;
+  color-scheme: dark;
+}
+[hidden]{display:none!important}
+html,body{min-height:100%}
+body{background:radial-gradient(120% 70% at 50% 0%, var(--night2), var(--night) 70%) fixed, var(--night);color:var(--cream);font-family:var(--body);font-size:16px;line-height:1.5;overflow-x:hidden;touch-action:manipulation;-webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent}
+.stars{position:fixed;inset:0;pointer-events:none;z-index:-1;background-image:radial-gradient(1.5px 1.5px at 12% 22%,#fff8,transparent),radial-gradient(1px 1px at 78% 14%,#fff9,transparent),radial-gradient(1.5px 1.5px at 40% 8%,#fff6,transparent),radial-gradient(1px 1px at 90% 40%,#fff7,transparent),radial-gradient(1.5px 1.5px at 6% 52%,#fff6,transparent),radial-gradient(1px 1px at 60% 30%,#fff8,transparent)}
+/* one string across the top: papel picado flags with Christmas bulbs between them */
+.picado{display:flex;justify-content:center;align-items:flex-start;gap:5px;padding-top:6px;position:relative;overflow:hidden}
+.picado::before{content:"";position:absolute;left:0;right:0;top:6px;height:2px;background:#2e5a3e}
+.bulb{flex:0 0 10px;height:17px;margin-top:-1px;position:relative;border-radius:50% 50% 50% 50%/40% 40% 60% 60%;background:var(--c);box-shadow:0 0 10px 2px var(--c)}
+.bulb::before{content:"";position:absolute;top:-3px;left:2px;width:6px;height:5px;border-radius:2px;background:#3b4a3e}
+@media (prefers-reduced-motion:no-preference){.bulb{animation:glow 2.4s ease-in-out infinite;animation-delay:var(--d)}@keyframes glow{50%{opacity:.45;box-shadow:0 0 3px 0 var(--c)}}}
+.flag{flex:0 0 34px;height:44px;
+  clip-path:polygon(0 0,100% 0,100% 82%,88% 100%,75% 82%,62% 100%,50% 82%,38% 100%,25% 82%,12% 100%,0 82%);
+  -webkit-mask:radial-gradient(circle at 50% 38%, transparent 6px, #000 6.5px), radial-gradient(circle at 25% 64%, transparent 3px, #000 3.5px);
+  -webkit-mask-composite:source-in; mask-composite:intersect;
+  mask:radial-gradient(circle at 50% 38%, transparent 6px, #000 6.5px), radial-gradient(circle at 25% 64%, transparent 3px, #000 3.5px)}
+.flag.f0{background:var(--red)}.flag.f1{background:#2f8f4e}.flag.f2{background:var(--marigold)}.flag.f3{background:var(--rosa)}.flag.f4{background:#f4efe4}
+@media (prefers-reduced-motion:no-preference){.flag{animation:sway 4s ease-in-out infinite;transform-origin:top center}.flag:nth-child(even){animation-delay:-2s}@keyframes sway{50%{transform:rotate(3deg)}}}
+.wrap{max-width:460px;margin:0 auto;padding-block:6px 56px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:grid;gap:14px}
+.head{display:grid;justify-items:center;gap:6px;text-align:center;padding-top:6px}
+.eyebrow{font-size:12px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--marigold)}
+h1{font-family:var(--display);font-weight:400;font-size:clamp(28px,8vw,36px);line-height:1.06;margin:0;text-wrap:balance;color:var(--cream)}
+.sub{margin:0;color:#c3cbe6;font-weight:600;font-size:15px}
+.stage{position:relative;cursor:pointer}
+.stage svg{display:block;width:100%;max-width:100%;height:auto}
+.pile{position:absolute;inset:0;pointer-events:none}
+.pile span{position:absolute;left:0;top:0;line-height:1;will-change:transform}
+/* quiet Christmas night behind everything */
+.scenery{position:fixed;left:0;right:0;bottom:0;width:100%;height:36vh;z-index:-1;pointer-events:none}
+.snow{position:fixed;inset:0;width:100%;height:100%;z-index:-1;pointer-events:none}
+@media (prefers-reduced-motion:no-preference){.bstar{animation:twinkle 3.2s ease-in-out infinite}@keyframes twinkle{50%{opacity:.55}}}
+.play{display:grid;justify-items:center;gap:2px;text-align:center;min-height:64px}
+.shout{font-family:var(--display);font-size:clamp(24px,7vw,30px);color:var(--cream);line-height:1.2}
+.shout.hot{color:var(--marigold)}
+.shout.pop{animation:shout .35s cubic-bezier(.3,1.8,.5,1)}
+@keyframes shout{from{transform:scale(.6) rotate(-6deg)}to{transform:none}}
+.hint{font-weight:600;font-size:14px;color:#aab4d6}
+.snd{position:absolute;top:4px;left:0;width:40px;height:40px;border-radius:50%;border:0;background:rgba(255,248,236,.12);color:var(--cream);font-size:18px;cursor:pointer;display:grid;place-items:center}
+.snd[data-on="1"]{background:var(--marigold)}
+.snd:focus-visible{outline:3px solid var(--marigold);outline-offset:2px}
+.lang{position:absolute;top:4px;right:0;display:flex;padding:3px;border-radius:99px;background:rgba(255,248,236,.12);z-index:2}
+.lang button{font:inherit;font-weight:800;font-size:13px;min-width:40px;height:34px;border:0;border-radius:99px;background:none;color:var(--cream);cursor:pointer;padding:0 10px}
+.lang button[aria-pressed="true"]{background:var(--marigold);color:#2a1d14}
+.lang button:focus-visible{outline:3px solid var(--marigold);outline-offset:2px}
+.foot .lang{position:static;background:#f1e6d2;margin-bottom:4px}
+.foot .lang button{color:var(--ink)}
+/* the match card is a gift tag: ribbon and bow on top, a poinsettia in the corner */
+.tag{background:var(--card);color:var(--ink);border-radius:16px;padding:52px 22px 22px;display:grid;gap:18px;position:relative;box-shadow:0 14px 30px rgba(0,0,0,.35);overflow:hidden;text-align:center}
+.tag.plain{padding-top:24px;overflow:visible}
+.ribbon{position:absolute;left:0;right:0;top:20px;height:14px;background:var(--red);box-shadow:inset 0 -3px 0 rgba(0,0,0,.15)}
+.bow{position:absolute;top:2px;left:50%;width:76px;margin-left:-38px}
+.poin{position:absolute;right:-18px;bottom:-18px;width:96px;opacity:.95}
+.label{font-size:11px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+.match{font-family:var(--display);font-size:clamp(34px,11vw,48px);line-height:1.02;color:var(--red);margin-top:6px;overflow-wrap:anywhere;text-wrap:balance}
+.sizes{display:grid;grid-template-columns:repeat(3,1fr);margin-top:8px;border:1.5px solid #e6dac4;border-radius:12px;overflow:hidden}
+.sizes div{padding:10px 6px;display:grid;gap:2px;min-width:0}
+.sizes div+div{border-left:1.5px solid #e6dac4}
+.sizes span{font-size:10px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+.sizes b{font-family:var(--display);font-weight:400;font-size:22px;color:var(--ink);overflow-wrap:anywhere}
+ol{margin:8px 0 0;padding:0;list-style:none;display:grid;gap:8px;text-align:left}
+ol li{display:flex;gap:10px;align-items:flex-start;font-weight:700;background:#f6eedd;border-radius:10px;padding:10px 12px;-webkit-user-select:text;user-select:text}
+ol li::before{content:"★";color:var(--marigold);font-size:16px;line-height:1.4}
+.hints{display:grid;gap:10px;margin-top:8px;text-align:left}
+.hint{display:grid;gap:4px}
+.hint small{font-size:11px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.hint .chips{display:flex;flex-wrap:wrap;gap:6px}
+.hint .chips span{background:#f6eedd;color:var(--ink);border-radius:99px;padding:4px 10px;font-weight:700;font-size:14px;-webkit-user-select:text;user-select:text}
+.hint p{margin:0;font-weight:700;color:var(--ink);-webkit-user-select:text;user-select:text}
+.hint.no p{color:var(--red)}
+.foot{display:grid;justify-items:center;gap:6px;padding-right:40px;padding-left:40px}
+.hush{font-size:13px;color:var(--muted);margin:0}
+.again{font:inherit;font-weight:800;font-size:14px;background:none;border:0;color:var(--red);cursor:pointer;padding:6px;text-decoration:underline;text-underline-offset:3px}
+.fx{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:20}
+.fx span{position:absolute;left:0;top:0;font-size:26px;line-height:1;will-change:transform}
+.banner{position:fixed;left:50%;top:38%;z-index:25;pointer-events:none;transform:translate(-50%,-50%);text-align:center;width:min(92vw,440px)}
+.banner b{display:block;font-family:var(--display);font-weight:400;font-size:clamp(44px,14vw,72px);line-height:.95;color:var(--cream);text-shadow:0 4px 0 var(--red),0 12px 26px rgba(0,0,0,.45)}
+.banner span{display:inline-block;margin-top:14px;font-family:var(--display);font-size:clamp(17px,5vw,22px);background:#2f8f4e;color:var(--cream);padding:6px 16px;border-radius:99px}
+.result-in{animation:pop .55s cubic-bezier(.3,1.6,.5,1)}
+@keyframes pop{from{transform:scale(.85) translateY(20px);opacity:0}to{transform:none;opacity:1}}
+@media (prefers-reduced-motion:reduce){.shout.pop,.result-in{animation:none}}
+.famboard{width:100%;display:grid;gap:6px;margin:4px 0}.famboard ol{list-style:none;margin:0;padding:0;display:grid;gap:5px}.famboard li{display:flex;justify-content:space-between;gap:10px;padding:8px 12px;border-radius:12px;background:#fff;border:2px solid #efe2cc;font-weight:800;color:var(--ink)}.famboard li::before{content:none!important;display:none!important}.famboard li.none{justify-content:center;color:#8a7a68;font-weight:700}
+.saveimg.play{background:#2f8f4e;box-shadow:0 4px 0 #1d5e33;text-decoration:none;display:inline-block}
+.saveimg{font-family:var(--display);font-size:18px;border:0;border-radius:12px;padding:11px 18px;background:var(--red);color:#fff;box-shadow:0 4px 0 #9c241f;cursor:pointer}
+.saveimg:active{transform:translateY(2px);box-shadow:0 2px 0 #9c241f}
+.shot{position:fixed;inset:0;z-index:60;background:rgba(10,16,40,.86);display:grid;place-items:center;padding:16px max(16px,env(safe-area-inset-left,0px));overflow:auto}
+.shotbox{display:grid;gap:12px;justify-items:center;width:min(100%,420px)}
+.shotbox img{width:100%;height:auto;border-radius:14px;box-shadow:0 14px 40px rgba(0,0,0,.5);-webkit-touch-callout:default;-webkit-user-select:auto;user-select:auto}
+.shotbox p{margin:0;text-align:center;color:#fff8ec;font-weight:700}
+.shotrow{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
+.shotrow .again{color:#fff8ec}
+</style>
+
+<div class="stars"></div>
+<svg class="scenery" viewBox="0 0 400 160" preserveAspectRatio="xMidYMax slice" aria-hidden="true">
+  <!-- the Christmas star over the village -->
+  <defs><radialGradient id="glow"><stop offset="0" stop-color="#ffe9a8" stop-opacity=".55"/><stop offset="1" stop-color="#ffe9a8" stop-opacity="0"/></radialGradient></defs>
+  <g class="bstar">
+    <circle cx="206" cy="24" r="22" fill="url(#glow)"/>
+    <path d="M206 10 L208 22 L220 24 L208 26 L206 38 L204 26 L192 24 L204 22 Z" fill="#fff4cc"/>
+    <path d="M206 16 L207 23 L214 24 L207 25 L206 32 L205 25 L198 24 L205 23 Z" fill="#ffd66b"/>
+  </g>
+  <!-- far hills with a little village -->
+  <path d="M0 108 Q60 80 130 94 Q200 70 270 90 Q340 76 400 94 L400 160 L0 160 Z" fill="#1c2b5e"/>
+  <path d="M0 108 Q60 80 130 94 Q200 70 270 90 Q340 76 400 94" stroke="#c9d5ee" stroke-width="1.5" fill="none" opacity=".45"/>
+  <g>
+    <rect x="104" y="84" width="16" height="11" fill="#2a3b7c"/><polygon points="101,85 112,76 123,85" fill="#e3eaf7"/><rect x="109" y="88" width="5" height="5" fill="#f5c66a"/>
+    <rect x="128" y="88" width="13" height="9" fill="#2a3b7c"/><polygon points="125,89 134.5,81 144,89" fill="#e3eaf7"/><rect x="132" y="91" width="4" height="4" fill="#f5c66a"/>
+    <rect x="200" y="72" width="12" height="16" fill="#2a3b7c"/><polygon points="198,73 206,62 214,73" fill="#e3eaf7"/><rect x="204" y="66" width="4" height="4" fill="#f5c66a"/><rect x="212" y="78" width="18" height="10" fill="#2a3b7c"/><polygon points="210,79 221,71 232,79" fill="#e3eaf7"/><rect x="219" y="81" width="5" height="7" fill="#f5c66a"/>
+    <rect x="286" y="80" width="15" height="10" fill="#2a3b7c"/><polygon points="283,81 293.5,73 304,81" fill="#e3eaf7"/><rect x="291" y="83" width="5" height="4" fill="#f5c66a"/>
+  </g>
+  <!-- near snowy hill -->
+  <path d="M0 132 Q90 110 190 124 Q290 104 400 126 L400 160 L0 160 Z" fill="#2b3c7b"/>
+  <path d="M0 132 Q90 110 190 124 Q290 104 400 126" stroke="#e3eaf7" stroke-width="2.5" fill="none" opacity=".7"/>
+  <!-- lit pines -->
+  <g>
+    <polygon points="30,124 46,124 38,100" fill="#123d33"/><polygon points="28,130 48,130 38,108" fill="#16473b"/><circle cx="38" cy="99" r="2" fill="#ffd66b"/>
+    <circle cx="35" cy="115" r="1.3" fill="#e2337f"/><circle cx="41" cy="120" r="1.3" fill="#f5a524"/><circle cx="37" cy="125" r="1.3" fill="#53b84a"/>
+    <polygon points="350,118 370,118 360,90" fill="#123d33"/><polygon points="347,126 373,126 360,99" fill="#16473b"/><circle cx="360" cy="89" r="2.2" fill="#ffd66b"/>
+    <circle cx="356" cy="108" r="1.4" fill="#22a9c4"/><circle cx="364" cy="114" r="1.4" fill="#e2337f"/><circle cx="358" cy="121" r="1.4" fill="#f5a524"/>
+    <polygon points="378,124 390,124 384,106" fill="#16473b"/>
+  </g>
+</svg>
+<canvas class="snow" id="snow" aria-hidden="true"></canvas>
+<div class="picado" aria-hidden="true" id="picado"></div>
+
+<div class="wrap">
+  <div class="head">
+    <div class="eyebrow">¡Feliz Navidad! · Secret Santa 2026</div>
+    <h1 id="hello">Break the piñata!</h1>
+    <p class="sub" data-t="sub">Your Secret Santa match is hiding inside 🎁</p>
+  </div>
+
+  <div class="stage" id="stage" role="button" tabindex="0" aria-label="Swing at the piñata">
+    <button id="snd" type="button" class="snd" aria-label="Turn sound on">🔇</button>
+    <div class="lang" role="group" aria-label="Language / Idioma"><button type="button" data-lang="en" aria-pressed="true">EN</button><button type="button" data-lang="es" aria-pressed="false">ES</button></div>
+    <svg viewBox="0 0 360 330" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <!-- snowy ground where the candy lands -->
+      <path d="M0 330 Q0 306 34 302 Q180 292 326 302 Q360 306 360 330 Z" fill="#dfe7f6"/>
+      <path d="M8 312 Q14 303 34 302 Q180 292 326 302 Q346 303 352 312" stroke="#ffffff" stroke-width="3" fill="none" opacity=".8" stroke-linecap="round"/>
+      <ellipse cx="132" cy="304" rx="54" ry="6" fill="#9fb0d4" opacity=".6"/>
+      <!-- piñata on its rope -->
+      <g id="pin">
+        <line x1="275" y1="0" x2="275" y2="92" stroke="#fff8ec" stroke-width="2.5"/>
+        <g class="piece" id="cTop"><polygon points="275,88 265,126 285,126" fill="#e2337f"/><path d="M275,88 l-6,-8 M275,88 l6,-8" stroke="#f5a524" stroke-width="2"/></g>
+        <g class="piece" id="cRight"><polygon points="336,150 300,139 300,161" fill="#f5a524"/><path d="M336,150 l8,-5 M336,150 l8,6" stroke="#e2337f" stroke-width="2"/></g>
+        <g class="piece" id="cLeft"><polygon points="214,150 250,139 250,161" fill="#22a9c4"/><path d="M214,150 l-8,-5 M214,150 l-8,6" stroke="#53b84a" stroke-width="2"/></g>
+        <g class="piece" id="cBR"><polygon points="314,206 285,171 300,162" fill="#53b84a"/><path d="M314,206 l-2,12 M314,206 l5,10" stroke="#e2337f" stroke-width="2"/></g>
+        <g class="piece" id="cBL"><polygon points="236,206 265,171 250,162" fill="#d7372f"/><path d="M236,206 l2,12 M236,206 l-5,10" stroke="#f5a524" stroke-width="2"/></g>
+        <g class="piece" id="core">
+          <circle cx="275" cy="150" r="30" fill="#fff8ec"/>
+          <circle cx="275" cy="150" r="30" fill="none" stroke="#f5a524" stroke-width="5" stroke-dasharray="6 5"/>
+          <circle cx="275" cy="150" r="16" fill="none" stroke="#e2337f" stroke-width="3" stroke-dasharray="3 4"/>
+          <g stroke="#2a1d14" stroke-width="2" fill="none" stroke-linecap="round">
+            <path class="crack" d="M262 134 l7 8 l-4 6 l8 5" opacity="0"/>
+            <path class="crack" d="M290 140 l-6 6 l5 5 l-7 7" opacity="0"/>
+            <path class="crack" d="M268 166 l6 -7 l5 4 l5 -6" opacity="0"/>
+            <path class="crack" d="M252 150 l9 1 l3 -6 l8 2 M298 152 l-8 2 l-2 6" opacity="0"/>
+          </g>
+        </g>
+      </g>
+      <!-- original big-head toy kid, blindfolded, with a ribboned stick -->
+      <g id="kid" transform="translate(24,58) scale(.85)">
+        <rect x="92" y="244" width="22" height="34" rx="8" fill="#2b3a7a"/>
+        <rect x="126" y="244" width="22" height="34" rx="8" fill="#2b3a7a"/>
+        <rect x="86" y="268" width="32" height="16" rx="8" fill="#3a2418"/>
+        <rect x="122" y="268" width="32" height="16" rx="8" fill="#3a2418"/>
+        <rect x="78" y="168" width="84" height="86" rx="26" fill="#d7372f"/>
+        <path d="M84 176 Q120 196 156 176 L156 192 Q120 212 84 192 Z" fill="#f5a524"/>
+        <path d="M84 182 Q120 202 156 182" stroke="#e2337f" stroke-width="4" fill="none"/>
+        <path d="M84 189 Q120 209 156 189" stroke="#22a9c4" stroke-width="3" fill="none"/>
+        <rect x="88" y="196" width="14" height="44" rx="4" fill="#f5a524"/>
+        <rect x="88" y="206" width="14" height="4" fill="#e2337f"/><rect x="88" y="218" width="14" height="4" fill="#22a9c4"/><rect x="88" y="230" width="14" height="4" fill="#53b84a"/>
+        <ellipse cx="84" cy="232" rx="11" ry="10" fill="#f0b98a"/>
+        <!-- stick: drawn pointing right from the hand, rotated by script -->
+        <g id="stick" transform="rotate(-150 150 220)">
+          <rect x="146" y="214" width="204" height="12" rx="6" fill="#c9884a"/>
+          <rect x="196" y="214" width="8" height="12" fill="#e2337f"/><rect x="244" y="214" width="8" height="12" fill="#22a9c4"/><rect x="292" y="214" width="8" height="12" fill="#f5a524"/>
+          <path d="M338 220 q10 -14 22 -8 M338 220 q12 6 20 16" stroke="#e2337f" stroke-width="3" fill="none"/>
+        </g>
+        <ellipse cx="150" cy="220" rx="12" ry="11" fill="#f0b98a"/>
+        <rect x="38" y="56" width="164" height="128" rx="50" fill="#f0b98a"/>
+        <path d="M44 106 C44 66 80 58 120 60 C160 58 196 66 196 106 C186 92 170 86 150 90 C138 80 112 80 96 90 C78 86 56 92 44 106 Z" fill="#4a2c1d"/>
+        <!-- classic Santa hat: tall red cone flopping over to the right -->
+        <path d="M46 88 C56 50 92 12 146 4 C184 -2 210 14 220 42 L204 50 C196 34 184 28 172 32 C182 50 192 68 196 88 Z" fill="#d7372f"/>
+        <path d="M60 88 C70 58 98 26 136 12 C110 34 90 60 84 88 Z" fill="#a8241f" opacity=".55"/>
+        <path d="M150 20 C170 18 190 26 200 40" stroke="#ef5a4f" stroke-width="4" fill="none" stroke-linecap="round" opacity=".7"/>
+        <rect x="34" y="78" width="172" height="24" rx="12" fill="#fff8ec"/>
+        <path d="M44 84 h20 M74 94 h18 M104 84 h22 M138 94 h18 M168 84 h22" stroke="#e3dccd" stroke-width="3" stroke-linecap="round"/>
+        <circle cx="214" cy="50" r="15" fill="#fff8ec"/>
+        <circle cx="209" cy="45" r="5" fill="#ffffff"/>
+        <g id="eyes" opacity="0">
+          <circle cx="92" cy="128" r="11" fill="#1b1410"/><circle cx="148" cy="128" r="11" fill="#1b1410"/>
+          <circle cx="96" cy="124" r="3.5" fill="#fff"/><circle cx="152" cy="124" r="3.5" fill="#fff"/>
+        </g>
+        <g id="blindfold">
+          <rect x="40" y="114" width="160" height="26" rx="8" fill="#22a9c4"/>
+          <path d="M44 122 h152 M44 132 h152" stroke="#fff8ec" stroke-width="2" stroke-dasharray="8 6"/>
+          <path d="M42 120 l-18 -8 l4 14 Z M42 130 l-16 10 l12 4 Z" fill="#22a9c4"/>
+        </g>
+        <ellipse cx="72" cy="152" rx="11" ry="7" fill="#e2337f" opacity=".35"/>
+        <ellipse cx="168" cy="152" rx="11" ry="7" fill="#e2337f" opacity=".35"/>
+        <ellipse cx="120" cy="148" rx="5" ry="3.5" fill="#d99a6c"/>
+        <path id="mouth" d="M110 160 Q120 168 130 160" stroke="#1b1410" stroke-width="3" fill="none" stroke-linecap="round"/>
+      </g>
+    </svg>
+    <div class="pile" id="pile" aria-hidden="true"></div>
+  </div>
+
+  <div class="play" id="play">
+    <div class="shout" id="shout">Tap anywhere to swing</div>
+    <div class="hint" id="hint">¡Dale, dale, dale! 🎶</div>
+  </div>
+
+  <div class="tag" id="result" hidden>
+    <div class="ribbon"></div>
+    <svg class="bow" viewBox="0 0 76 40" aria-hidden="true">
+      <path d="M38 20 C26 2 4 4 8 18 C11 28 28 26 38 20 Z" fill="#d7372f"/><path d="M38 20 C50 2 72 4 68 18 C65 28 48 26 38 20 Z" fill="#d7372f"/>
+      <path d="M38 20 C30 10 16 9 15 16" stroke="#a8241f" stroke-width="2" fill="none"/><path d="M38 20 C46 10 60 9 61 16" stroke="#a8241f" stroke-width="2" fill="none"/>
+      <path d="M36 22 L26 38 L32 36 L34 40 Z M40 22 L50 38 L44 36 L42 40 Z" fill="#b52a24"/>
+      <circle cx="38" cy="20" r="6" fill="#ef5a4f"/>
+    </svg>
+    <svg class="poin" viewBox="0 0 100 100" aria-hidden="true">
+      <path d="M50 50 L22 70 Q14 60 24 52 Z M50 50 L78 70 Q86 60 76 52 Z" fill="#2f8f4e"/>
+      <g fill="#d7372f">
+        <path d="M50 50 Q44 22 50 8 Q56 22 50 50 Z"/><path d="M50 50 Q76 30 92 32 Q78 44 50 50 Z"/><path d="M50 50 Q78 62 86 80 Q66 74 50 50 Z"/>
+        <path d="M50 50 Q52 78 40 92 Q36 72 50 50 Z"/><path d="M50 50 Q24 70 8 66 Q22 52 50 50 Z"/><path d="M50 50 Q22 36 12 20 Q34 26 50 50 Z"/>
+      </g>
+      <g fill="#b52a24" opacity=".8"><path d="M50 50 Q60 36 72 34 Q64 46 50 50 Z"/><path d="M50 50 Q38 36 28 32 Q36 46 50 50 Z"/><path d="M50 50 Q58 64 62 76 Q50 66 50 50 Z"/></g>
+      <circle cx="50" cy="50" r="5" fill="#f5c542"/><circle cx="46" cy="47" r="2" fill="#53b84a"/><circle cx="54" cy="48" r="2" fill="#53b84a"/><circle cx="50" cy="54" r="2" fill="#53b84a"/>
+    </svg>
+    <div>
+      <div class="label" data-t="shopping">You're shopping for</div>
+      <div class="match" id="rName"></div>
+    </div>
+    <div>
+      <div class="label" data-t="sizes">Their sizes</div>
+      <div class="sizes">
+        <div><span data-t="shirt">Shirt</span><b id="sShirt"></b></div>
+        <div><span data-t="pants">Pants</span><b id="sPants"></b></div>
+        <div><span data-t="shoes">Shoes</span><b id="sShoe"></b></div>
+      </div>
+    </div>
+    <div>
+      <div class="label" data-t="wishes">Their top 3 wishes</div>
+      <ol id="gifts"></ol>
+    </div>
+    <div id="hintsBox" hidden>
+      <div class="label" data-t="hints">Gift hints ✨</div>
+      <div class="hints" id="hints"></div>
+    </div>
+    <div class="foot">
+      <div class="lang" role="group" aria-label="Language / Idioma"><button type="button" data-lang="en" aria-pressed="true">English</button><button type="button" data-lang="es" aria-pressed="false">Español</button></div>
+      <p class="hush" data-t="hush">Shhh, it's top secret 🤫 Keep this text so you can check back while you shop.</p>
+      <button id="shotBtn" type="button" class="saveimg" data-t="shot">📸 Save as image</button>
+      <div id="famBoard" class="famboard" hidden><div class="label" id="famLabel"></div><ol id="famList"></ol></div>
+      <a id="playTips" class="saveimg play" href=ORIGIN+"/play" target="_blank" rel="noopener" data-t="playTips">🎮 Play for elf tips</a>
+      <button id="again" type="button" class="again" data-t="again">🎺 Play the song again</button>
+    </div>
+  </div>
+
+  <div class="tag plain" id="bad" hidden>
+    <p style="margin:0;text-align:center;font-weight:700" data-t="bad1">Almost there! Your secret code didn't come through.</p>
+    <p style="margin:0;text-align:center;color:var(--muted)" data-t="bad2">Go back to your text, copy the whole message (or just the link), and paste it here.</p>
+    <label for="paste" class="label" style="text-align:center" data-t="badLabel">Your Secret Santa text</label>
+    <textarea id="paste" rows="3" placeholder="Paste here" style="font:inherit;font-size:16px;color:var(--ink);background:#fff;border:2px solid #e6d7c0;border-radius:12px;padding:10px;width:100%;box-sizing:border-box;resize:vertical;-webkit-user-select:text;user-select:text"></textarea>
+    <button id="go" type="button" style="font-family:var(--display);font-size:20px;border:0;border-radius:14px;padding:13px 24px;background:var(--rosa);color:#fff;box-shadow:0 5px 0 #9c1f55;cursor:pointer" data-t="go">Let's break it! 🪅</button>
+    <p id="pasteErr" hidden style="margin:0;text-align:center;color:var(--red);font-weight:700" data-t="pasteErr">That doesn't look like your Secret Santa link. Copy the whole text message and try again.</p>
+  </div>
+</div>
+<div class="shot" id="shot" hidden role="dialog" aria-modal="true" aria-label="Your match as a picture">
+  <div class="shotbox">
+    <img id="shotImg" alt="Your Secret Santa match card">
+    <p id="shotHelp">Press and hold the picture, then tap <b>Save to Photos</b> 📲</p>
+    <div class="shotrow">
+      <button id="shotSave" type="button" class="saveimg" hidden data-t="shotSave">⬇️ Save image</button>
+      <button id="shotClose" type="button" class="again" data-t="close">Close</button>
+    </div>
+  </div>
+</div>
+<div class="fx" id="fx" aria-hidden="true"></div>
+
+<script>
+const SB_URL="https://ktssnlyspwzhdhffpgqm.supabase.co", SB_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt0c3NubHlzcHd6aGRoZmZwZ3FtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTM5MjYwMDgsImV4cCI6MjEwOTUwMjAwOH0.3lHaJYRYCyeqcdgS2EIfT1_6qr0B5CxNqYQNHkyevCk";
+async function rpc(fn,args){ const c=new AbortController(), tm=setTimeout(()=>c.abort(),9000);
+  try{ const r=await fetch(SB_URL+"/rest/v1/rpc/"+fn,{method:"POST",headers:{"Content-Type":"application/json",apikey:SB_KEY,Authorization:"Bearer "+SB_KEY},body:JSON.stringify(args),signal:c.signal});
+    if(!r.ok) throw new Error("rpc "+r.status); return await r.json(); } finally{ clearTimeout(tm); } }
+const ORIGIN=location.origin;
+
+const KEY = "eva-santa-2026-wrap";
+const HITS = 7 + Math.floor(Math.random()*4); // 7–10 hits, never shown, so nobody knows when it'll break
+const SHOUTS = ["¡Dale!","¡Dale, dale!","¡Ándale!","¡Más fuerte!","¡Otra vez!","¡Eso!","¡No pierdas el tino!","¡Duro!","¡Ahí va!","¡Pégale!"];
+const RM = matchMedia("(prefers-reduced-motion: reduce)").matches;
+const $ = id => document.getElementById(id);
+(function(){
+  const p=$("picado"), bulbs=["#ff4d4d","#ffd34d","#4ddc7a","#5ac8ff","#ff6fb5"];
+  for(let i=0;i<10;i++){
+    const f=document.createElement("span"); f.className="flag f"+(i%5); p.appendChild(f);
+    const b=document.createElement("span"); b.className="bulb"; b.style.setProperty("--c",bulbs[i%bulbs.length]); b.style.setProperty("--d",(-(i*0.37)%2.4).toFixed(2)+"s"); p.appendChild(b);
+  }
+})();
+
+/* gentle snowfall — few flakes, slow, behind everything */
+(function(){
+  const cv=$("snow"), cx=cv.getContext("2d"); if(!cx) return;
+  let W=0,H=0,dpr=1; const flakes=[];
+  function size(){ dpr=Math.min(2,window.devicePixelRatio||1); W=innerWidth; H=innerHeight; cv.width=W*dpr; cv.height=H*dpr; cx.setTransform(dpr,0,0,dpr,0,0); }
+  size(); addEventListener("resize", size);
+  for(let i=0;i<46;i++) flakes.push({x:Math.random()*W, y:Math.random()*H, r:0.8+Math.random()*1.9, v:10+Math.random()*24, ph:Math.random()*6.28, a:0.35+Math.random()*0.5});
+  function draw(){ cx.clearRect(0,0,W,H); flakes.forEach(f=>{ cx.globalAlpha=f.a; cx.beginPath(); cx.arc(f.x+Math.sin(f.ph)*6, f.y, f.r, 0, 6.283); cx.fillStyle="#ffffff"; cx.fill(); }); cx.globalAlpha=1; }
+  if(RM){ draw(); return; }
+  let t0=performance.now();
+  (function tick(t){ const dt=Math.min(0.05,(t-t0)/1000); t0=t;
+    flakes.forEach(f=>{ f.y+=f.v*dt; f.ph+=dt*0.8; if(f.y>H+4){ f.y=-4; f.x=Math.random()*W; } });
+    draw(); requestAnimationFrame(tick); })(t0);
+})();
+
+function decode(code){
+  if(!/^x[0-9a-f]+$/.test(code) || code.length%2!==1) return null;
+  const hex=code.slice(1), bytes=new Uint8Array(hex.length/2);
+  for(let i=0;i<bytes.length;i++) bytes[i]=parseInt(hex.substr(i*2,2),16) ^ KEY.charCodeAt(i%KEY.length);
+  try{ return JSON.parse(new TextDecoder().decode(bytes)); }catch(e){ return null; }
+}
+let rawCode=null;
+function findCode(text){
+  const ms=String(text||"").toLowerCase().match(/x[0-9a-f]{40,}/g)||[];
+  for(const m of ms){ const c=m.length%2===1?m:m.slice(0,-1); const d=decode(c); if(d){ rawCode=c; return d; } }
+  return null;
+}
+let data = findCode(location.hash) || findCode(location.href);
+/* the family game leaderboard rides along in the link (sb=S…) */
+let sbRaw=null, sbData=null;
+(function(){ const m=String(location.hash+" "+location.href).match(/[#&]sb=(S[A-Za-z0-9_-]{8,})/); if(!m) return; try{ let s=m[1].slice(1).replace(/-/g,"+").replace(/_/g,"/"); while(s.length%4) s+="="; const bin=atob(s), b=new Uint8Array(bin.length); for(let i=0;i<b.length;i++) b[i]=bin.charCodeAt(i)^KEY.charCodeAt(i%KEY.length); const o=JSON.parse(new TextDecoder().decode(b)); if(o&&o.gid){ sbRaw=m[1]; sbData=o; } }catch(e){} })();
+let famLive=false;
+async function famLiveLoad(){ if(!sbData||famLive) return; famLive=true; try{ const bd=await rpc("get_board",{p_gid:sbData.gid}); if(Array.isArray(bd)&&bd.length){ sbData.e=bd.map(x=>[x.player,x.score,x.stars,x.top_level,0]); renderFam(); } }catch(e){} }
+function renderFam(){ famLiveLoad(); if(!sbData||!rawCode) return; const e=(sbData.e||[]).slice(0,5), medal=["🥇","🥈","🥉"], es=LANG==="es";
+  $("famLabel").textContent=(es?"🏆 Tabla de ":"🏆 ")+(sbData.gn||"")+(es?"":" leaderboard");
+  $("famList").innerHTML=e.length?e.map((r,i)=>`<li><span>${medal[i]||i+1} ${String(r[0]).replace(/[&<>"]/g,"")}</span><b>${Number(r[1]).toLocaleString()}</b></li>`).join(""):`<li class="none">${es?"Nadie en la tabla todavía. ¡Sé el primero!":"Nobody's on the board yet. Be first!"}</li>`;
+  $("famBoard").hidden=false;
+  $("playTips").textContent=e.length?(es?"🎮 Quédate a jugar · gánale a "+String(e[0][0]).split(" ").slice(0,2).join(" "):"🎮 Stay and play · beat "+String(e[0][0]).split(" ").slice(0,2).join(" ")):(es?"🎮 Quédate a jugar y llévate el #1":"🎮 Stay and play, claim #1"); }
+
+/* ---------- English | Español ---------- */
+const T={
+  en:{title:"Your Secret Santa Match",hello:"Break the piñata!",helloN:n=>`${n}, break the piñata!`,sub:"Your Secret Santa match is hiding inside 🎁",tap:"Tap anywhere to swing",keep:"Keep swinging!",below:"Your match is below 👇",
+    stage:"Swing at the piñata",shopping:"You're shopping for",sizes:"Their sizes",shirt:"Shirt",pants:"Pants",shoes:"Shoes",wishes:"Their top 3 wishes",hints:"Gift hints ✨",noIdeas:"No ideas listed",
+    hush:"Shhh, it's top secret 🤫 Keep this text so you can check back while you shop.",shot:"📸 Save as image",playTips:"🎮 Play for elf tips",making:"Making your picture…",again:"🎺 Play the song again",
+    bad1:"Almost there! Your secret code didn't come through.",bad2:"Go back to your text, copy the whole message (or just the link), and paste it here.",badLabel:"Your Secret Santa text",paste:"Paste here",go:"Let's break it! 🪅",
+    pasteErr:"That doesn't look like your Secret Santa link. Copy the whole text message and try again.",shotHelp:"Press and hold the picture, then tap <b>Save to Photos</b> 📲",shotSave:"⬇️ Save image",close:"Close",
+    saved:"Saved ✓ ¡Feliz Navidad! 🎄",shotFail:"Couldn't make the picture here. Take a screenshot instead 📸",shotAria:"Your match as a picture",
+    cHead:"¡FELIZ NAVIDAD! · FAMILY SECRET SANTA 2026",cTitle:"My Secret Santa match 🎁",cFor:"I'M SHOPPING FOR",cSizes:"SIZES",cTiles:["SHIRT","PANTS","SHOES"],cWishes:"TOP 3 WISHES",cHints:"GIFT HINTS ✨",cFoot:"Shhh, it's a secret 🤫  ¡Feliz Navidad! 🎄",
+    rows:{vb:"Their vibe",fi:"How they like clothes to fit",co:"Colors they love wearing",sw:"Shoes they actually wear",lv:"What they love",sc:"Scents they love",cf:"How they take their coffee or tea",ck:"Loves to cook or bake",
+      tr:"Favorite treats",rd:"Likes to read",gm:"Plays or uses",sp:"Their sport or workout",tm:"Their team",st:"Stores or brands they love",gc:"Gift cards",no:"Please, no…"}},
+  es:{title:"Tu Secret Santa",hello:"¡Rompe la piñata!",helloN:n=>`¡${n}, rompe la piñata!`,sub:"Tu Secret Santa está escondido adentro 🎁",tap:"Toca donde sea para pegarle",keep:"¡Sigue pegándole!",below:"Tu Secret Santa está abajo 👇",
+    stage:"Pégale a la piñata",shopping:"Le vas a regalar a",sizes:"Sus tallas",shirt:"Camisa",pants:"Pantalón",shoes:"Zapato",wishes:"Sus 3 deseos favoritos",hints:"Pistas para el regalo ✨",noIdeas:"No puso ideas",
+    hush:"Shhh, es top secret 🤫 Guarda este mensaje para revisarlo mientras compras.",shot:"📸 Guardar como imagen",playTips:"🎮 Juega por tips",making:"Haciendo tu imagen…",again:"🎺 Tocar la canción otra vez",
+    bad1:"¡Ya casi! Tu código secreto no llegó.",bad2:"Regresa a tu mensaje, copia todo el texto (o solo el link) y pégalo aquí.",badLabel:"Tu mensaje del Secret Santa",paste:"Pega aquí",go:"¡A romperla! 🪅",
+    pasteErr:"Ese no parece tu link del Secret Santa. Copia todo el mensaje y vuelve a intentar.",shotHelp:"Mantén presionada la imagen y toca <b>Guardar en Fotos</b> 📲",shotSave:"⬇️ Guardar imagen",close:"Cerrar",
+    saved:"Guardada ✓ ¡Feliz Navidad! 🎄",shotFail:"No se pudo hacer la imagen aquí. Mejor toma una captura de pantalla 📸",shotAria:"Tu Secret Santa como imagen",
+    cHead:"¡FELIZ NAVIDAD! · SECRET SANTA FAMILIAR 2026",cTitle:"Mi Secret Santa 🎁",cFor:"LE VOY A REGALAR A",cSizes:"TALLAS",cTiles:["CAMISA","PANTALÓN","ZAPATO"],cWishes:"SUS 3 DESEOS",cHints:"PISTAS PARA EL REGALO ✨",cFoot:"Shhh, es secreto 🤫  ¡Feliz Navidad! 🎄",
+    rows:{vb:"Su estilo",fi:"Cómo le gusta que le quede la ropa",co:"Colores que le encanta usar",sw:"Zapatos que sí usa",lv:"Lo que le encanta",sc:"Aromas que le encantan",cf:"Cómo toma su café o té",ck:"Le encanta cocinar u hornear",
+      tr:"Sus dulces favoritos",rd:"Le gusta leer",gm:"Juega o usa",sp:"Su deporte o ejercicio",tm:"Su equipo",st:"Tiendas o marcas que le encantan",gc:"Tarjetas de regalo",no:"Por favor, no…"}}
+};
+// every answer choice on the two letters, English ↔ Spanish, so chips read in the shopper's language
+const OPTS=[["Sneakers","Tenis"],["Boots","Botas"],["Slippers & house shoes","Pantuflas"],["Sandals & slides","Sandalias y chanclas"],["Running & workout shoes","Tenis para correr o hacer ejercicio"],["Dress shoes","Zapatos de vestir"],
+  ["⚫ Black","⚫ Negro"],["⚪ White & cream","⚪ Blanco y crema"],["🤎 Browns & neutrals","🤎 Cafés y neutros"],["🔵 Blues","🔵 Azules"],["🟢 Greens","🟢 Verdes"],["🔴 Reds","🔴 Rojos"],["🩷 Pinks","🩷 Rosas"],["🟣 Purples","🟣 Morados"],["🌈 Bright & bold","🌈 Vivos y llamativos"],
+  ["Fitted","Ajustada"],["Regular","Normal"],["Relaxed & roomy","Holgada y cómoda"],
+  ["🧸 Cozy & comfy","🧸 Cómodo y calientito"],["👟 Sporty & on the go","👟 Deportivo y activo"],["👔 Classic & put-together","👔 Clásico y arreglado"],["😎 Trendy & bold","😎 A la moda y atrevido"],["🏕️ Outdoorsy","🏕️ Aventurero y al aire libre"],
+  ["🧴 Self-care & smelling good","🧴 Cuidado personal y oler rico"],["☕ Coffee or tea","☕ Café o té"],["🍳 Cooking & baking","🍳 Cocinar y hornear"],["🍫 Sweet treats & snacks","🍫 Dulces y botanas"],["🏠 Home & cozy decor","🏠 Casa y decoración"],["📚 Reading","📚 Leer"],
+  ["🎮 Games & tech","🎮 Juegos y tecnología"],["🏋️ Fitness & sports","🏋️ Ejercicio y deportes"],["🏆 Fan gear for my team","🏆 Cosas de mi equipo"],["🌱 Plants & gardening","🌱 Plantas y jardín"],["🛠️ Tools & DIY","🛠️ Herramientas y proyectos"],["🎨 Arts & crafts","🎨 Manualidades y arte"],
+  ["Fresh & clean","Fresco y limpio"],["Floral","Floral"],["Sweet & vanilla","Dulce y vainilla"],["Warm & woodsy","Cálido y amaderado"],["Citrus","Cítrico"],["Unscented, please","Sin aroma, por favor"],
+  ["Black coffee","Café negro"],["Coffee with cream & sugar","Café con crema y azúcar"],["Lattes & fancy drinks","Lattes y bebidas especiales"],["Tea","Té"],["Hot chocolate or champurrado","Chocolate caliente o champurrado"],
+  ["Love them!","¡Me encantan!"],["Only for a store I love","Solo de una tienda que me guste"],["I'd rather get a surprise","Prefiero una sorpresa"]];
+const okey=s=>String(s||"").normalize("NFD").replace(/[̀-ͯ]/g,"").toLowerCase().replace(/[^a-z0-9]+/g," ").trim();
+const OPT=new Map(); OPTS.forEach(p=>{ OPT.set(okey(p[0]),p); OPT.set(okey(p[1]),p); });
+const COMMA_OPTS=OPTS.flat().filter(o=>o.includes(", ")); // answers that contain a comma themselves
+function splitVals(val){ let s=String(val||""); const keep=[];
+  COMMA_OPTS.forEach(o=>{ if(s.includes(o)){ keep.push(o); s=s.split(o).join("\u0000"+(keep.length-1)+"\u0000"); } });
+  return s.split(/,\s*/).map(v=>v.replace(/\u0000(\d+)\u0000/g,(_,i)=>keep[+i]).trim()).filter(Boolean); }
+const trOpt=v=>{ const p=OPT.get(okey(v)); return p?p[LANG==="es"?1:0]:v; };
+let LANG=(data&&data.l==="es")||(!data&&/^es\b/i.test(navigator.language||""))?"es":"en";
+try{ const saved=localStorage.getItem("ss-lang"); if(saved==="en"||saved==="es") LANG=saved; }catch(e){}
+const t=k=>T[LANG][k];
+let hintKey=null; // which line is under the shout right now
+function applyLang(){
+  document.documentElement.lang=LANG; document.title=t("title");
+  document.querySelectorAll("[data-t]").forEach(el=>{ el.textContent=t(el.dataset.t); });
+  document.querySelectorAll(".lang button").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.lang===LANG)));
+  $("hello").textContent=data&&data.n?t("helloN")(data.n):t("hello");
+  $("paste").placeholder=t("paste"); $("stage").setAttribute("aria-label",t("stage")); $("shot").setAttribute("aria-label",t("shotAria"));
+  $("shotHelp").innerHTML=t("shotHelp");
+  if(!hits) $("shout").textContent=t("tap");
+  if(hintKey) $("hint").textContent=t(hintKey);
+  if(!$("result").hidden){ fillResult(); renderFam(); }
+}
+document.querySelectorAll(".lang button").forEach(b=>b.addEventListener("click",()=>{ LANG=b.dataset.lang; try{ localStorage.setItem("ss-lang",LANG); }catch(e){} applyLang(); }));
+
+/* ---------- sound (unlocked by the first tap) ---------- */
+let ac=null, master=null, noiseBuf=null, songNodes=[];
+// A tiny silent WAV looped in an <audio> element switches iPhones into "media playback" mode,
+// so Web Audio is heard even with the ringer switch on silent.
+const SILENT_WAV=(()=>{ const n=1600,b=new Uint8Array(44+n),v=new DataView(b.buffer),w=(o,s)=>[...s].forEach((c,i)=>b[o+i]=c.charCodeAt(0));
+  w(0,"RIFF");v.setUint32(4,36+n,true);w(8,"WAVEfmt ");v.setUint32(16,16,true);v.setUint16(20,1,true);v.setUint16(22,1,true);v.setUint32(24,8000,true);v.setUint32(28,8000,true);v.setUint16(32,1,true);v.setUint16(34,8,true);w(36,"data");v.setUint32(40,n,true);b.fill(128,44);
+  let s="";b.forEach(x=>s+=String.fromCharCode(x));return "data:audio/wav;base64,"+btoa(s); })();
+let silentEl=null;
+function unlock(){
+  try{ if(navigator.audioSession) navigator.audioSession.type="playback"; }catch(e){}
+  try{
+    if(!silentEl){ silentEl=document.createElement("audio"); silentEl.src=SILENT_WAV; silentEl.loop=true; silentEl.setAttribute("playsinline",""); silentEl.setAttribute("webkit-playsinline",""); }
+    const p=silentEl.play(); if(p&&p.catch) p.catch(()=>{});
+  }catch(e){}
+  const a=audio();
+  if(a){ try{ const b=a.createBuffer(1,1,22050), s=a.createBufferSource(); s.buffer=b; s.connect(a.destination); s.start(0); }catch(e){} }
+  updateSoundChip();
+}
+function updateSoundChip(){
+  const c=document.getElementById("snd"); if(!c) return;
+  const on = ac && ac.state==="running";
+  c.textContent = on ? "🔊" : "🔇";
+  c.setAttribute("aria-label", on ? "Sound is on" : "Turn sound on");
+  c.dataset.on = on ? "1" : "";
+}
+function audio(){
+  try{
+    if(!ac){
+      ac=new (window.AudioContext||window.webkitAudioContext)();
+      ac.onstatechange=updateSoundChip;
+      const comp=ac.createDynamicsCompressor(); comp.threshold.value=-14; comp.ratio.value=4;
+      master=ac.createGain(); master.gain.value=0.9; master.connect(comp).connect(ac.destination);
+      noiseBuf=ac.createBuffer(1, ac.sampleRate, ac.sampleRate); const d=noiseBuf.getChannelData(0); for(let i=0;i<d.length;i++) d[i]=Math.random()*2-1;
+    }
+    if(ac.state==="suspended") ac.resume();
+  }catch(e){ ac=null; }
+  return ac;
+}
+function env(g, t, a, peak, dec){ g.gain.setValueAtTime(0.0001,t); g.gain.exponentialRampToValueAtTime(peak,t+a); g.gain.exponentialRampToValueAtTime(0.0001,t+a+dec); }
+function osc(type, freq, t, dur, peak, opts={}){
+  const a=audio(); if(!a) return;
+  const o=a.createOscillator(), g=a.createGain(); o.type=type; o.frequency.setValueAtTime(freq,t);
+  if(opts.slide) o.frequency.exponentialRampToValueAtTime(opts.slide, t+dur);
+  let out=o;
+  if(opts.lp){ const f=a.createBiquadFilter(); f.type="lowpass"; f.frequency.value=opts.lp; o.connect(f); out=f; }
+  if(opts.vib){ const l=a.createOscillator(), lg=a.createGain(); l.frequency.value=5.6; lg.gain.value=freq*opts.vib; l.connect(lg).connect(o.frequency); l.start(t); l.stop(t+dur+0.1); songNodes.push(l); }
+  out.connect(g).connect(master);
+  if(opts.sustain){ g.gain.setValueAtTime(0.0001,t); g.gain.exponentialRampToValueAtTime(peak,t+0.03); g.gain.setValueAtTime(peak*0.8,t+Math.max(0.04,dur-0.06)); g.gain.exponentialRampToValueAtTime(0.0001,t+dur); }
+  else env(g,t,0.005,peak,dur);
+  o.start(t); o.stop(t+dur+0.05); if(opts.song) songNodes.push(o);
+}
+function noise(t, dur, peak, type, f0, f1){
+  const a=audio(); if(!a) return;
+  const s=a.createBufferSource(); s.buffer=noiseBuf;
+  const f=a.createBiquadFilter(); f.type=type; f.Q.value=type==="bandpass"?1.2:0.7;
+  f.frequency.setValueAtTime(f0,t); if(f1) f.frequency.exponentialRampToValueAtTime(f1,t+dur);
+  const g=a.createGain(); env(g,t,dur*0.35,peak,dur*0.65);
+  s.connect(f).connect(g).connect(master); s.start(t, Math.random()*0.5); s.stop(t+dur+0.05);
+}
+const now = () => (audio()?ac.currentTime:0);
+function whoosh(){ const t=now(); noise(t,0.16,0.35,"bandpass",350,2600); }
+function bonk(){
+  const t=now();
+  osc("sine",170,t,0.18,0.9,{slide:50});
+  osc("triangle",420,t,0.07,0.25,{slide:180});
+  noise(t,0.08,0.45,"highpass",1800);
+  for(let i=0;i<3;i++) osc("square",2200+Math.random()*1800,t+0.04+i*0.03,0.03,0.04); // candy rattle inside
+}
+function smash(){
+  const t=now();
+  osc("sine",120,t,0.4,1,{slide:35});
+  noise(t,0.5,0.8,"lowpass",4000,300);
+  noise(t,0.25,0.5,"highpass",2500);
+  for(let i=0;i<22;i++) osc("square",1800+Math.random()*3000,t+0.05+Math.random()*0.9,0.025,0.035); // candy hitting the floor
+}
+
+/* ---------- "Jingle Bells" (public domain) as a mariachi ranchera ----------
+   Two trumpets in thirds, violins an octave up, guitarrón bass on 1 & 3, vihuela strums on 2 & 4. */
+const HZ = n => 440*Math.pow(2,(n-69)/12);
+const N = {D4:62,E4:64,Fs4:66,G4:67,A4:69,B4:71,C5:72,D5:74,E5:76,Fs5:78,G5:79,A5:81,G3:55,A3:57,B3:59,C3:48,D3:50,E3:52,Fs3:54,G2:43,A2:45,D2:38,C2:36,B2:47};
+function thirdBelow(m){ const pc=((m-67)%12+12)%12; const order=[0,2,4,5,7,9,11]; let i=order.indexOf(pc); if(i<0) return m-3; const oct=Math.floor((m-67)/12); const j=i-2; return 67+oct*12+(j<0?order[j+7]-12:order[j]); }
+const MELODY = [
+  // pickup fanfare
+  ["D5",.5],["D5",.5],["G5",1],["R",2],
+  ["B4",1],["B4",1],["B4",2], ["B4",1],["B4",1],["B4",2], ["B4",1],["D5",1],["G4",1.5],["A4",.5], ["B4",4],
+  ["C5",1],["C5",1],["C5",1.5],["C5",.5], ["C5",1],["B4",1],["B4",1],["B4",.5],["B4",.5], ["B4",1],["A4",1],["A4",1],["B4",1], ["A4",2],["D5",2],
+  ["B4",1],["B4",1],["B4",2], ["B4",1],["B4",1],["B4",2], ["B4",1],["D5",1],["G4",1.5],["A4",.5], ["B4",4],
+  ["C5",1],["C5",1],["C5",1.5],["C5",.5], ["C5",1],["B4",1],["B4",1],["B4",.5],["B4",.5], ["D5",1],["D5",1],["C5",1],["A4",1], ["G4",4],
+  // mariachi tag: shake, then ta-da
+  ["D5",.5],["E5",.5],["D5",.5],["B4",.5],["G4",1],["D5",1], ["G5",3],["R",1]
+];
+// one chord per bar (4 beats), first bar is the pickup
+const CHORDS = ["G","G","G","G","G","C","G","A","D","G","G","G","G","C","G","D","G","D","G"];
+const CHORD_NOTES = {G:[55,59,62,67], C:[55,60,64,67], D:[57,62,66,69], A:[57,61,64,69]};
+const BASS = {G:[43,50], C:[48,43], D:[50,45], A:[45,52]};
+function playSong(){
+  const a=audio(); if(!a) return;
+  stopSong();
+  const beat=0.3, t0=a.currentTime+0.15;
+  let t=t0;
+  MELODY.forEach(([n,len])=>{
+    const dur=len*beat;
+    if(n!=="R"){
+      const m=N[n], f=HZ(m);
+      osc("sawtooth",f,t,dur*0.92,0.16,{lp:2600,vib:0.006,sustain:true,song:true});            // trumpet 1
+      osc("sawtooth",HZ(thirdBelow(m)),t,dur*0.92,0.11,{lp:2300,vib:0.006,sustain:true,song:true}); // trumpet 2
+      osc("triangle",f*2,t,dur*0.95,0.05,{vib:0.012,sustain:true,song:true});                   // violins
+    }
+    t+=dur;
+  });
+  const total=MELODY.reduce((s,[,l])=>s+l,0), bars=Math.ceil(total/4);
+  for(let b=0;b<bars;b++){
+    const ch=CHORDS[Math.min(b,CHORDS.length-1)], bt=t0+b*4*beat;
+    BASS[ch].forEach((m,i)=>osc("triangle",HZ(m),bt+i*2*beat,beat*1.2,0.5,{song:true}));    // guitarrón on 1 & 3
+    [1,3].forEach(k=>CHORD_NOTES[ch].forEach((m,j)=>osc("square",HZ(m),bt+k*beat+j*0.012,0.12,0.035,{lp:1800,song:true}))); // vihuela strum on 2 & 4
+    [1.5,3.5].forEach(k=>CHORD_NOTES[ch].slice(1).forEach((m,j)=>osc("square",HZ(m),bt+k*beat+j*0.01,0.07,0.02,{lp:1600,song:true})));
+  }
+}
+function stopSong(){ songNodes.forEach(n=>{ try{ n.stop(); }catch(e){} }); songNodes=[]; }
+
+/* ---------- game state & animation loop ---------- */
+const stick=$("stick"), pin=$("pin");
+const REST=-150, HIT=-38;
+let stickA=REST, pinA=0, pinV=0, hits=0, broken=false, swingT=-1, queued=false, hitDone=false, last=performance.now();
+function frame(now){
+  const dt=Math.min(0.05,(now-last)/1000); last=now;
+  if(swingT>=0){
+    swingT+=dt; const D=0.11;
+    if(swingT<D){ stickA=REST+(HIT-REST)*(swingT/D); }
+    else { if(!hitDone){ hitDone=true; onHit(); } stickA=HIT+(REST-HIT)*Math.min(1,(swingT-D)/0.16); }
+    if(swingT>=D+0.16){ swingT=-1; stickA=broken?-120:REST; if(queued&&!broken){ queued=false; startSwing(); } }
+  }
+  // piñata: damped spring plus a gentle idle sway
+  if(!broken){
+    const acc=-60*pinA-4*pinV; pinV+=acc*dt; pinA+=pinV*dt;
+    pin.setAttribute("transform",`rotate(${(pinA+Math.sin(now/900)*3).toFixed(2)} 275 0)`);
+  }
+  stick.setAttribute("transform",`rotate(${stickA.toFixed(1)} 150 220)`);
+  requestAnimationFrame(frame);
+}
+function startSwing(){ swingT=0; hitDone=false; whoosh(); }
+function swing(){
+  if(broken||!data) return;
+  unlock();
+  if(swingT>=0){ queued=true; return; }
+  startSwing();
+}
+function onHit(){
+  hits++; bonk();
+  pinV -= 160 + Math.random()*60;
+  document.querySelectorAll(".crack").forEach((c,i)=>{ if(hits/HITS > (i+0.5)/4) c.setAttribute("opacity","1"); });
+  const s=$("shout"); s.textContent=SHOUTS[Math.floor(Math.random()*SHOUTS.length)]; s.classList.add("hot"); s.classList.remove("pop"); void s.offsetWidth; s.classList.add("pop");
+  if(hits===1){ hintKey="keep"; $("hint").textContent=t("keep"); }
+  if(navigator.vibrate) try{ navigator.vibrate(25); }catch(e){}
+  if(hits>=3) burst(2+Math.floor(hits/2), 0.6);
+  if(hits>=HITS) breakPinata();
+}
+
+/* ---------- particles ---------- */
+const CANDY=["🍬","🍭","🍊","🥜","🍬","🍫","⭐","🍬"];
+const CHEER=["🎄","⭐","🎁","❄️","🔔","🍬","🌟","🪅","✨","🎉","🍊","🫔"];
+function pinataPoint(){
+  const r=$("stage").querySelector("svg").getBoundingClientRect();
+  return {x:r.left+r.width*(275/360), y:r.top+r.height*(150/330)};
+}
+// Candy flies out of the piñata and lands on the snow, where it stays.
+let piled=0;
+function burst(n, power){
+  const pile=$("pile"), w=pile.clientWidth, k=w/360, size=Math.max(18, 22*k);
+  const ox=275*k-size/2, oy=150*k-size/2;
+  for(let i=0;i<n && piled<140;i++, piled++){
+    const s=document.createElement("span"); s.textContent=CANDY[Math.floor(Math.random()*CANDY.length)]; s.style.fontSize=size+"px";
+    pile.appendChild(s);
+    // most candy lands near the piñata, some rolls further toward the kid
+    const sx = Math.random()<0.65 ? 200+Math.random()*150 : 20+Math.random()*190;
+    const lx = sx*k-size/2, ly = (302+Math.random()*18)*k-size*0.8;
+    const rot=Math.round((Math.random()*2-1)*200);
+    if(RM){ s.style.transform=`translate(${lx}px,${ly}px) rotate(${rot}deg)`; continue; }
+    const up=(40+Math.random()*110)*power*k;
+    s.animate([
+      {transform:`translate(${ox}px,${oy}px) rotate(0deg)`},
+      {transform:`translate(${ox+(lx-ox)*0.45}px,${oy-up}px) rotate(${rot*0.5}deg)`, offset:0.32},
+      {transform:`translate(${lx}px,${ly}px) rotate(${rot}deg)`, offset:0.78},
+      {transform:`translate(${lx}px,${ly-7*k}px) rotate(${rot}deg)`, offset:0.88},
+      {transform:`translate(${lx}px,${ly}px) rotate(${rot}deg)`}
+    ],{duration:1100+Math.random()*700, delay:Math.random()*160, easing:"cubic-bezier(.25,.6,.45,1)", fill:"both"});
+  }
+}
+function flood(){
+  if(RM) return;
+  const fx=$("fx");
+  for(let i=0;i<90;i++){
+    const s=document.createElement("span"); s.textContent=CHEER[i%CHEER.length]; s.style.fontSize=(20+Math.random()*22)+"px";
+    fx.appendChild(s);
+    const x=Math.random()*innerWidth, drift=(Math.random()*2-1)*80;
+    s.animate([
+      {transform:`translate(${x}px,-60px) rotate(0)`},
+      {transform:`translate(${x+drift}px,${innerHeight+60}px) rotate(${(Math.random()*2-1)*360}deg)`}
+    ],{duration:2200+Math.random()*1800, delay:Math.random()*1400, easing:"ease-in", fill:"both"}).onfinish=()=>s.remove();
+  }
+}
+function banner(){
+  const b=document.createElement("div"); b.className="banner";
+  b.innerHTML="<b>¡Feliz Navidad!</b><span>y próspero año nuevo 🎄</span>";
+  document.body.appendChild(b);
+  if(!RM){
+    b.animate([{transform:"translate(-50%,-50%) scale(.3) rotate(-8deg)",opacity:0},{transform:"translate(-50%,-50%) scale(1.08) rotate(2deg)",opacity:1,offset:.25},{transform:"translate(-50%,-50%) scale(1)",opacity:1,offset:.8},{transform:"translate(-50%,-60%) scale(.9)",opacity:0}],{duration:2600,easing:"ease-out",fill:"forwards"}).onfinish=()=>b.remove();
+  } else setTimeout(()=>b.remove(),1800);
+}
+
+/* ---------- the big moment ---------- */
+function breakPinata(){
+  broken=true;
+  pin.setAttribute("transform","rotate(0 275 0)");
+  const dirs={cTop:[0,-160],cRight:[200,-60],cLeft:[-200,-60],cBR:[140,170],cBL:[-140,170],core:[0,260]};
+  Object.entries(dirs).forEach(([id,[dx,dy]])=>{
+    const el=$(id); el.style.transformBox="fill-box"; el.style.transformOrigin="center";
+    if(RM){ el.style.opacity="0"; return; }
+    el.animate([{transform:"translate(0,0) rotate(0)",opacity:1},{transform:`translate(${dx}px,${dy}px) rotate(${dx>0?220:-220}deg)`,opacity:0}],{duration:900,easing:"cubic-bezier(.2,.7,.3,1)",fill:"forwards"});
+  });
+  $("blindfold").setAttribute("opacity","0"); $("eyes").setAttribute("opacity","1");
+  $("mouth").setAttribute("d","M106 158 Q120 178 134 158 Z"); $("mouth").setAttribute("fill","#7a2a1f");
+  stickA=-120;
+  burst(55, 1.2); smash(); setTimeout(playSong, 350); flood(); banner();
+  $("shout").textContent="¡La rompiste! ¡Ajúa! 🎉"; hintKey="below"; $("hint").textContent=t("below");
+  setTimeout(reveal, RM?300:1900);
+}
+function fillResult(){
+  $("rName").textContent=(data.r||"")+"!";
+  $("sShirt").textContent=data.s||"—"; $("sPants").textContent=data.p||"—"; $("sShoe").textContent=data.h||"—";
+  const ol=$("gifts"); ol.innerHTML="";
+  (data.g||[]).filter(Boolean).forEach(g=>{const li=document.createElement("li"); li.textContent=g; ol.appendChild(li);});
+  if(!ol.children.length){ const li=document.createElement("li"); li.textContent=t("noIdeas"); ol.appendChild(li); }
+  renderHints();
+}
+function reveal(){
+  if(rawCode) $("playTips").href=ORIGIN+"/play#gift="+rawCode+(sbRaw?"&sb="+sbRaw+"&me="+encodeURIComponent(data.n||""):"");
+  renderFam();
+  fillResult();
+  const r=$("result"); r.hidden=false; r.classList.add("result-in");
+  try{ r.scrollIntoView({behavior:RM?"auto":"smooth", block:"center"}); }catch(e){ r.scrollIntoView(); }
+}
+
+/* ---------- gift hints from the "help your Santa" questions ---------- */
+const HINT_ROWS=[ // key, show as chips? (labels live in T.rows)
+  ["vb",1],["fi",1],["co",1],["sw",1],["lv",1],["sc",1],["cf",1],["ck",0],["tr",0],["rd",0],["gm",0],["sp",0],["tm",0],["st",0],["gc",1],["no",0]];
+// chip answers are translated into the shopper's language; typed answers stay in the person's own words
+function hintList(){ const x=data&&data.x||{}; return HINT_ROWS.filter(([k])=>x[k]).map(([k,chips])=>({k,chips,label:T[LANG].rows[k],
+  vals:chips?splitVals(x[k]).map(trOpt):[String(x[k])]})); }
+function renderHints(){
+  const list=hintList(), box=$("hints"); box.innerHTML=""; $("hintsBox").hidden=!list.length;
+  list.forEach(h=>{ const d=document.createElement("div"); d.className="hint"+(h.k==="no"?" no":"");
+    const lab=document.createElement("small"); lab.textContent=h.label; d.appendChild(lab);
+    if(h.chips){ const c=document.createElement("div"); c.className="chips"; h.vals.forEach(v=>{ const sp=document.createElement("span"); sp.textContent=v; c.appendChild(sp); }); d.appendChild(c); }
+    else { const p=document.createElement("p"); p.textContent=h.vals[0]; d.appendChild(p); }
+    box.appendChild(d); });
+}
+
+/* ---------- start ---------- */
+$("again").addEventListener("click", ()=>{ unlock(); playSong(); });
+
+/* ---------- save the match as a picture ---------- */
+// on the web: share sheet where it exists (save to Photos), else a normal download
+const dl={save:async({filename,data})=>{ try{ const f=new File([data],filename,{type:"image/png"}); if(navigator.canShare&&navigator.canShare({files:[f]})){ await navigator.share({files:[f]}); return {status:"saved"}; } }catch(e){ if(e&&e.name==="AbortError") return {status:"cancelled"}; }
+  const a=document.createElement("a"); a.href=URL.createObjectURL(data); a.download=filename; document.body.appendChild(a); a.click(); a.remove(); return {status:"saved"}; }};
+function rr(c,x,y,w,h,r){ c.beginPath(); c.moveTo(x+r,y); c.arcTo(x+w,y,x+w,y+h,r); c.arcTo(x+w,y+h,x,y+h,r); c.arcTo(x,y+h,x,y,r); c.arcTo(x,y,x+w,y,r); c.closePath(); }
+function wrap(c,text,maxW){ const words=String(text).split(/\s+/), lines=[]; let line="";
+  words.forEach(w=>{ const t=line?line+" "+w:w; if(c.measureText(t).width>maxW&&line){ lines.push(line); line=w; } else line=t; }); if(line) lines.push(line); return lines; }
+async function drawCard(){
+  try{ await Promise.all([document.fonts.load('80px "Lilita One"'),document.fonts.load('800 40px "Nunito"'),document.fonts.load('700 40px "Nunito"')]); }catch(e){}
+  const D='"Lilita One","Arial Rounded MT Bold",sans-serif', B='"Nunito",system-ui,sans-serif';
+  // measure the gift hints first so the card can grow to fit them
+  const mc=document.createElement("canvas").getContext("2d"); mc.font=`700 30px ${B}`;
+  const hints=hintList().map(h=>({...h,lines:wrap(mc,h.vals.join(" · "),1080-140-90).slice(0,3)}));
+  const extra=hints.length?70+hints.reduce((t,h)=>t+30+h.lines.length*38+16,0):0;
+  const W=1080,H=1350+extra, cv=document.createElement("canvas"); cv.width=W; cv.height=H; const c=cv.getContext("2d");
+  // night sky
+  const g=c.createRadialGradient(W/2,0,50,W/2,0,H); g.addColorStop(0,"#2a3d7a"); g.addColorStop(.7,"#16224a"); g.addColorStop(1,"#121b3d"); c.fillStyle=g; c.fillRect(0,0,W,H);
+  for(let i=0;i<70;i++){ c.globalAlpha=.25+Math.random()*.5; c.fillStyle="#fff"; c.beginPath(); c.arc(Math.random()*W,Math.random()*H,1+Math.random()*2.6,0,6.283); c.fill(); } c.globalAlpha=1;
+  // papel picado + lights
+  c.strokeStyle="#2e5a3e"; c.lineWidth=4; c.beginPath(); c.moveTo(0,10); c.lineTo(W,10); c.stroke();
+  const fl=["#d7372f","#2f8f4e","#f5a524","#e2337f","#f4efe4"], bl=["#ff4d4d","#ffd34d","#4ddc7a","#5ac8ff","#ff6fb5"];
+  for(let i=0;i<12;i++){ const x=12+i*90; c.fillStyle=fl[i%5]; c.beginPath(); c.moveTo(x,10); c.lineTo(x+64,10); c.lineTo(x+64,80);
+    for(let k=0;k<=8;k++) c.lineTo(x+64-k*8,k%2?92:80); c.closePath(); c.fill();
+    c.fillStyle="#16224a"; c.beginPath(); c.arc(x+32,38,9,0,6.283); c.fill();
+    c.fillStyle=bl[i%5]; c.shadowColor=bl[i%5]; c.shadowBlur=18; c.beginPath(); c.ellipse(x+78,32,9,14,0,0,6.283); c.fill(); c.shadowBlur=0; }
+  // header
+  c.textAlign="center"; c.fillStyle="#f5a524"; c.font=`800 30px ${B}`; c.fillText(t("cHead"),W/2,165);
+  c.fillStyle="#fff8ec"; c.font=`76px ${D}`; c.fillText(t("cTitle"),W/2,250);
+  // gift tag card
+  const cx=70, cy=300, cw=W-140, ch=930+extra; c.shadowColor="rgba(0,0,0,.4)"; c.shadowBlur=40; c.shadowOffsetY=16; c.fillStyle="#fff8ec"; rr(c,cx,cy,cw,ch,34); c.fill(); c.shadowBlur=0; c.shadowOffsetY=0;
+  c.save(); rr(c,cx,cy,cw,ch,34); c.clip(); c.fillStyle="#d7372f"; c.fillRect(cx,cy+44,cw,30); c.fillStyle="rgba(0,0,0,.15)"; c.fillRect(cx,cy+68,cw,6);
+  // poinsettia in the corner
+  const px=cx+cw-40, py=cy+ch-30; c.fillStyle="#2f8f4e"; for(const a of [2.4,3.6]){ c.save(); c.translate(px,py); c.rotate(a); c.beginPath(); c.ellipse(52,0,52,16,0,0,6.283); c.fill(); c.restore(); }
+  c.fillStyle="#d7372f"; for(let k=0;k<6;k++){ c.save(); c.translate(px,py); c.rotate(k*1.047+.3); c.beginPath(); c.ellipse(48,0,48,15,0,0,6.283); c.fill(); c.restore(); }
+  c.fillStyle="#f5c542"; c.beginPath(); c.arc(px,py,11,0,6.283); c.fill(); c.restore();
+  // bow
+  c.fillStyle="#d7372f"; [-1,1].forEach(sx=>{ c.beginPath(); c.moveTo(W/2,cy+58); c.bezierCurveTo(W/2+sx*30,cy+10,W/2+sx*95,cy+14,W/2+sx*84,cy+52); c.bezierCurveTo(W/2+sx*78,cy+80,W/2+sx*30,cy+76,W/2,cy+58); c.fill(); });
+  c.fillStyle="#ef5a4f"; c.beginPath(); c.arc(W/2,cy+58,15,0,6.283); c.fill();
+  // who
+  c.fillStyle="#7a6553"; c.font=`800 28px ${B}`; c.fillText(t("cFor"),W/2,cy+160);
+  c.fillStyle="#d7372f"; let fs=104; c.font=`${fs}px ${D}`; while(c.measureText(data.r).width>cw-90&&fs>54){ fs-=4; c.font=`${fs}px ${D}`; }
+  const nameLines=wrap(c,data.r,cw-90).slice(0,2); nameLines.forEach((l,i)=>c.fillText(l,W/2,cy+262+i*(fs+4)));
+  let y=cy+262+(nameLines.length-1)*(fs+4)+70;
+  // sizes
+  c.fillStyle="#7a6553"; c.font=`800 26px ${B}`; c.fillText(t("cSizes"),W/2,y); y+=24;
+  const tl=t("cTiles"), tiles=[[tl[0],data.s,"#22a9c4","#fff"],[tl[1],data.p,"#53b84a","#fff"],[tl[2],data.h,"#f5a524","#2a1d14"]], tw=(cw-90-40)/3;
+  tiles.forEach(([lab,val,bg,fg],i)=>{ const tx=cx+45+i*(tw+20); c.fillStyle=bg; rr(c,tx,y,tw,130,22); c.fill(); c.fillStyle=fg; c.globalAlpha=.85; c.font=`800 22px ${B}`; c.fillText(lab,tx+tw/2,y+42); c.globalAlpha=1;
+    let f2=48; c.font=`${f2}px ${D}`; const v=val||"—"; while(c.measureText(v).width>tw-24&&f2>24){ f2-=3; c.font=`${f2}px ${D}`; } c.fillText(v,tx+tw/2,y+100); });
+  y+=190;
+  // wishes
+  c.fillStyle="#7a6553"; c.font=`800 26px ${B}`; c.fillText(t("cWishes"),W/2,y); y+=26;
+  c.textAlign="left"; const wishes=(data.g||[]).filter(Boolean).slice(0,3); if(!wishes.length) wishes.push(t("noIdeas"));
+  wishes.forEach((w,i)=>{ c.font=`700 36px ${B}`; const lines=wrap(c,w,cw-200).slice(0,2), h=36+lines.length*44;
+    c.fillStyle="#f6eedd"; rr(c,cx+45,y,cw-90,h,18); c.fill();
+    c.fillStyle="#f5a524"; c.font=`40px ${D}`; c.fillText("★",cx+70,y+56);
+    c.fillStyle="#2a1d14"; c.font=`700 36px ${B}`; lines.forEach((l,k)=>c.fillText(l,cx+125,y+58+k*44)); y+=h+16; });
+  // gift hints
+  if(hints.length){ y+=24; c.textAlign="center"; c.fillStyle="#7a6553"; c.font=`800 26px ${B}`; c.fillText(t("cHints"),W/2,y); y+=24; c.textAlign="left";
+    hints.forEach(h=>{ c.fillStyle="#7a6553"; c.font=`800 22px ${B}`; c.fillText(h.label.toUpperCase(),cx+45,y+22);
+      c.fillStyle=h.k==="no"?"#d7372f":"#2a1d14"; c.font=`700 30px ${B}`; h.lines.forEach((l,k)=>c.fillText(l,cx+45,y+60+k*38)); y+=30+h.lines.length*38+16; }); }
+  // footer
+  c.textAlign="center"; c.fillStyle="#c3cbe6"; c.font=`700 30px ${B}`; c.fillText(t("cFoot"),W/2,H-60);
+  return await new Promise(r=>cv.toBlob(r,"image/png"));
+}
+let shotBlob=null, shotUrl="";
+$("shotBtn").addEventListener("click", async()=>{
+  $("shotBtn").disabled=true; $("shotBtn").textContent=t("making");
+  try{ shotBlob=await drawCard(); if(shotUrl) URL.revokeObjectURL(shotUrl); shotUrl=URL.createObjectURL(shotBlob); $("shotImg").src=shotUrl;
+    $("shotSave").hidden=!dl; $("shot").hidden=false; }
+  catch(e){ $("shotHelp").textContent=t("shotFail"); $("shot").hidden=false; }
+  $("shotBtn").disabled=false; $("shotBtn").textContent=t("shot");
+});
+$("shotSave").addEventListener("click", async()=>{
+  if(!dl||!shotBlob) return;
+  try{ const r=await dl.save({filename:`secret-santa-${(data.n||"my")}-match.png`.toLowerCase().replace(/[^a-z0-9.-]+/g,"-"),data:shotBlob}); if(r&&r.status==="saved") $("shotHelp").textContent=t("saved"); }
+  catch(e){ if(e&&(e.code==="unavailable"||e.code==="not_granted"||e.code==="capability_disabled")){ $("shotSave").hidden=true; } else if(e&&e.code==="declined"){} else $("shotHelp").innerHTML=t("shotHelp"); }
+});
+$("shotClose").addEventListener("click",()=>{ $("shot").hidden=true; });
+$("snd").addEventListener("click", ()=>{
+  unlock();
+  const t=now(); [1047,1319,1568].forEach((f,i)=>osc("triangle",f,t+0.05+i*0.09,0.35,0.25)); // little bell chime to confirm
+  setTimeout(updateSoundChip,150);
+});
+// iPhones only allow sound to start from touchend/click, so unlock on those too
+["touchend","click","pointerup","keydown"].forEach(ev=>document.addEventListener(ev, unlock, {passive:true}));
+let started=false;
+function startGame(){
+  if(started) return; started=true;
+  $("bad").hidden=true; $("play").hidden=false;
+  applyLang();
+  document.addEventListener("pointerdown", e=>{ if(e.button>0) return; if(e.target.closest("textarea,button,a")) return; swing(); });
+  $("stage").addEventListener("keydown", e=>{ if(e.target!==$("stage")) return; if(e.key===" "||e.key==="Enter"){ e.preventDefault(); swing(); } });
+  try{ $("stage").scrollIntoView({block:"center"}); }catch(e){}
+}
+$("go").addEventListener("click", ()=>{
+  const d=findCode($("paste").value);
+  if(!d){ $("pasteErr").hidden=false; return; }
+  $("pasteErr").hidden=true; data=d; if(d.l==="es"||d.l==="en"){ LANG=d.l; } unlock(); startGame();
+});
+applyLang();
+if(data) startGame();
+else { $("play").hidden=true; $("bad").hidden=false; }
+requestAnimationFrame(frame);
+window.addEventListener("hashchange", ()=>{ const d=findCode(location.hash); if(d&&!started){ data=d; startGame(); } });
+</script>
+
+</html>

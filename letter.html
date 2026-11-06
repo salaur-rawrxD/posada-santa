@@ -1,0 +1,331 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="description" content="Run your family Secret Santa with Mexican-Christmas flavor: letters to Santa, piñata reveals and a posada game. Free, no accounts.">
+<meta property="og:title" content="Posada Santa · Secret Santa con sabor">
+<meta property="og:description" content="Letters to Santa, piñata reveals and La Posada game. Free, no accounts.">
+<meta name="theme-color" content="#16224a">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Posada Santa · Letter to Santa</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lilita+One&family=Nunito:wght@500;700;800&display=swap">
+<style>
+:root{
+  --night:#16224a; --night2:#22336b; --cream:#fff8ec; --ink:#2a1d14; --muted:#9aa6cf; --gold:#f5c66a; --marigold:#f5a524; --red:#d7372f; --rosa:#e2337f; --pine:#2f8f4e; --turq:#22a9c4;
+  --glass:rgba(255,255,255,.05); --line:rgba(255,255,255,.09);
+  --display:"Lilita One","Arial Rounded MT Bold",system-ui,sans-serif; --body:"Nunito",system-ui,-apple-system,"Segoe UI",sans-serif; color-scheme:dark;
+}
+[hidden]{display:none!important}
+*{box-sizing:border-box}
+html,body{min-height:100%}
+body{margin:0;background:radial-gradient(120% 60% at 50% 0%,var(--night2),var(--night) 70%) fixed,var(--night);color:var(--cream);font-family:var(--body);font-size:16px;line-height:1.45;-webkit-tap-highlight-color:transparent}
+.snowbg{position:fixed;inset:0;pointer-events:none;z-index:0;opacity:.55;background-image:radial-gradient(1.6px 1.6px at 12% 18%,#fff,transparent),radial-gradient(1.2px 1.2px at 78% 12%,#fff,transparent),radial-gradient(1.8px 1.8px at 40% 6%,#fff,transparent),radial-gradient(1.2px 1.2px at 90% 40%,#fff,transparent),radial-gradient(1.6px 1.6px at 6% 52%,#fff,transparent),radial-gradient(1.2px 1.2px at 62% 30%,#fff,transparent),radial-gradient(1.4px 1.4px at 28% 72%,#fff,transparent),radial-gradient(1.2px 1.2px at 84% 78%,#fff,transparent)}
+.picado{position:relative;z-index:1;display:flex;justify-content:center;gap:5px;padding-top:6px;overflow:hidden;height:52px}
+.picado::before{content:"";position:absolute;left:0;right:0;top:6px;height:2px;background:#2e5a3e}
+.picado .flag{flex:0 0 30px;height:40px;clip-path:polygon(0 0,100% 0,100% 82%,88% 100%,75% 82%,62% 100%,50% 82%,38% 100%,25% 82%,12% 100%,0 82%)}
+.picado .bulb{flex:0 0 9px;height:15px;border-radius:50% 50% 50% 50%/40% 40% 60% 60%;background:var(--c);box-shadow:0 0 10px 2px var(--c);margin-top:-1px}
+@media (prefers-reduced-motion:no-preference){.picado .bulb{animation:glow 2.4s ease-in-out infinite;animation-delay:var(--d)}@keyframes glow{50%{opacity:.45}}}
+.wrap{position:relative;z-index:1;max-width:560px;margin:0 auto;padding:6px max(16px,env(safe-area-inset-left,0px)) 110px max(16px,env(safe-area-inset-right,0px))}
+.kicker{display:inline-flex;align-items:center;gap:8px;font-size:11px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:var(--gold)}
+.kicker::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--marigold);box-shadow:0 0 10px var(--marigold)}
+h1,h2,h3{margin:0;font-weight:800;letter-spacing:-.02em;line-height:1.1;color:var(--cream)}
+h1{font-size:clamp(28px,8vw,36px)}h2{font-size:clamp(22px,6.4vw,27px)}h3{font-size:17px}
+p{margin:0;color:#b8c1e0;font-weight:600}
+.card{position:relative;padding:18px;border-radius:24px;background:linear-gradient(180deg,rgba(38,54,112,.92),rgba(22,32,72,.94));border:1px solid rgba(255,255,255,.1);box-shadow:0 20px 50px rgba(0,0,0,.35),inset 0 1px 0 rgba(255,255,255,.07);display:grid;gap:14px}
+.card.soft{background:var(--glass);box-shadow:none;border-color:var(--line)}
+.stack{display:grid;gap:12px}.stack.tight{gap:6px}.row{display:flex;gap:10px;align-items:center}.between{justify-content:space-between}
+.cta{font:inherit;font-weight:800;font-size:17px;width:100%;min-height:54px;padding:0 18px;border:0;border-radius:16px;cursor:pointer;color:#1c1430;background:linear-gradient(180deg,#ffc95e,#f5a524);box-shadow:0 12px 26px rgba(245,165,36,.25),inset 0 1px 0 rgba(255,255,255,.55);display:flex;gap:8px;align-items:center;justify-content:center;text-decoration:none;transition:transform .12s,filter .2s}
+.cta:active{transform:translateY(1px) scale(.99)}.cta:disabled{opacity:.45;cursor:not-allowed}
+.cta.alt{background:rgba(255,255,255,.07);color:var(--cream);box-shadow:inset 0 1px 0 rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12)}
+.cta.wa{background:linear-gradient(180deg,#3ad46a,#20b356);color:#06280f;box-shadow:0 10px 22px rgba(32,179,86,.25)}
+.cta.im{background:linear-gradient(180deg,#4aa8ff,#1d84f0);color:#fff;box-shadow:0 10px 22px rgba(29,132,240,.25)}
+.cta.sm{min-height:42px;font-size:14px;border-radius:13px;width:auto;padding:0 14px}
+.ghost{font:inherit;font-weight:700;font-size:14px;background:none;border:0;color:var(--muted);cursor:pointer;padding:8px;text-decoration:underline;text-decoration-color:rgba(170,180,214,.35);text-underline-offset:4px}
+.pill{font:inherit;font-weight:800;font-size:13px;height:34px;padding:0 13px;border-radius:99px;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.06);color:var(--cream);cursor:pointer;display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
+.seg{justify-self:start;display:inline-flex;padding:3px;border-radius:99px;background:rgba(255,255,255,.07);border:1px solid var(--line)}
+.seg button{font:inherit;font-weight:800;font-size:12px;height:28px;min-width:36px;padding:0 10px;border:0;border-radius:99px;background:none;color:var(--muted);cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--cream);color:var(--night)}
+label.lbl,.lbl{font-size:12px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+input[type=text],input[type=tel],input[type=date],input[type=time],textarea,select{font:inherit;font-size:16px;font-weight:700;width:100%;min-height:48px;padding:10px 14px;border-radius:14px;border:1px solid rgba(255,255,255,.16);background:rgba(10,16,40,.45);color:var(--cream);-webkit-user-select:text;user-select:text}
+textarea{min-height:110px;resize:vertical}
+input::placeholder,textarea::placeholder{color:#7f8ab8}
+input:focus,textarea:focus,select:focus{outline:none;border-color:var(--gold);box-shadow:0 0 0 3px rgba(245,198,106,.25)}
+.field{display:grid;gap:6px}.help{font-size:13px;color:var(--muted);font-weight:600}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{font:inherit;font-weight:700;font-size:14px;min-height:40px;padding:6px 13px;border-radius:99px;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.05);color:var(--cream);cursor:pointer;text-align:left}
+.chip[aria-pressed="true"]{background:rgba(245,165,36,.2);border-color:var(--gold);color:#fff}
+.toast{position:fixed;left:50%;bottom:calc(96px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);z-index:80;background:var(--cream);color:var(--ink);font-weight:800;padding:11px 16px;border-radius:14px;box-shadow:0 12px 30px rgba(0,0,0,.35);max-width:calc(100% - 32px);text-align:center}
+button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+@media (prefers-reduced-motion:no-preference){.in{animation:in .45s cubic-bezier(.3,1.4,.5,1) both}@keyframes in{from{transform:translateY(14px);opacity:0}}}
+
+h1,h2{font-family:var(--display);font-weight:400;letter-spacing:.005em}
+.top{display:flex;justify-content:space-between;align-items:center;gap:10px;margin:4px 0 14px}
+.brand{display:flex;align-items:center;gap:8px;font-weight:800;font-size:14px;color:var(--cream);min-width:0}
+.brand span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.prog{display:flex;gap:5px;margin:0 0 14px}
+.prog i{flex:1;height:5px;border-radius:9px;background:rgba(255,255,255,.12);transition:background .3s}
+.prog i.on{background:linear-gradient(90deg,var(--marigold),var(--gold))}
+.envelope{display:block;margin:0 auto -4px;width:150px;height:auto;filter:drop-shadow(0 16px 26px rgba(0,0,0,.35))}
+@media (prefers-reduced-motion:no-preference){.envelope{animation:bob 4s ease-in-out infinite}@keyframes bob{50%{transform:translateY(-6px) rotate(-1.5deg)}}}
+.facts{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px}
+.fact{padding:10px 12px;border-radius:14px;background:rgba(255,255,255,.05);border:1px solid var(--line)}
+.fact small{display:block;font-size:10px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.fact b{font-size:15px;font-weight:800}
+.q{display:grid;gap:8px}
+.q h3{font-size:17px;font-weight:800}
+.q .help{margin-top:-4px}
+.sub3{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.follow{display:grid;gap:12px;padding:14px;border-radius:18px;background:rgba(245,165,36,.07);border:1px dashed rgba(245,198,106,.35)}
+.follow .lbl{color:var(--gold)}
+.dock{position:fixed;left:0;right:0;bottom:0;z-index:20;padding:12px max(16px,env(safe-area-inset-left,0px)) calc(12px + env(safe-area-inset-bottom,0px));background:linear-gradient(180deg,rgba(22,34,74,0),rgba(22,34,74,.92) 30%);}
+.dock .inner{max-width:560px;margin:0 auto;display:flex;gap:10px}
+.dock .back{flex:0 0 54px;width:54px;padding:0}
+.review{display:grid;gap:10px}
+.rv{display:grid;gap:3px;padding:12px 14px;border-radius:14px;background:rgba(255,255,255,.04);border:1px solid var(--line)}
+.rv small{font-size:11px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.rv b{font-weight:700;font-size:15px;color:var(--cream);overflow-wrap:anywhere}
+.rv button{justify-self:start;padding:0;margin-top:2px}
+.sent{text-align:center;display:grid;gap:12px;justify-items:center}
+.stamp{width:96px;height:96px;border-radius:50%;display:grid;place-items:center;font-size:46px;background:radial-gradient(circle at 35% 30%,#ffd27a,#f5a524);box-shadow:0 0 0 8px rgba(245,165,36,.15),0 18px 40px rgba(245,165,36,.25)}
+@media (prefers-reduced-motion:no-preference){.stamp{animation:pop .6s cubic-bezier(.3,1.6,.5,1) both}@keyframes pop{from{transform:scale(.3);opacity:0}}}
+.btns{display:grid;gap:10px;width:100%}
+.codebox{font-size:12px;font-weight:700;color:var(--muted);word-break:break-all;max-height:68px;overflow:auto;padding:10px;border-radius:12px;background:rgba(0,0,0,.2);text-align:left;-webkit-user-select:all;user-select:all}
+.err{color:#ffb3a8;font-weight:800;font-size:14px}
+.lb{list-style:none;margin:0;padding:0;display:grid;gap:6px}.lb li{display:flex;justify-content:space-between;gap:10px;padding:10px 12px;border-radius:14px;background:rgba(255,255,255,.05);border:1px solid var(--line);font-weight:800}.lb b{font-variant-numeric:tabular-nums}
+.playcard{background:linear-gradient(160deg,rgba(47,143,78,.25),rgba(34,169,196,.14));border-color:rgba(143,240,172,.35)}
+.tiny{font-size:12px;color:var(--muted);font-weight:700;text-align:center}
+</style>
+</head>
+<body>
+<div class="snowbg" aria-hidden="true"></div>
+<div class="picado" id="picado" aria-hidden="true"></div>
+<main class="wrap">
+  <div class="top">
+    <div class="brand">🎄 <span id="brand">Secret Santa</span></div>
+    <div class="seg" role="group" aria-label="Language"><button type="button" data-lang="en" aria-pressed="true">EN</button><button type="button" data-lang="es" aria-pressed="false">ES</button></div>
+  </div>
+  <div class="prog" id="prog" aria-hidden="true"></div>
+  <section id="screen" aria-live="polite"></section>
+</main>
+<div class="dock" id="dock" hidden><div class="inner">
+  <button class="cta alt back" id="backBtn" type="button" aria-label="Back">←</button>
+  <button class="cta" id="nextBtn" type="button">Next</button>
+</div></div>
+<div class="toast" id="toast" hidden></div>
+
+<script>
+const SB_URL="https://ktssnlyspwzhdhffpgqm.supabase.co", SB_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt0c3NubHlzcHd6aGRoZmZwZ3FtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTM5MjYwMDgsImV4cCI6MjEwOTUwMjAwOH0.3lHaJYRYCyeqcdgS2EIfT1_6qr0B5CxNqYQNHkyevCk";
+async function rpc(fn,args){ const c=new AbortController(), tm=setTimeout(()=>c.abort(),9000);
+  try{ const r=await fetch(SB_URL+"/rest/v1/rpc/"+fn,{method:"POST",headers:{"Content-Type":"application/json",apikey:SB_KEY,Authorization:"Bearer "+SB_KEY},body:JSON.stringify(args),signal:c.signal});
+    if(!r.ok) throw new Error("rpc "+r.status); return await r.json(); } finally{ clearTimeout(tm); } }
+const ORIGIN=location.origin;
+
+const HOST_URL=ORIGIN+"/host";
+const GAME_URL=ORIGIN+"/play";
+const KEY="eva-santa-2026-wrap";
+const $=id=>document.getElementById(id);
+const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const TITLES=new Set(["tia","tio","abuela","abuelo","abue","abuelita","abuelito","prima","primo","cousin","aunt","auntie","uncle","grandma","grandpa","nana","tata","don","dona","mama","papa","mom","dad","madrina","padrino","comadre","compadre","nino","nina","sr","sra"]);
+const first=n=>{ const w=String(n||"").trim().split(/\s+/).filter(Boolean); if(!w.length) return ""; const k=w[0].normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase().replace(/\.$/,""); return TITLES.has(k)&&w[1]?w[0]+" "+w[1]:w[0]; };
+const digits=p=>String(p||"").replace(/\D/g,"");
+const intl=p=>{ let d=digits(p); if(d.length===10) d="1"+d; return d; };
+const isApple=/iPhone|iPad|Mac/i.test(navigator.userAgent);
+const waLink=(phone,text)=>`https://wa.me/${phone?intl(phone):""}?text=${encodeURIComponent(text)}`;
+const imLink=(phone,text)=>`sms:${phone?"+"+intl(phone):""}${isApple?"&":"?"}body=${encodeURIComponent(text)}`;
+function toast(t){ const el=$("toast"); el.textContent=t; el.hidden=false; clearTimeout(toast.t); toast.t=setTimeout(()=>el.hidden=true,2400); }
+async function copy(text){ try{ await navigator.clipboard.writeText(text); toast(L().copied); return true; }catch(e){ toast(L().copyFail); return false; } }
+const store={ get(k){ try{ return JSON.parse(localStorage.getItem(k)||"null"); }catch(e){ return null; } }, set(k,v){ try{ localStorage.setItem(k,JSON.stringify(v)); }catch(e){} } };
+(function(){ const p=$("picado"), fl=["#d7372f","#2f8f4e","#f5a524","#e2337f","#f4efe4","#22a9c4"], bl=["#ff4d4d","#ffd34d","#4ddc7a","#5ac8ff","#ff6fb5"];
+  for(let i=0;i<22;i++){ const f=document.createElement("span"); if(i%2){ f.className="bulb"; f.style.setProperty("--c",bl[(i>>1)%5]); f.style.setProperty("--d",(i*.17)+"s"); } else { f.className="flag"; f.style.background=fl[(i>>1)%6]; } p.appendChild(f); } })();
+
+/* ---------- sealed codes ---------- */
+function seal(o,pre){ const b=new TextEncoder().encode(JSON.stringify(o)); let s=""; for(let i=0;i<b.length;i++) s+=String.fromCharCode(b[i]^KEY.charCodeAt(i%KEY.length)); return pre+btoa(s).replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/,""); }
+function unseal(c,pre){ try{ if(!c||c[0]!==pre) return null; let s=c.slice(1).replace(/-/g,"+").replace(/_/g,"/"); while(s.length%4) s+="="; const bin=atob(s), b=new Uint8Array(bin.length); for(let i=0;i<b.length;i++) b[i]=bin.charCodeAt(i)^KEY.charCodeAt(i%KEY.length); return JSON.parse(new TextDecoder().decode(b)); }catch(e){ return null; } }
+function findGroup(text){ const s=String(text||""); const m=s.match(/[#&?]g=([A-Za-z0-9_-]{8,})/)||s.match(/\b(G[A-Za-z0-9_-]{16,})/); if(!m) return null; const g=unseal(m[1],"G"); if(!g||!g.gid) return null;
+  const p=new URLSearchParams((s.split("#")[1]||"").replace(/^[^g]*?(?=g=)/,"")); return {g, n:p.get("n")||"", l:p.get("l")||""}; }
+
+/* ---------- words ---------- */
+const OPT={
+  vb:[["🧸 Cozy & comfy","🧸 Cómodo y calientito"],["👟 Sporty & on the go","👟 Deportivo y activo"],["👔 Classic & put-together","👔 Clásico y arreglado"],["😎 Trendy & bold","😎 A la moda y atrevido"],["🏕️ Outdoorsy","🏕️ Aventurero y al aire libre"]],
+  fi:[["Fitted","Ajustada"],["Regular","Normal"],["Relaxed & roomy","Holgada y cómoda"]],
+  co:[["⚫ Black","⚫ Negro"],["⚪ White & cream","⚪ Blanco y crema"],["🤎 Browns & neutrals","🤎 Cafés y neutros"],["🔵 Blues","🔵 Azules"],["🟢 Greens","🟢 Verdes"],["🔴 Reds","🔴 Rojos"],["🩷 Pinks","🩷 Rosas"],["🟣 Purples","🟣 Morados"],["🌈 Bright & bold","🌈 Vivos y llamativos"]],
+  sw:[["Sneakers","Tenis"],["Boots","Botas"],["Slippers & house shoes","Pantuflas"],["Sandals & slides","Sandalias y chanclas"],["Running & workout shoes","Tenis para correr o hacer ejercicio"],["Dress shoes","Zapatos de vestir"]],
+  lv:[["🧴 Self-care & smelling good","🧴 Cuidado personal y oler rico","sc"],["☕ Coffee or tea","☕ Café o té","cf"],["🍳 Cooking & baking","🍳 Cocinar y hornear","ck"],["🍫 Sweet treats & snacks","🍫 Dulces y botanas","tr"],["🏠 Home & cozy decor","🏠 Casa y decoración"],["📚 Reading","📚 Leer","rd"],
+      ["🎮 Games & tech","🎮 Juegos y tecnología","gm"],["🏋️ Fitness & sports","🏋️ Ejercicio y deportes","sp"],["🏆 Fan gear for my team","🏆 Cosas de mi equipo","tm"],["🌱 Plants & gardening","🌱 Plantas y jardín"],["🛠️ Tools & DIY","🛠️ Herramientas y proyectos"],["🎨 Arts & crafts","🎨 Manualidades y arte"]],
+  sc:[["Fresh & clean","Fresco y limpio"],["Floral","Floral"],["Sweet & vanilla","Dulce y vainilla"],["Warm & woodsy","Cálido y amaderado"],["Citrus","Cítrico"],["Unscented, please","Sin aroma, por favor"]],
+  cf:[["Black coffee","Café negro"],["Coffee with cream & sugar","Café con crema y azúcar"],["Lattes & fancy drinks","Lattes y bebidas especiales"],["Tea","Té"],["Hot chocolate or champurrado","Chocolate caliente o champurrado"]],
+  gc:[["Love them!","¡Me encantan!"],["Only for a store I love","Solo de una tienda que me guste"],["I'd rather get a surprise","Prefiero una sorpresa"]],
+  shirt:[["XS","XS"],["S","CH"],["M","M"],["L","G"],["XL","XG"],["2XL","2XG"],["3XL","3XG"]]
+};
+const WORDS={
+  en:{title:"Letter to Santa",next:"Next",back:"Back",send:"Seal my letter ✉️",copied:"Copied ✓",copyFail:"Couldn't copy here. Press and hold the text to copy it.",
+    hiKick:"You're invited",hi:n=>n?`${n}, write your letter to Santa`:"Write your letter to Santa",
+    hiSub:(o,g)=>`${o} is running the Secret Santa for ${g}. Tell your Santa what you'd love. It takes about 3 minutes.`,
+    budget:"Gift budget",party:"Gift exchange",due:"Letters due",start:"Start my letter ✍️",
+    you:"First, who's writing?",name:"Your name",namePh:"Like Rosa García",phone:"Your phone number",phoneHelp:o=>`Optional. It helps ${o} match your letter to you.`,phonePh:"(555) 123-4567",needName:"Please type your name.",
+    sizes:"Your sizes",sizesSub:"So your Santa doesn't have to guess.",shirt:"Shirt size",pants:"Pants size",pantsPh:"32x30, M, 10…",shoe:"Shoe size",shoePh:"9 US, 26 MX…",other:"Other",otherPh:"Type your size",
+    wishes:"Your top 3 wishes",wishesSub:"Gifts you'd really love, within the budget. Be specific if you can!",wish:i=>["Wish #1 (your favorite)","Wish #2","Wish #3"][i],wishPh:["A cozy gray hoodie, size L","Café de olla mugs","Anything from Target"],needWish:"Add at least one wish so your Santa has a place to start.",
+    style:"Your style",styleSub:"Pick what fits. Skip anything you like.",vb:"Which sounds most like you?",fi:"How do you like your clothes to fit?",co:"Colors you love wearing",coHelp:"Pick as many as you like.",sw:"Shoes you actually wear",
+    loves:"What do you love?",lovesSub:"Besides clothes. Pick a few and we'll ask one quick question about each.",lv:"I love…",
+    sc:"Scents you love",cf:"How do you take it?",ck:"What do you love to cook or bake?",ckPh:"Pan dulce, tamales, sourdough…",tr:"Your favorite treats",trPh:"Mazapán, dark chocolate, Takis…",rd:"What do you like to read?",rdPh:"Mysteries, romance, comics…",
+    gm:"What do you play or use?",gmPh:"Switch, PS5, iPhone, board games…",sp:"Your sport or workout",spPh:"Running, yoga, soccer…",tm:"Which team?",tmPh:"Chivas, Dodgers, Cowboys…",
+    last:"Last few things",lastSub:"Almost done!",st:"Stores or brands you love",stPh:"Target, Sephora, Nike…",no:"Please, no…",noPh:"No candles, I'm allergic to wool…",gc:"How do you feel about gift cards?",
+    review:"Look it over",reviewSub:"Tap Edit to change anything.",edit:"Edit",none:"—",shirtL:"Shirt",pantsL:"Pants",shoeL:"Shoes",
+    doneKick:"Sealed with love",done:"Your letter is ready!",doneSub:o=>`Last step: send it to ${o}. Pick an app below and tap send.`,doneNoOrg:"Last step: send it to your organizer. Pick an app below and tap send.",
+    wa:"Send on WhatsApp",im:"Send by text / iMessage",cp:"Copy to send another way",org:"I'm the organizer, add it to my list",
+    stayK:"Stay and play",stayT:"La Posada leaderboard",stayP:g=>`Hop through 5 levels of posada chaos and climb the ${g} board.`,stayP0:g=>`Hop through 5 levels of posada chaos. Nobody from ${g} is on the board yet. Be first!`,stayGo:n=>`🎮 Play and beat ${n}`,stayGo0:"🎮 Play and claim #1",dlvK:"Delivered",dlvT:o=>`Delivered to ${o}!`,dlvP:o=>`Your letter is already in ${o}'s Secret Santa list. Nothing else to do.`,dlvNudge:o=>`Want to give ${o||"them"} a heads-up? (optional)`,dlvWait:"Sending…",dlvWaitP:"Dropping your letter in the buzón…",another:"Write one for someone else",after:"Didn't go through? Tap Copy and paste it to them in any app.",editAgain:"Change my letter",play:"🎮 While you wait, play La Posada",
+    msg:(o,g,n,url)=>`📮 ¡Hola ${o}! Here's my letter to Santa for ${g}. — ${n}\n\nTap to add it to the Secret Santa:\n${url}\n\n(If the link doesn't open the list, copy this whole message and paste it on the Secret Santa page.)`,
+    noInv:"Find your invite link",noInvSub:"This page opens from the link your organizer sent you. If you have their message, paste it here.",pasteL:"Paste your invite message",pasteGo:"Open my letter",badInv:"That doesn't look like a Secret Santa invite. Copy the whole message and try again.",
+    saved:"Draft saved on this phone",resumed:"Welcome back! Your draft is right where you left it."},
+  es:{title:"Carta a Santa",next:"Siguiente",back:"Atrás",send:"Sellar mi carta ✉️",copied:"Copiado ✓",copyFail:"No se pudo copiar. Mantén presionado el texto para copiarlo.",
+    hiKick:"Estás invitado",hi:n=>n?`${n}, escribe tu carta a Santa`:"Escribe tu carta a Santa",
+    hiSub:(o,g)=>`${o} organiza el Secret Santa de ${g}. Cuéntale a tu Santa qué te encantaría. Toma unos 3 minutos.`,
+    budget:"Presupuesto",party:"Intercambio",due:"Cartas hasta",start:"Empezar mi carta ✍️",
+    you:"Primero, ¿quién escribe?",name:"Tu nombre",namePh:"Por ejemplo Rosa García",phone:"Tu número de teléfono",phoneHelp:o=>`Opcional. Ayuda a que ${o} sepa que la carta es tuya.`,phonePh:"(555) 123-4567",needName:"Escribe tu nombre, por favor.",
+    sizes:"Tus tallas",sizesSub:"Para que tu Santa no tenga que adivinar.",shirt:"Talla de camisa",pants:"Talla de pantalón",pantsPh:"32x30, M, 10…",shoe:"Talla de zapato",shoePh:"26 MX, 9 US…",other:"Otra",otherPh:"Escribe tu talla",
+    wishes:"Tus 3 deseos",wishesSub:"Regalos que de verdad te encantarían, dentro del presupuesto. ¡Entre más específico, mejor!",wish:i=>["Deseo #1 (tu favorito)","Deseo #2","Deseo #3"][i],wishPh:["Una sudadera gris calientita, talla G","Tazas para café de olla","Lo que sea de Liverpool"],needWish:"Agrega al menos un deseo para que tu Santa tenga por dónde empezar.",
+    style:"Tu estilo",styleSub:"Escoge lo que va contigo. Puedes saltar lo que quieras.",vb:"¿Qué va más contigo?",fi:"¿Cómo te gusta que te quede la ropa?",co:"Colores que te encanta usar",coHelp:"Escoge todos los que quieras.",sw:"Zapatos que sí usas",
+    loves:"¿Qué te encanta?",lovesSub:"Además de la ropa. Escoge algunos y te hacemos una preguntita de cada uno.",lv:"Me encanta…",
+    sc:"Aromas que te encantan",cf:"¿Cómo te lo tomas?",ck:"¿Qué te gusta cocinar u hornear?",ckPh:"Pan dulce, tamales, galletas…",tr:"Tus dulces favoritos",trPh:"Mazapán, chocolate amargo, Takis…",rd:"¿Qué te gusta leer?",rdPh:"Misterio, romance, cómics…",
+    gm:"¿Qué juegas o usas?",gmPh:"Switch, PS5, iPhone, juegos de mesa…",sp:"Tu deporte o ejercicio",spPh:"Correr, yoga, fútbol…",tm:"¿Cuál equipo?",tmPh:"Chivas, América, Dodgers…",
+    last:"Últimas cositas",lastSub:"¡Ya casi!",st:"Tiendas o marcas que te encantan",stPh:"Liverpool, Sephora, Nike…",no:"Por favor, no…",noPh:"Nada de velas, soy alérgico a la lana…",gc:"¿Qué opinas de las tarjetas de regalo?",
+    review:"Revísala",reviewSub:"Toca Editar para cambiar algo.",edit:"Editar",none:"—",shirtL:"Camisa",pantsL:"Pantalón",shoeL:"Zapato",
+    doneKick:"Sellada con cariño",done:"¡Tu carta está lista!",doneSub:o=>`Último paso: mándasela a ${o}. Escoge una app y toca enviar.`,doneNoOrg:"Último paso: mándasela a quien organiza. Escoge una app y toca enviar.",
+    wa:"Mandar por WhatsApp",im:"Mandar por mensaje / iMessage",cp:"Copiar para mandarla de otra forma",org:"Yo organizo, agrégala a mi lista",
+    stayK:"Quédate a jugar",stayT:"La tabla de La Posada",stayP:g=>`Brinca 5 niveles de puro relajo posadero y sube en la tabla de ${g}.`,stayP0:g=>`Brinca 5 niveles de puro relajo posadero. Nadie de ${g} está en la tabla todavía. ¡Sé el primero!`,stayGo:n=>`🎮 Juega y gánale a ${n}`,stayGo0:"🎮 Juega y quédate con el #1",dlvK:"Entregada",dlvT:o=>`¡Le llegó a ${o}!`,dlvP:o=>`Tu carta ya está en la lista del Secret Santa de ${o}. No tienes que hacer nada más.`,dlvNudge:o=>`¿Le quieres avisar a ${o||"quien organiza"}? (opcional)`,dlvWait:"Enviando…",dlvWaitP:"Echando tu carta al buzón…",another:"Escribir otra para alguien más",after:"¿No se mandó? Toca Copiar y pégasela en cualquier app.",editAgain:"Cambiar mi carta",play:"🎮 Mientras esperas, juega La Posada",
+    msg:(o,g,n,url)=>`📮 ¡Hola ${o}! Aquí va mi carta a Santa para ${g}. — ${n}\n\nToca para agregarla al Secret Santa:\n${url}\n\n(Si el link no abre la lista, copia todo este mensaje y pégalo en la página del Secret Santa.)`,
+    noInv:"Busca tu invitación",noInvSub:"Esta página se abre con el link que te mandaron. Si tienes el mensaje, pégalo aquí.",pasteL:"Pega tu mensaje de invitación",pasteGo:"Abrir mi carta",badInv:"Eso no parece una invitación del Secret Santa. Copia todo el mensaje y vuelve a intentar.",
+    saved:"Borrador guardado en este teléfono",resumed:"¡Qué bueno que volviste! Tu borrador está donde lo dejaste."}
+};
+let lang="en";
+const L=()=>WORDS[lang];
+const li=()=>lang==="es"?1:0;
+function optText(key,i){ return OPT[key][i][li()]; }
+function fmtDate(iso){ if(!iso) return ""; const d=new Date(iso+"T12:00:00"); return d.toLocaleDateString(lang==="es"?"es-MX":undefined,{weekday:"short",month:"short",day:"numeric"}); }
+
+/* ---------- state ---------- */
+let inv=findGroup(location.hash)||findGroup(location.href);
+let A=null, step=0, sealed=null, delivered=null;
+const STEPS=["intro","you","sizes","wishes","style","loves","last","review","done"];
+function draftKey(){ return "santa-letter-"+(inv?inv.g.gid+"-"+String(inv.n||"").toLowerCase().replace(/[^a-z0-9]+/g,""):"none"); }
+function blank(){ return {name:inv&&inv.n||"",phone:"",shirt:"",shirtO:"",pants:"",shoe:"",g:["","",""],vb:[],fi:[],co:[],sw:[],lv:[],sc:[],cf:[],gc:[],ck:"",tr:"",rd:"",gm:"",sp:"",tm:"",st:"",no:""}; }
+function save(){ if(inv) store.set(draftKey(),{A,step,lang,sealed,delivered}); }
+async function deliver(){ delivered=null; render(); try{ const ok=await rpc("submit_letter",{p_gid:inv.g.gid,p_code:sealed}); delivered=ok===true; }catch(e){ delivered=false; } save(); if(STEPS[step]==="done") render(); }
+function setLang(l){ lang=l==="es"?"es":"en"; document.documentElement.lang=lang; document.querySelectorAll("[data-lang]").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.lang===lang))); document.title=L().title; }
+document.querySelectorAll("[data-lang]").forEach(b=>b.onclick=()=>{ setLang(b.dataset.lang); save(); render(); });
+
+/* ---------- small builders ---------- */
+function chips(key,max,{multi=true}={}){ const sel=A[key];
+  return `<div class="chips" data-key="${key}" data-multi="${multi?1:0}">${OPT[key].map((o,i)=>`<button type="button" class="chip" data-i="${i}" aria-pressed="${sel.includes(i)}">${esc(o[li()])}</button>`).join("")}</div>`; }
+function textQ(key,label,ph){ return `<div class="field"><label class="lbl" for="f_${key}">${esc(label)}</label><input type="text" id="f_${key}" data-bind="${key}" value="${esc(A[key])}" placeholder="${esc(ph||"")}" autocomplete="off"></div>`; }
+function wire(){
+  document.querySelectorAll("[data-bind]").forEach(el=>el.addEventListener("input",()=>{ const k=el.dataset.bind; if(k.startsWith("g")&&/^g\d$/.test(k)) A.g[+k[1]]=el.value; else A[k]=el.value; save(); }));
+  document.querySelectorAll(".chips[data-key]").forEach(box=>box.addEventListener("click",e=>{ const b=e.target.closest(".chip"); if(!b) return; const k=box.dataset.key, i=+b.dataset.i, multi=box.dataset.multi==="1";
+    if(k==="shirt"){ A.shirt=A.shirt===optText("shirt",i)||A.shirt===OPT.shirt[i][0]?"":OPT.shirt[i][li()]; A.shirtO=""; save(); render(); return; }
+    let s=A[k]; if(multi){ s=s.includes(i)?s.filter(x=>x!==i):[...s,i]; } else { s=s.includes(i)?[]:[i]; } A[k]=s; save();
+    if(k==="lv") render(); else box.querySelectorAll(".chip").forEach(c=>c.setAttribute("aria-pressed",String(s.includes(+c.dataset.i)))); }));
+}
+function shirtChips(){ return `<div class="chips" data-key="shirt">${OPT.shirt.map((o,i)=>`<button type="button" class="chip" data-i="${i}" aria-pressed="${A.shirt===o[0]||A.shirt===o[1]}">${esc(o[li()])}</button>`).join("")}</div>`; }
+
+/* ---------- screens ---------- */
+const ENVELOPE=`<svg class="envelope" viewBox="0 0 160 118" aria-hidden="true"><defs><linearGradient id="ev" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff8ec"/><stop offset="1" stop-color="#f1e3c8"/></linearGradient></defs>
+<rect x="6" y="18" width="148" height="94" rx="10" fill="url(#ev)"/><path d="M6 28 L80 78 L154 28" fill="none" stroke="#e2cfa8" stroke-width="3"/><path d="M6 108 L62 66 M154 108 L98 66" stroke="#e8d7b6" stroke-width="2.5"/>
+<rect x="116" y="26" width="28" height="32" rx="3" fill="#d7372f"/><rect x="119" y="29" width="22" height="26" rx="2" fill="none" stroke="#fff8ec" stroke-width="1.5" stroke-dasharray="2 2"/><path d="M130 33 l4 8 h-8z M130 38 l5 9 h-10z" fill="#2f8f4e"/><rect x="129" y="47" width="2.5" height="4" fill="#6b4226"/>
+<circle cx="80" cy="76" r="15" fill="#c4231b"/><circle cx="80" cy="76" r="11" fill="none" stroke="#e85a4a" stroke-width="2"/><path d="M80 69 l2 4.5 5 .5 -3.8 3.3 1.2 4.9 -4.4-2.6 -4.4 2.6 1.2-4.9 -3.8-3.3 5-.5z" fill="#ffd27a"/></svg>`;
+function head(kick,title,sub){ return `<div class="stack tight"><span class="kicker">${esc(kick)}</span><h2>${esc(title)}</h2>${sub?`<p>${esc(sub)}</p>`:""}</div>`; }
+function render(){
+  const g=inv&&inv.g, W=L(), id=STEPS[step], scr=$("screen"); $("brand").textContent=g?g.gn:"Secret Santa";
+  // progress
+  const P=$("prog"); P.innerHTML=""; if(g&&step>0&&id!=="done"){ for(let i=1;i<STEPS.length-1;i++){ const b=document.createElement("i"); if(i<=step) b.className="on"; P.appendChild(b); } }
+  $("dock").hidden=!g||id==="intro"||id==="done";
+  $("nextBtn").textContent=id==="review"?W.send:W.next; $("backBtn").setAttribute("aria-label",W.back);
+  if(!g){ scr.innerHTML=`<div class="card in">${ENVELOPE}${head("Secret Santa",W.noInv,W.noInvSub)}
+    <div class="field"><label class="lbl" for="pasteInv">${esc(W.pasteL)}</label><textarea id="pasteInv" placeholder="🎄…"></textarea></div><p class="err" id="invErr" hidden>${esc(W.badInv)}</p>
+    <button class="cta" id="pasteGo" type="button">${esc(W.pasteGo)}</button></div>`;
+    $("pasteGo").onclick=()=>{ const r=findGroup($("pasteInv").value); if(!r){ $("invErr").hidden=false; return; } inv=r; boot(); }; return; }
+  let h="";
+  if(id==="intro"){
+    const facts=[g.b&&[W.budget,g.b],g.d&&[W.party,fmtDate(g.d)+(g.pl?" · "+g.pl:"")],g.dl&&[W.due,fmtDate(g.dl)]].filter(Boolean);
+    h=`<div class="card in" style="text-align:center">${ENVELOPE}<div class="stack tight" style="justify-items:center"><span class="kicker">${esc(W.hiKick)}</span><h1>${esc(W.hi(first(A.name)))}</h1><p>${esc(W.hiSub(first(g.on)||"Santa",g.gn))}</p></div>
+      ${facts.length?`<div class="facts" style="text-align:left">${facts.map(f=>`<div class="fact"><small>${esc(f[0])}</small><b>${esc(f[1])}</b></div>`).join("")}</div>`:""}
+      <button class="cta" id="startBtn" type="button">${esc(W.start)}</button></div>`;
+  }
+  if(id==="you") h=`<div class="card in">${head("1 / 6",W.you,"")}
+    <div class="field"><label class="lbl" for="f_name">${esc(W.name)}</label><input type="text" id="f_name" data-bind="name" value="${esc(A.name)}" placeholder="${esc(W.namePh)}" autocomplete="name"></div>
+    <div class="field"><label class="lbl" for="f_phone">${esc(W.phone)}</label><input type="tel" id="f_phone" data-bind="phone" value="${esc(A.phone)}" placeholder="${esc(W.phonePh)}" autocomplete="tel" inputmode="tel"><span class="help">${esc(W.phoneHelp(first(g.on)||"Santa"))}</span></div>
+    <p class="err" id="err" hidden></p></div>`;
+  if(id==="sizes") h=`<div class="card in">${head("2 / 6",W.sizes,W.sizesSub)}
+    <div class="q"><h3>${esc(W.shirt)}</h3>${shirtChips()}<input type="text" data-bind="shirtO" value="${esc(A.shirtO)}" placeholder="${esc(W.other+": "+W.otherPh)}" aria-label="${esc(W.other)}"></div>
+    <div class="sub3">${textQ("pants",W.pants,W.pantsPh)}${textQ("shoe",W.shoe,W.shoePh)}</div></div>`;
+  if(id==="wishes") h=`<div class="card in">${head("3 / 6",W.wishes,W.wishesSub)}
+    ${[0,1,2].map(i=>`<div class="field"><label class="lbl" for="f_g${i}">${esc(W.wish(i))}</label><input type="text" id="f_g${i}" data-bind="g${i}" value="${esc(A.g[i])}" placeholder="${esc(W.wishPh[i])}" autocomplete="off"></div>`).join("")}
+    <p class="err" id="err" hidden></p></div>`;
+  if(id==="style") h=`<div class="card in">${head("4 / 6",W.style,W.styleSub)}
+    <div class="q"><h3>${esc(W.vb)}</h3>${chips("vb",0,{multi:false})}</div>
+    <div class="q"><h3>${esc(W.fi)}</h3>${chips("fi",0,{multi:false})}</div>
+    <div class="q"><h3>${esc(W.co)}</h3><span class="help">${esc(W.coHelp)}</span>${chips("co")}</div>
+    <div class="q"><h3>${esc(W.sw)}</h3>${chips("sw")}</div></div>`;
+  if(id==="loves"){ const fol=A.lv.map(i=>OPT.lv[i][2]).filter(Boolean);
+    const fq={sc:()=>`<div class="q"><span class="lbl">${esc(W.sc)}</span>${chips("sc")}</div>`,cf:()=>`<div class="q"><span class="lbl">${esc(W.cf)}</span>${chips("cf")}</div>`};
+    h=`<div class="card in">${head("5 / 6",W.loves,W.lovesSub)}<div class="q"><h3>${esc(W.lv)}</h3>${chips("lv")}</div>
+    ${fol.length?`<div class="follow">${fol.map(k=>fq[k]?fq[k]():textQ(k,W[k],W[k+"Ph"])).join("")}</div>`:""}</div>`; }
+  if(id==="last") h=`<div class="card in">${head("6 / 6",W.last,W.lastSub)}${textQ("st",W.st,W.stPh)}${textQ("no",W.no,W.noPh)}
+    <div class="q"><h3>${esc(W.gc)}</h3>${chips("gc",0,{multi:false})}</div></div>`;
+  if(id==="review"){ const v=build(), x=v.x||{}, row=(lab,val,to)=>`<div class="rv"><small>${esc(lab)}</small><b>${esc(val||W.none)}</b><button class="ghost" type="button" data-go="${to}">${esc(W.edit)}</button></div>`;
+    h=`<div class="card in">${head("✉️",W.review,W.reviewSub)}<div class="review">
+      ${row(W.name,v.n+(v.ph?" · "+v.ph:""),1)}${row(W.sizes,[v.s&&W.shirtL+" "+v.s,v.p&&W.pantsL+" "+v.p,v.h&&W.shoeL+" "+v.h].filter(Boolean).join(" · "),2)}
+      ${row(W.wishes,v.g.map((w,i)=>(i+1)+". "+w).join("  "),3)}${row(W.style,[x.vb,x.fi,x.co,x.sw].filter(Boolean).join(" · "),4)}
+      ${row(W.loves,[x.lv,x.sc,x.cf,x.ck,x.tr,x.rd,x.gm,x.sp,x.tm].filter(Boolean).join(" · "),5)}${row(W.last,[x.st,x.no&&W.no+" "+x.no,x.gc].filter(Boolean).join(" · "),6)}
+    </div></div>`; }
+  if(id==="done"){ const o=first(g.on), m=message(), hasO=!!digits(g.op);
+    const ok=delivered===true, wait=delivered===null, alt=ok?" alt":"";
+    h=`<div class="card in sent"><div class="stamp" aria-hidden="true">${ok?"✅":wait?"✉️":"📮"}</div><div class="stack tight" style="justify-items:center"><span class="kicker">${esc(ok?W.dlvK:wait?W.dlvWait:W.doneKick)}</span><h1>${esc(ok?W.dlvT(o||"Santa"):W.done)}</h1><p>${esc(ok?W.dlvP(o||"your organizer"):wait?W.dlvWaitP:(o?W.doneSub(o):W.doneNoOrg))}</p></div>
+      ${ok?`<p class="tiny">${esc(W.dlvNudge(o||""))}</p>`:""}
+      <div class="btns"><a class="cta wa${alt}" id="waBtn" href="${esc(waLink(g.op,m))}" target="_blank" rel="noopener">${esc(W.wa)}</a><a class="cta im${alt}" id="imBtn" href="${esc(imLink(g.op,m))}">${esc(W.im)}</a><button class="cta alt" id="cpBtn" type="button">${esc(W.cp)}</button></div>
+      ${ok?"":`<p class="tiny">${esc(W.after)}</p>`}
+      <div class="row" style="flex-wrap:wrap;justify-content:center;gap:4px"><button class="ghost" id="editBtn" type="button">${esc(W.editAgain)}</button><button class="ghost" id="anotherBtn" type="button">${esc(W.another)}</button>${HOST_URL.startsWith("http")?`<a class="ghost" href="${esc(hostLink())}" target="_blank" rel="noopener">${esc(W.org)}</a>`:""}</div></div>
+      ${playCard()}`; void hasO; }
+  scr.innerHTML=h; wire();
+  const sb=$("startBtn"); if(sb) sb.onclick=()=>go(1);
+  scr.querySelectorAll("[data-go]").forEach(b=>b.onclick=()=>go(+b.dataset.go));
+  if(id==="done"){ $("cpBtn").onclick=()=>copy(message()); $("editBtn").onclick=()=>{ sealed=null; delivered=null; go(7); }; $("anotherBtn").onclick=()=>{ inv.n=""; A=blank(); sealed=null; step=1; save(); render(); }; }
+  window.scrollTo({top:0,behavior:"instant"in window?"instant":"auto"});
+}
+function go(s){ step=Math.max(0,Math.min(STEPS.length-1,s)); save(); render(); }
+function err(t){ const e=$("err"); if(e){ e.textContent=t; e.hidden=false; } toast(t); }
+$("nextBtn").onclick=()=>{ const id=STEPS[step], W=L();
+  if(id==="you"&&!A.name.trim()){ err(W.needName); $("f_name").focus(); return; }
+  if(id==="wishes"&&!A.g.some(w=>w.trim())){ err(W.needWish); $("f_g0").focus(); return; }
+  if(id==="review"){ sealed=seal(build(),"L"); go(8); deliver(); return; }
+  go(step+1); };
+$("backBtn").onclick=()=>go(step-1);
+
+/* ---------- the sealed letter ---------- */
+function build(){ const pick=k=>A[k].map(i=>optText(k,i)).join(", "), x={};
+  ["vb","fi","co","sw","gc"].forEach(k=>{ const v=pick(k); if(v) x[k]=v; });
+  const lvOn=A.lv.map(i=>OPT.lv[i]); if(lvOn.length) x.lv=lvOn.map(o=>o[li()]).join(", ");
+  const want=new Set(lvOn.map(o=>o[2]).filter(Boolean));
+  ["sc","cf"].forEach(k=>{ if(want.has(k)){ const v=pick(k); if(v) x[k]=v; } });
+  ["ck","tr","rd","gm","sp","tm"].forEach(k=>{ if(want.has(k)&&A[k].trim()) x[k]=A[k].trim(); });
+  ["st","no"].forEach(k=>{ if(A[k].trim()) x[k]=A[k].trim(); });
+  const o={v:1,gid:inv.g.gid,n:A.name.trim(),l:lang,s:(A.shirtO.trim()||A.shirt),p:A.pants.trim(),h:A.shoe.trim(),g:A.g.map(s=>s.trim()).filter(Boolean),t:Date.now()};
+  const ph=A.phone.trim(); if(ph) o.ph=ph; if(Object.keys(x).length) o.x=x; return o; }
+function playCard(){ const g=inv.g, W=L(), e=(g.sb||[]).slice(0,3), medal=["🥇","🥈","🥉"];
+  const url=GAME_URL+"#sb="+seal({gid:g.gid,gn:g.gn,e:g.sb||[]},"S")+"&me="+encodeURIComponent(first(A.name)||A.name);
+  return `<div class="card in playcard" style="margin-top:12px"><div class="stack tight"><span class="kicker">🎮 ${esc(W.stayK)}</span><h2>${esc(W.stayT)}</h2><p>${esc(e.length?W.stayP(g.gn):W.stayP0(g.gn))}</p></div>
+    ${e.length?`<ol class="lb">${e.map((r,i)=>`<li><span>${medal[i]} ${esc(r[0])}</span><b>${Number(r[1]).toLocaleString()}</b></li>`).join("")}</ol>`:""}
+    <a class="cta" href="${esc(url)}" target="_blank" rel="noopener">${esc(e.length?W.stayGo(String(e[0][0]).split(" ").slice(0,2).join(" ")):W.stayGo0)}</a></div>`; }
+function hostLink(){ return HOST_URL+"#letter="+sealed; }
+function message(){ const g=inv.g; return L().msg(first(g.on)||"",g.gn,first(A.name),hostLink()); }
+
+/* ---------- start ---------- */
+function boot(){ const d=store.get(draftKey());
+  if(d&&d.A){ A=Object.assign(blank(),d.A); step=d.step||0; sealed=d.sealed||null; delivered=d.delivered??null; if(step===8&&sealed&&delivered!==true) setTimeout(deliver,300); setLang(d.lang||inv.l||inv.g.l||"en"); if(inv.n&&!A.name) A.name=inv.n; if(step===8&&!sealed) step=7; if(step>0&&step<8) setTimeout(()=>toast(L().resumed),400); }
+  else { A=blank(); setLang(inv.l||inv.g.l||"en"); step=0; }
+  render(); }
+if(inv) boot(); else { setLang((navigator.language||"").startsWith("es")?"es":"en"); render(); }
+</script>
+</body>
+</html>

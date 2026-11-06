@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Posada Santa · Secret Santa con sabor</title>
+<meta name="description" content="Run your family Secret Santa with Mexican-Christmas flavor: letters to Santa, piñata reveals and a posada game. Free, no accounts, English and Spanish.">
+<meta property="og:title" content="Posada Santa · Secret Santa con sabor">
+<meta property="og:description" content="Letters to Santa, piñata reveals and La Posada game. Free, no accounts.">
+<meta property="og:image" content="/assets/og.png">
+<meta name="theme-color" content="#16224a">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lilita+One&family=Nunito:wght@500;700;800;900&display=swap">
+<style>
+:root{--night:#16224a;--night2:#22336b;--deep:#101a3c;--cream:#fff8ec;--muted:#aab4d6;--gold:#f5c66a;--marigold:#f5a524;--red:#d7372f;--rosa:#e2337f;--pine:#2f8f4e;--turq:#22a9c4;--line:rgba(255,255,255,.1);
+  --display:"Lilita One","Arial Rounded MT Bold",system-ui,sans-serif;--body:"Nunito",system-ui,-apple-system,"Segoe UI",sans-serif;color-scheme:dark}
+*{box-sizing:border-box}html{scroll-behavior:smooth}
+body{margin:0;background:radial-gradient(120% 70% at 50% 0%,var(--night2),var(--night) 60%,var(--deep)) fixed,var(--night);color:var(--cream);font-family:var(--body);font-size:17px;line-height:1.5}
+a{color:inherit}
+.snow{position:fixed;inset:0;pointer-events:none;opacity:.5;background-image:radial-gradient(1.6px 1.6px at 12% 18%,#fff,transparent),radial-gradient(1.2px 1.2px at 78% 12%,#fff,transparent),radial-gradient(1.8px 1.8px at 40% 6%,#fff,transparent),radial-gradient(1.2px 1.2px at 90% 40%,#fff,transparent),radial-gradient(1.6px 1.6px at 6% 52%,#fff,transparent),radial-gradient(1.2px 1.2px at 62% 30%,#fff,transparent),radial-gradient(1.4px 1.4px at 28% 72%,#fff,transparent),radial-gradient(1.2px 1.2px at 84% 78%,#fff,transparent)}
+.picado{position:relative;display:flex;justify-content:center;gap:6px;padding-top:6px;overflow:hidden;height:58px}
+.picado::before{content:"";position:absolute;left:0;right:0;top:6px;height:2px;background:#2e5a3e}
+.picado .flag{flex:0 0 34px;height:46px;clip-path:polygon(0 0,100% 0,100% 82%,88% 100%,75% 82%,62% 100%,50% 82%,38% 100%,25% 82%,12% 100%,0 82%)}
+.picado .bulb{flex:0 0 10px;height:16px;border-radius:50% 50% 50% 50%/40% 40% 60% 60%;background:var(--c);box-shadow:0 0 12px 2px var(--c)}
+@media (prefers-reduced-motion:no-preference){.picado .bulb{animation:glow 2.4s ease-in-out infinite;animation-delay:var(--d)}@keyframes glow{50%{opacity:.45}}}
+.wrap{position:relative;max-width:1080px;margin:0 auto;padding:0 max(18px,env(safe-area-inset-left,0px))}
+nav{display:flex;justify-content:space-between;align-items:center;padding:6px 0 0}
+.logo{display:flex;align-items:center;gap:10px;font-family:var(--display);font-size:22px;text-decoration:none}
+.logo svg{width:34px;height:34px}
+.seg{display:inline-flex;padding:3px;border-radius:99px;background:rgba(255,255,255,.07);border:1px solid var(--line)}
+.seg button{font:inherit;font-weight:800;font-size:13px;height:30px;min-width:40px;padding:0 10px;border:0;border-radius:99px;background:none;color:var(--muted);cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--cream);color:var(--night)}
+.hero{display:grid;grid-template-columns:1.1fr .9fr;gap:40px;align-items:center;padding:48px 0 40px}
+.kicker{display:inline-flex;align-items:center;gap:8px;font-size:12px;font-weight:900;letter-spacing:.16em;text-transform:uppercase;color:var(--gold)}
+.kicker::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--marigold);box-shadow:0 0 10px var(--marigold)}
+h1,h2,h3{margin:0;font-family:var(--display);font-weight:400;line-height:1.04;letter-spacing:.005em}
+h1{font-size:clamp(42px,7.4vw,76px);margin:14px 0 16px}h1 em{font-style:normal;color:var(--gold)}
+h2{font-size:clamp(30px,5vw,44px)}h3{font-size:22px}
+p{margin:0;color:#c3cbe8;font-weight:600}
+.lede{font-size:clamp(18px,2.2vw,21px);max-width:34ch}
+.ctas{display:flex;flex-wrap:wrap;gap:12px;margin-top:26px}
+.cta{font:inherit;font-weight:900;font-size:18px;min-height:58px;padding:0 26px;border:0;border-radius:18px;cursor:pointer;color:#1c1430;background:linear-gradient(180deg,#ffc95e,#f5a524);box-shadow:0 14px 30px rgba(245,165,36,.28),inset 0 1px 0 rgba(255,255,255,.55);display:inline-flex;gap:10px;align-items:center;justify-content:center;text-decoration:none;transition:transform .12s}
+.cta:hover{transform:translateY(-1px)}.cta:active{transform:translateY(1px)}
+.cta.alt{background:rgba(255,255,255,.07);color:var(--cream);box-shadow:none;border:1px solid rgba(255,255,255,.16)}
+.trust{display:flex;flex-wrap:wrap;gap:8px 18px;margin-top:20px;font-size:14px;font-weight:800;color:var(--muted)}
+.trust span::before{content:"✓ ";color:#8ff0ac}
+.phones{position:relative;height:560px}
+.phone{position:absolute;width:250px;border-radius:34px;padding:9px;background:#0b1230;box-shadow:0 30px 70px rgba(0,0,0,.5),0 0 0 1px rgba(255,255,255,.08) inset}
+.phone img{display:block;width:100%;border-radius:26px;aspect-ratio:390/760;object-fit:cover;object-position:top;background:#16224a}
+.phone.a{left:0;top:30px;transform:rotate(-5deg);z-index:1}.phone.b{right:0;top:0;transform:rotate(4deg);z-index:2}
+@media (prefers-reduced-motion:no-preference){.phone.a{animation:fa 6s ease-in-out infinite}.phone.b{animation:fb 6s ease-in-out infinite}@keyframes fa{50%{transform:rotate(-4deg) translateY(-8px)}}@keyframes fb{50%{transform:rotate(5deg) translateY(6px)}}}
+section{padding:56px 0}
+.center{text-align:center;display:grid;justify-items:center;gap:12px}
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:30px}
+.step{padding:22px;border-radius:24px;background:linear-gradient(180deg,rgba(38,54,112,.9),rgba(22,32,72,.92));border:1px solid var(--line);display:grid;gap:10px;align-content:start}
+.step .n{width:48px;height:48px;border-radius:14px;display:grid;place-items:center;font-size:26px;background:rgba(245,165,36,.16)}
+.step small{font-weight:900;letter-spacing:.14em;text-transform:uppercase;font-size:11px;color:var(--gold)}
+.feats{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;margin-top:30px}
+.feat{display:grid;grid-template-columns:56px 1fr;gap:16px;padding:20px;border-radius:22px;background:rgba(255,255,255,.04);border:1px solid var(--line)}
+.feat .i{width:56px;height:56px;border-radius:16px;display:grid;place-items:center;font-size:28px;background:rgba(255,255,255,.06)}
+.game{display:grid;grid-template-columns:1fr 1fr;gap:36px;align-items:center;padding:30px;border-radius:32px;background:linear-gradient(150deg,rgba(226,51,127,.2),rgba(34,169,196,.12) 60%,rgba(47,143,78,.14));border:1px solid rgba(245,198,106,.3)}
+.game img{width:100%;border-radius:22px;box-shadow:0 20px 50px rgba(0,0,0,.4);display:block}
+.bosses{display:flex;flex-wrap:wrap;gap:8px;margin:16px 0 22px}.bosses span{font-weight:800;font-size:14px;padding:7px 12px;border-radius:99px;background:rgba(0,0,0,.22);border:1px solid var(--line)}
+.final{padding:44px 24px;border-radius:32px;text-align:center;display:grid;justify-items:center;gap:14px;background:radial-gradient(80% 120% at 50% 0%,rgba(245,165,36,.22),rgba(22,34,74,.4));border:1px solid rgba(245,198,106,.35)}
+footer{padding:30px 0 50px;display:flex;flex-wrap:wrap;gap:10px 22px;justify-content:space-between;color:var(--muted);font-size:14px;font-weight:700}
+footer a{color:var(--muted)}
+@media (max-width:860px){.hero{grid-template-columns:1fr;padding-top:26px}.phones{height:470px;max-width:440px;margin:0 auto;width:100%}.phone{width:205px}.steps,.feats,.game{grid-template-columns:1fr}.game{padding:20px}}
+@media (max-width:420px){.phones{height:400px}.phone{width:172px}.cta{width:100%}}
+:focus-visible{outline:3px solid var(--gold);outline-offset:3px}
+</style>
+</head>
+<body>
+<div class="snow" aria-hidden="true"></div>
+<div class="picado" id="picado" aria-hidden="true"></div>
+<div class="wrap">
+  <nav><a class="logo" href="/"><svg viewBox="0 0 40 40" aria-hidden="true"><g transform="translate(20 21)"><path d="M0-18 5-6 18-6 7 2 11 15 0 7-11 15-7 2-18-6-5-6z" fill="#f5a524"/><circle r="7" fill="#e2337f"/><circle r="3" fill="#fff8ec"/></g></svg>Posada Santa</a>
+    <div class="seg" role="group" aria-label="Language / Idioma"><button data-l="en" aria-pressed="true">EN</button><button data-l="es" aria-pressed="false">ES</button></div></nav>
+
+  <header class="hero">
+    <div>
+      <span class="kicker" data-t="kick">Free · No accounts · English & Español</span>
+      <h1 data-t="h1" data-html>Secret Santa, <em>con sabor.</em></h1>
+      <p class="lede" data-t="lede">Your family writes letters to Santa, names get drawn in secret, and everyone breaks a piñata to find their match. Then the whole family battles it out in La Posada.</p>
+      <div class="ctas"><a class="cta" href="/host" data-t="cta">🎄 Start your Secret Santa</a><a class="cta alt" href="/play" data-t="cta2">🎮 Play La Posada</a></div>
+      <div class="trust"><span data-t="tr1">Set up in 5 minutes</span><span data-t="tr2">Invites by WhatsApp or text</span><span data-t="tr3">Nobody sees the matches, not even you</span></div>
+    </div>
+    <div class="phones" aria-hidden="true"><div class="phone a"><img src="/assets/letter.png" alt=""></div><div class="phone b"><img src="/assets/pinata.png" alt=""></div></div>
+  </header>
+
+  <section class="center" id="how">
+    <span class="kicker" data-t="howK">How it works</span><h2 data-t="howT">Three steps. Zero spreadsheets.</h2>
+    <div class="steps" style="text-align:left">
+      <div class="step"><span class="n">👨‍👩‍👧‍👦</span><small data-t="s1k">Step 1</small><h3 data-t="s1t">Add your people</h3><p data-t="s1p">Type them in, paste a list from your group chat, or pick from your contacts.</p></div>
+      <div class="step"><span class="n">✉️</span><small data-t="s2k">Step 2</small><h3 data-t="s2t">They write letters to Santa</h3><p data-t="s2p">Sizes, three wishes and gift hints, in English or Spanish. Each letter lands on your page automatically.</p></div>
+      <div class="step"><span class="n">🪅</span><small data-t="s3k">Step 3</small><h3 data-t="s3t">Draw names, send piñatas</h3><p data-t="s3p">One tap draws names (partners can't get each other). Everyone breaks a piñata to see who they're shopping for.</p></div>
+    </div>
+  </section>
+
+  <section>
+    <div class="center"><span class="kicker" data-t="fK">Made for familias</span><h2 data-t="fT">Everything a Mexican Christmas needs</h2></div>
+    <div class="feats">
+      <div class="feat"><span class="i">📮</span><div><h3 data-t="f1t">Letters to Santa</h3><p data-t="f1p">A festive letter instead of a boring form. Your Santa gets real sizes and real hints.</p></div></div>
+      <div class="feat"><span class="i">🪅</span><div><h3 data-t="f2t">Piñata reveals</h3><p data-t="f2p">Swing until it breaks, then save your match and shopping list as a picture.</p></div></div>
+      <div class="feat"><span class="i">🏆</span><div><h3 data-t="f3t">Family leaderboard</h3><p data-t="f3p">Live scores just for your group. Tío Beto is not going to like losing.</p></div></div>
+      <div class="feat"><span class="i">🇲🇽</span><div><h3 data-t="f4t">Bilingual from the start</h3><p data-t="f4p">Every person gets messages and pages in their own language, English or Spanish.</p></div></div>
+    </div>
+  </section>
+
+  <section>
+    <div class="game">
+      <img src="/assets/game.png" alt="La Posada game: dodging La Marchanta's fruit in the mercado" loading="lazy">
+      <div><span class="kicker" data-t="gK">The game</span><h2 data-t="gT" style="margin:10px 0 12px">La Posada</h2>
+        <p data-t="gP">Five levels of posada chaos. Dodge flying chanclas, chile smoke and judgy tías, chain combos up to ×5, and take down a boss at the end of every level.</p>
+        <div class="bosses"><span>👴 Don Gruñón</span><span>🍅 La Marchanta</span><span>🎆 El Cohetero</span><span>🪅 La Piñatota</span><span>👻 El Cucuy Navideño</span></div>
+        <a class="cta" href="/play" data-t="gCta">🎮 Play now</a></div>
+    </div>
+  </section>
+
+  <section><div class="final"><span class="kicker" data-t="endK">¡Ándale!</span><h2 data-t="endT">Your posada is waiting</h2><p data-t="endP">Start in five minutes. No accounts, no downloads, no cost.</p><a class="cta" href="/host" data-t="cta">🎄 Start your Secret Santa</a></div></section>
+
+  <footer><span>© 2026 Posada Santa</span><span><a href="/privacy" data-t="priv">Privacy & terms</a></span></footer>
+</div>
+<script>
+(function(){ const p=document.getElementById("picado"), fl=["#d7372f","#2f8f4e","#f5a524","#e2337f","#f4efe4","#22a9c4"], bl=["#ff4d4d","#ffd34d","#4ddc7a","#5ac8ff","#ff6fb5"];
+  for(let i=0;i<30;i++){ const f=document.createElement("span"); if(i%2){ f.className="bulb"; f.style.setProperty("--c",bl[(i>>1)%5]); f.style.setProperty("--d",(i*.17)+"s"); } else { f.className="flag"; f.style.background=fl[(i>>1)%6]; } p.appendChild(f); } })();
+const ES={kick:"Gratis · Sin cuentas · Español e inglés",h1:"Secret Santa, <em>con sabor.</em>",lede:"Tu familia escribe cartas a Santa, los nombres se sortean en secreto y cada quien rompe una piñata para ver a quién le tocó. Después, toda la familia se enfrenta en La Posada.",
+  cta:"🎄 Organiza tu Secret Santa",cta2:"🎮 Juega La Posada",tr1:"Listo en 5 minutos",tr2:"Invitaciones por WhatsApp o mensaje",tr3:"Nadie ve las parejas, ni tú",
+  howK:"Cómo funciona",howT:"Tres pasos. Cero hojas de cálculo.",s1k:"Paso 1",s1t:"Agrega a tu gente",s1p:"Escríbelos, pega una lista del grupo o escoge de tus contactos.",
+  s2k:"Paso 2",s2t:"Escriben su carta a Santa",s2p:"Tallas, tres deseos y pistas, en español o inglés. Cada carta te llega solita.",
+  s3k:"Paso 3",s3t:"Sortea y manda piñatas",s3p:"Un toque sortea los nombres (las parejas no se tocan entre sí). Cada quien rompe su piñata para ver a quién le compra.",
+  fK:"Hecho para familias",fT:"Todo lo que una Navidad mexicana necesita",f1t:"Cartas a Santa",f1p:"Una carta navideña en vez de un formulario aburrido. Tu Santa recibe tallas y pistas de verdad.",
+  f2t:"Piñatas sorpresa",f2p:"Pégale hasta que se rompa y guarda tu Secret Santa y su lista como imagen.",f3t:"Tabla familiar",f3p:"Puntos en vivo solo para tu grupo. A Tío Beto no le va a gustar perder.",
+  f4t:"Bilingüe desde el principio",f4p:"Cada persona recibe mensajes y páginas en su idioma, español o inglés.",
+  gK:"El juego",gT:"La Posada",gP:"Cinco niveles de puro relajo posadero. Esquiva chanclas voladoras, humo de chile y tías criticonas, arma combos hasta ×5 y vence a un jefe al final de cada nivel.",gCta:"🎮 Jugar ahora",
+  endK:"¡Ándale!",endT:"Tu posada te espera",endP:"Empieza en cinco minutos. Sin cuentas, sin descargas, sin costo.",priv:"Privacidad y términos"};
+const EN={}; document.querySelectorAll("[data-t]").forEach(el=>{ if(!(el.dataset.t in EN)) EN[el.dataset.t]=el.innerHTML; });
+function setLang(l){ document.documentElement.lang=l; const D=l==="es"?ES:EN; document.querySelectorAll("[data-t]").forEach(el=>{ const v=D[el.dataset.t]; if(v!=null) el.innerHTML=v; });
+  document.querySelectorAll("[data-l]").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.l===l))); try{ localStorage.setItem("posada-lang",l); }catch(e){} }
+document.querySelectorAll("[data-l]").forEach(b=>b.onclick=()=>setLang(b.dataset.l));
+let pref=null; try{ pref=localStorage.getItem("posada-lang"); }catch(e){} setLang(pref||((navigator.language||"").startsWith("es")?"es":"en"));
+</script>
+</body>
+</html>
