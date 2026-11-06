@@ -195,6 +195,12 @@ function newRound(){ S={t:0,left:60,score:0,ammo:6,reload:0,combo:0,bestCombo:0,
   makeCans(); S.pinatas=[{x:120,ph:0,hp:3,max:3,shake:0,dead:0,len:62},{x:270,ph:2.2,hp:3,max:3,shake:0,dead:0,len:88}]; renderAmmo(); }
 function makeCans(){ const cx=rnd(90,300); S.cansList=[]; const rows=[[0,3],[1,2],[2,1]]; rows.forEach(([r,n])=>{ for(let i=0;i<n;i++) S.cansList.push({x:cx+(i-(n-1)/2)*28,y:FENCE-17-r*34,vx:0,vy:0,rot:0,vr:0,down:false,c:pick(["#d7372f","#2f8f4e","#f5a524","#22a9c4"])}); }); }
 
+function drawNaranjo(c,x,gy,k){ c.save(); c.translate(x,gy); c.scale(k,k);
+  c.fillStyle="#6B4A33"; c.beginPath(); c.moveTo(-5,0); c.quadraticCurveTo(-2,-18,-3,-38); c.lineTo(3,-38); c.quadraticCurveTo(3,-18,6,0); c.closePath(); c.fill();
+  c.beginPath(); c.moveTo(1,-24); c.quadraticCurveTo(10,-32,18,-38); c.lineTo(19,-36); c.quadraticCurveTo(11,-29,3,-20); c.fill();
+  c.fillStyle="#2F4A2F"; [[0,-62,24],[-19,-53,16],[19,-53,16],[-11,-74,15],[11,-74,15],[0,-46,16]].forEach(([cx,cy,r])=>{ c.beginPath(); c.arc(cx,cy,r,0,6.283); c.fill(); });
+  c.fillStyle="#E8782A"; [[-15,-56],[6,-70],[18,-50],[-2,-49],[-22,-46],[12,-42],[-8,-77]].forEach(([cx,cy])=>{ c.beginPath(); c.arc(cx,cy,4,0,6.283); c.fill(); });
+  c.fillStyle="rgba(255,255,255,.4)"; [[-16,-57],[5,-71],[17,-51]].forEach(([cx,cy])=>{ c.beginPath(); c.arc(cx,cy,1.1,0,6.283); c.fill(); }); c.restore(); }
 /* ---------- input: tap to throw ---------- */
 const toV=(x,y)=>({x:(x-OX)/K,y:(y-OY)/K});
 cv.addEventListener("pointerdown",e=>{ if(state!=="play") return; const p=toV(e.clientX,e.clientY); throwAt(p.x,p.y); });
@@ -214,6 +220,7 @@ function land(tm){ const x=tm.x, y=tm.y;
   for(const c of S.cansList){ if(!c.down&&Math.abs(x-c.x)<16&&y>c.y-20&&y<c.y+20){ hitCan(c,x); return; } }
   for(const p of S.pinatas){ if(p.dead) continue; const q=pinPos(p); if(Math.hypot(x-q.x,y-q.y)<30){ hitPin(p,q); return; } }
   for(const w of S.wins){ if(w.who&&!w.hit&&Math.abs(x-w.x)<40&&y>w.y-58&&y<w.y+44){ hitWin(w); return; } }
+  if(x<48&&y>FENCE+38&&y<FENCE+96){ for(let i=0;i<3;i++) S.parts.push({x:26+rnd(-12,12),y:FENCE+55,vx:rnd(-60,60),vy:rnd(-160,-40),t:0,l:1.2,r:0,emoji:"🍊",rot:rnd(-4,4)}); const t0=now(); tone("triangle",988,t0,.12,.06); tone("triangle",1319,t0+.08,.16,.05); return; }
   const c=S.cucuy; if(c&&!c.hit&&Math.abs(x-c.x)<26&&y>ROOF-62&&y<ROOF+6){ hitCucuy(c); return; }
   // ¡plaf! on whatever is behind
   S.combo=0; S.splats.push({x,y,t:0,s:.6+(1-tm.d)*.5,r:rnd(0,6)}); const t0=now(); noise(t0,.14,.25,"lowpass",600,200); floatTxt(t("miss"),x,y-14,"#e9c46a"); updMult(); }
@@ -314,7 +321,8 @@ function fence(){ ctx.fillStyle="#6b4226"; ctx.fillRect(-200,FENCE,VW+400,16); c
   for(let x=-200;x<VW+200;x+=48){ ctx.fillStyle="#5a3a26"; ctx.fillRect(x+20,FENCE+16,10,60); }
   ctx.fillStyle="#3a2a48"; ctx.fillRect(-200,FENCE+76,VW+400,VH); const g=ctx.createLinearGradient(0,FENCE+60,0,VH); g.addColorStop(0,"#4a3a5a"); g.addColorStop(1,"#2a1f3a"); ctx.fillStyle=g; ctx.fillRect(-200,FENCE+60,VW+400,VH);
   // nochebuenas along the yard
-  [30,110,280,360].forEach((x,i)=>{ const y=FENCE+92+(i%2)*20; ctx.fillStyle="#2f8f4e"; ctx.beginPath(); ctx.ellipse(x,y+6,18,8,0,0,6.283); ctx.fill(); ctx.fillStyle="#d7372f"; for(let k=0;k<6;k++){ ctx.save(); ctx.translate(x,y); ctx.rotate(k*1.047); ctx.beginPath(); ctx.ellipse(9,0,9,4,0,0,6.283); ctx.fill(); ctx.restore(); } ctx.fillStyle="#ffd34d"; ctx.beginPath(); ctx.arc(x,y,3,0,6.283); ctx.fill(); });
+  drawNaranjo(ctx,26,FENCE+92,.6); ctx.fillStyle="#b4552c"; ctx.beginPath(); ctx.moveTo(12,FENCE+92); ctx.lineTo(40,FENCE+92); ctx.lineTo(36,FENCE+108); ctx.lineTo(16,FENCE+108); ctx.closePath(); ctx.fill();
+  [110,280,360].forEach((x,i)=>{ const y=FENCE+92+(i%2)*20; ctx.fillStyle="#2f8f4e"; ctx.beginPath(); ctx.ellipse(x,y+6,18,8,0,0,6.283); ctx.fill(); ctx.fillStyle="#d7372f"; for(let k=0;k<6;k++){ ctx.save(); ctx.translate(x,y); ctx.rotate(k*1.047); ctx.beginPath(); ctx.ellipse(9,0,9,4,0,0,6.283); ctx.fill(); ctx.restore(); } ctx.fillStyle="#ffd34d"; ctx.beginPath(); ctx.arc(x,y,3,0,6.283); ctx.fill(); });
   drawSign(); S.cansList.forEach(drawCan); }
 function drawSign(){ const x=VW-70, y=FENCE+44; ctx.fillStyle="#5a3a26"; ctx.fillRect(x-3,y-6,6,40); ctx.save(); ctx.translate(x,y-18); ctx.rotate(-.06);
   ctx.fillStyle="#e8d2a6"; ctx.fillRect(-52,-20,104,40); ctx.strokeStyle="#8d5a34"; ctx.lineWidth=3; ctx.strokeRect(-52,-20,104,40);

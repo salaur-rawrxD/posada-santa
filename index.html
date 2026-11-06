@@ -73,6 +73,7 @@ section{padding:56px 0}
 .final{padding:44px 24px;border-radius:32px;text-align:center;display:grid;justify-items:center;gap:14px;background:radial-gradient(80% 120% at 50% 0%,rgba(245,165,36,.22),rgba(22,34,74,.4));border:1px solid rgba(245,198,106,.35)}
 footer{padding:30px 0 50px;display:flex;flex-wrap:wrap;gap:10px 22px;justify-content:space-between;color:var(--muted);font-size:14px;font-weight:700}
 footer a{color:var(--muted)}
+.veci{display:inline-flex;align-items:center;gap:8px;opacity:.78}.veci img{display:block;width:18px;height:auto}
 @media (max-width:860px){.hero{grid-template-columns:1fr;padding-top:26px}.phones{height:470px;max-width:440px;margin:0 auto;width:100%}.phone{width:205px}.steps,.feats,.game{grid-template-columns:1fr}.game{padding:20px}}
 @media (max-width:420px){.phones{height:400px}.phone{width:172px}.cta{width:100%}}
 :focus-visible{outline:3px solid var(--gold);outline-offset:3px}
@@ -137,7 +138,7 @@ footer a{color:var(--muted)}
 
   <section><div class="final"><span class="kicker" data-t="endK">¡Ándale!</span><h2 data-t="endT">Your posada is waiting</h2><p data-t="endP">Start in five minutes. No accounts, no downloads, no cost.</p><a class="cta" href="/host" data-t="cta">🎄 Start your Secret Santa</a></div></section>
 
-  <footer><span>© 2026 Posada Santa</span><span><a href="/privacy" data-t="priv">Privacy & terms</a></span></footer>
+  <footer><span class="veci"><img src="/assets/laveci-tree.svg" alt="" width="18" height="25"><span data-t="veci">Made with cariño by La Veci Productions</span></span><span>© 2026 Posada Santa</span><span><a href="/privacy" data-t="priv">Privacy & terms</a></span></footer>
 </div>
 <script>
 (function(){ const p=document.getElementById("picado"), fl=["#d7372f","#2f8f4e","#f5a524","#e2337f","#f4efe4","#22a9c4"], bl=["#ff4d4d","#ffd34d","#4ddc7a","#5ac8ff","#ff6fb5"];
@@ -152,7 +153,7 @@ const ES={kick:"Gratis · Sin cuentas · Español e inglés",h1:"Secret Santa, <
   f4t:"Bilingüe desde el principio",f4p:"Cada persona recibe mensajes y páginas en su idioma, español o inglés.",
   gK:"El juego",gT:"La Posada",gP:"Cinco niveles de puro relajo posadero. Esquiva chanclas voladoras, humo de chile y tías criticonas, arma combos hasta ×5 y vence a un jefe al final de cada nivel.",gCta:"🎮 Jugar ahora",
   mK:"Minijuegos",mT:"Juegos rápidos para toda la familia",m1:"Bájate hasta la posada esquivando mariachis, burros, el carrito de tamales y la chancla de la tía.",m2:"¡Gánale los terrenos a tus tías y tíos con una olla de tamales! Nunca a la Abuelita.",m3:"Cinco niveles, cinco jefes y una tabla familiar en vivo.",m4:"Pégale a tiempo, aguanta los jalones del tío y luego agarra los dulces.",mGo:"Jugar →",
-  endK:"¡Ándale!",endT:"Tu posada te espera",endP:"Empieza en cinco minutos. Sin cuentas, sin descargas, sin costo.",priv:"Privacidad y términos"};
+  endK:"¡Ándale!",endT:"Tu posada te espera",endP:"Empieza en cinco minutos. Sin cuentas, sin descargas, sin costo.",priv:"Privacidad y términos",veci:"Hecho con cariño por La Veci Productions"};
 const EN={}; document.querySelectorAll("[data-t]").forEach(el=>{ if(!(el.dataset.t in EN)) EN[el.dataset.t]=el.innerHTML; });
 function setLang(l){ document.documentElement.lang=l; const D=l==="es"?ES:EN; document.querySelectorAll("[data-t]").forEach(el=>{ const v=D[el.dataset.t]; if(v!=null) el.innerHTML=v; });
   document.querySelectorAll("[data-l]").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.l===l))); try{ localStorage.setItem("posada-lang",l); }catch(e){} }

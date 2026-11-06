@@ -1234,9 +1234,17 @@ function addHazards(x0,x1){
     else { const y0=rand(96,200); if(!stars.some(s=>Math.abs(s.x-x1)<160)) strays.push({x:x1+rand(60,200),y0,ph:Math.random()*6,done:false,bumped:false,told:false}); } } }
 
 /* ---------- holiday scenery: yard pines, gift piles, falling snow, Santa's sleigh ---------- */
+function drawNaranjo(c,x,gy,k){ c.save(); c.translate(x,gy); c.scale(k,k);
+  c.fillStyle="#6B4A33"; c.beginPath(); c.moveTo(-5,0); c.quadraticCurveTo(-2,-18,-3,-38); c.lineTo(3,-38); c.quadraticCurveTo(3,-18,6,0); c.closePath(); c.fill();
+  c.beginPath(); c.moveTo(1,-24); c.quadraticCurveTo(10,-32,18,-38); c.lineTo(19,-36); c.quadraticCurveTo(11,-29,3,-20); c.fill();
+  c.fillStyle="#2F4A2F"; [[0,-62,24],[-19,-53,16],[19,-53,16],[-11,-74,15],[11,-74,15],[0,-46,16]].forEach(([cx,cy,r])=>{ c.beginPath(); c.arc(cx,cy,r,0,6.283); c.fill(); });
+  c.fillStyle="#E8782A"; [[-15,-56],[6,-70],[18,-50],[-2,-49],[-22,-46],[12,-42],[-8,-77]].forEach(([cx,cy])=>{ c.beginPath(); c.arc(cx,cy,4,0,6.283); c.fill(); });
+  c.fillStyle="rgba(255,255,255,.4)"; [[-16,-57],[5,-71],[17,-51]].forEach(([cx,cy])=>{ c.beginPath(); c.arc(cx,cy,1.1,0,6.283); c.fill(); }); c.restore(); }
+
 function drawYard(){ const par=.8, tile=430, off=camX*par;
   for(let k=Math.floor(off/tile)-1;k<=Math.floor((off+viewW)/tile)+1;k++){ const r=rng(k*313+77), x0=k*tile-off;
     const px=x0+40+r()*300, h=36+r()*16;
+    if(((k%11)+11)%11===7){ drawNaranjo(ctx,px,GY-4,.62); continue; }
     ctx.fillStyle="#5b3a22"; ctx.fillRect(px-2.5,GY-8,5,8);
     [[0,1],[.32,.8],[.6,.58]].forEach(([o,w])=>{ ctx.fillStyle=o?"#1f6b45":"#185a3a"; ctx.beginPath(); ctx.moveTo(px-14*w,GY-6-h*o); ctx.lineTo(px+14*w,GY-6-h*o); ctx.lineTo(px,GY-6-h*o-h*.5); ctx.closePath(); ctx.fill(); });
     for(let i=0;i<7;i++){ const u=i/7, lx=px+(r()-.5)*20*(1-u), ly=GY-10-u*h*.9; ctx.fillStyle=FIRE[(i+k)%5]; ctx.globalAlpha=.55+.45*Math.sin(clock*4+i*2+k); ctx.beginPath(); ctx.arc(lx,ly,1.6,0,6.283); ctx.fill(); } ctx.globalAlpha=1;

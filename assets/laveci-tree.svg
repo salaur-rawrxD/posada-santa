@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="40 20 120 165" width="240" height="330" role="img" aria-label="La Veci Productions tree mark">
+<title>La Veci Productions</title>
+<path d="M52 175 H148" stroke="#6B4A33" stroke-width="3" stroke-linecap="round" fill="none"/>
+<g fill="#6B4A33"><path d="M91 174 Q97 146 95 108 L101 108 Q102 136 109 174 Z"/><path d="M99 142 Q112 130 126 118 L128 121 Q114 133 102 148 Z"/><path d="M97 134 Q86 124 74 116 L72 119 Q84 127 96 140 Z"/></g>
+<g fill="#2F4A2F"><circle cx="100" cy="72" r="44"/><circle cx="64" cy="88" r="30"/><circle cx="136" cy="88" r="30"/><circle cx="78" cy="52" r="28"/><circle cx="122" cy="52" r="28"/><circle cx="100" cy="100" r="30"/><circle cx="80" cy="106" r="22"/><circle cx="120" cy="106" r="22"/></g>
+<g fill="#fff" opacity="0.08"><circle cx="84" cy="46" r="16"/><circle cx="62" cy="80" r="12"/></g>
+<g fill="#E8782A"><circle cx="72" cy="78" r="7.5"/><circle cx="112" cy="60" r="7.5"/><circle cx="136" cy="94" r="7.5"/><circle cx="96" cy="96" r="7.5"/><circle cx="60" cy="106" r="7"/><circle cx="122" cy="114" r="7"/><circle cx="88" cy="42" r="7"/><circle cx="142" cy="66" r="7"/></g>
+<g fill="#fff" opacity="0.4"><circle cx="70" cy="76" r="2"/><circle cx="110" cy="58" r="2"/><circle cx="134" cy="92" r="2"/><circle cx="94" cy="94" r="2"/><circle cx="58" cy="104" r="1.8"/><circle cx="120" cy="112" r="1.8"/><circle cx="86" cy="40" r="1.8"/><circle cx="140" cy="64" r="1.8"/></g>
+<g fill="#8FAE6E"><path d="M112 53 q5 -7 11 -3 q-5 6 -11 3z"/><path d="M88 35 q-6 -6 -11 -1 q6 5 11 1z"/></g>
+</svg>
