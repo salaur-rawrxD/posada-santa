@@ -516,7 +516,8 @@ function rand(n){ const u=new Uint32Array(1); crypto.getRandomValues(u); return 
 function blocked(a,b){ return G().pairs.some(([x,y])=>(x===a&&y===b)||(x===b&&y===a)); }
 function makeDraw(ids){ for(let tr=0;tr<40000;tr++){ const r=[...ids]; for(let i=r.length-1;i>0;i--){ const j=rand(i+1); [r[i],r[j]]=[r[j],r[i]]; }
     if(ids.every((g,i)=>g!==r[i]&&!blocked(g,r[i]))) return ids.map((g,i)=>[g,r[i]]); } return null; }
-function codeFor(giver,rec){ const L=rec.letter||{}, o={n:first(giver.name),l:giver.lang||G().lang,r:rec.name,s:L.s||"",p:L.p||"",h:L.h||"",g:L.g||[]}; if(L.x&&Object.keys(L.x).length) o.x=L.x; return pinCode(o); }
+function codeFor(giver,rec){ const g=G(), L=rec.letter||{}, kid=!!(rec.kid&&kidsOn(g)), o={n:first(giver.name),l:giver.lang||g.lang,r:rec.name,s:L.s||"",p:L.p||"",h:L.h||"",g:L.g||[]}; if(L.x&&Object.keys(L.x).length) o.x=L.x;
+  const b=kid&&g.kids&&g.kids.budget?g.kids.budget:g.budget; if(b) o.b=String(b).slice(0,20); if(kid) o.k=1; return pinCode(o); }
 function drawPool(){ const g=G(); return g.people.filter(p=>p.letter||g.includeAll); }
 const kidsOn=g=>!!(g&&g.kids&&g.kids.on);
 function drawSplit(){ const g=G(), pool=drawPool(); if(!kidsOn(g)) return {adults:pool,kids:[]}; return {adults:pool.filter(p=>!p.kid||p.me),kids:pool.filter(p=>p.kid&&!p.me)}; }
