@@ -2600,4 +2600,30 @@ function gamesPill(show){ if(/claude|anthropic/.test(location.hostname)) return;
 gamesPill(()=>typeof state!=="undefined"&&!["play","arriving"].includes(state));
 </script>
 
+<script>
+/* "now with your family" card: turns players and piñata openers into organizers (site only).
+   famCard(where, game, mode, before) — where: a card element; mode "play" (after a game) or "reveal" (after your piñata). */
+function famCard(where, game, mode, before, light){ if(!where||/claude|anthropic/.test(location.hostname)) return null;
+  const inFam=()=>{ try{ const f=JSON.parse(localStorage.getItem("posada-groups-v1")||"null"), h=JSON.parse(localStorage.getItem("santa-host-v1")||"null");
+      return !!((f&&f.groups&&Object.keys(f.groups).length)||(h&&h.groups&&Object.values(h.groups).some(g=>g&&g.setup))); }catch(e){ return false; } };
+  if(mode==="play"&&inFam()) return null;
+  if(!document.getElementById("famcard-css")){ const st=document.createElement("style"); st.id="famcard-css";
+    st.textContent=".famcard{display:grid;gap:8px;justify-items:center;text-align:center;padding:16px 16px 14px;margin:4px 0;border-radius:20px;background:linear-gradient(160deg,rgba(245,165,36,.22),rgba(226,51,127,.14));border:1px solid rgba(245,198,106,.5);color:#fff8ec;font-family:Nunito,system-ui,sans-serif}"
+      +".famcard b{font-family:'Lilita One',system-ui,sans-serif;font-weight:400;font-size:21px;line-height:1.15}.famcard p{margin:0;font-size:14px;font-weight:700;line-height:1.4;color:#d9def2}"
+      +".famcard.light{color:#1c1430;background:linear-gradient(160deg,#ffe7b0,#ffd0e4);border-color:#f5a524}.famcard.light p{color:#5a4a63}.famcard a{display:flex;align-items:center;justify-content:center;width:100%;min-height:50px;border-radius:15px;font-weight:900;font-size:16px;text-decoration:none;color:#1c1430;background:linear-gradient(180deg,#ffc95e,#f5a524);box-shadow:0 10px 22px rgba(245,165,36,.28)}";
+    document.head.appendChild(st); }
+  const W={ play:{es:["👨‍👩‍👧‍👦 ¿Y si juegas con tu familia?","Arma su intercambio navideño en 5 minutos: cartas a Santa, sorteo secreto, piñatas y una tabla familiar para ver quién gana.","🎄 Organizar el intercambio"],
+                  en:["👨‍👩‍👧‍👦 Play this with your family","Set up your family gift exchange in 5 minutes: letters to Santa, a secret draw, piñatas and a family leaderboard.","🎄 Start our gift exchange"]},
+            reveal:{es:["🎄 ¿Tienes otro intercambio?","En el trabajo, con amigos o con la otra familia. Organízalo gratis en 5 minutos.","Organizar uno →"],
+                    en:["🎄 Got another gift exchange?","At work, with friends or the in-laws. Set it up free in 5 minutes.","Start one →"]} };
+  const el=document.createElement("div"); el.className="famcard"+(light?" light":"");
+  const draw=()=>{ const L=(document.documentElement.lang||"").startsWith("es")?"es":"en", w=W[mode][L];
+    el.innerHTML=`<b>${w[0]}</b><p>${w[1]}</p><a href="/host">${w[2]}</a>`;
+    el.querySelector("a").addEventListener("click",()=>{ try{ psTrack("fam_cta",{game,mode}); }catch(e){} }); };
+  draw(); if(before&&before.parentNode===where) where.insertBefore(el,before); else where.appendChild(el);
+  new MutationObserver(draw).observe(document.documentElement,{attributes:true,attributeFilter:["lang"]});
+  return el; }
+famCard(document.querySelector("#results .card"),"posada","play",document.querySelector("#results [data-pcrumbs]"));
+</script>
+
 </html>

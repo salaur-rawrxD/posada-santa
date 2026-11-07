@@ -3,14 +3,14 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Posada Santa · Secret Santa con sabor</title>
+<title>Posada Santa · Secret Santa e intercambio navideño con piñata</title>
 <link rel="canonical" href="https://posadaxmas.com/">
-<meta name="description" content="Letters to Santa, piñata reveals and La Posada game. Free, no accounts.">
+<meta name="description" content="Letters to Santa, a secret name draw and a piñata reveal for your family gift exchange. Free, in English and Spanish, no accounts.">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Posada Santa">
 <meta property="og:url" content="https://posadaxmas.com/">
-<meta property="og:title" content="Posada Santa · Secret Santa con sabor">
-<meta property="og:description" content="Letters to Santa, piñata reveals and La Posada game. Free, no accounts.">
+<meta property="og:title" content="Posada Santa · Secret Santa e intercambio navideño con piñata">
+<meta property="og:description" content="Letters to Santa, a secret name draw and a piñata reveal for your family gift exchange. Free, in English and Spanish, no accounts.">
 <meta property="og:image" content="https://posadaxmas.com/assets/og.png">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="manifest" href="/manifest.webmanifest">
@@ -103,6 +103,52 @@ footer a{color:var(--muted)}
 @media (max-width:860px){.hero{grid-template-columns:1fr;padding-top:26px}.phones{height:470px;max-width:440px;margin:0 auto;width:100%}.phone{width:205px}.steps,.feats,.game{grid-template-columns:1fr}.game{padding:20px}}
 @media (max-width:420px){.phones{height:400px}.phone{width:172px}.cta{width:100%}}
 :focus-visible{outline:3px solid var(--gold);outline-offset:3px}
+[hidden]{display:none!important}
+body{overflow-x:clip}
+.hero{grid-template-columns:1fr 1fr;grid-template-areas:"txt play" "cta play";column-gap:40px;row-gap:0;padding:34px 0 30px}
+.htxt{grid-area:txt;align-self:end}.hplay{grid-area:play}.hcta{grid-area:cta;align-self:start}
+.hero h1{font-size:clamp(38px,6.4vw,70px);margin:12px 0 12px}
+.lede{max-width:30ch}
+.hplay{position:relative;display:grid;justify-items:center;align-content:center;gap:8px;min-height:420px}
+.hp-wrap{position:relative;width:min(300px,62vw);aspect-ratio:200/250;background:none;border:0;padding:0;cursor:pointer;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+.hp-pin{width:100%;height:100%;overflow:visible;transform-origin:50% 0}
+@media (prefers-reduced-motion:no-preference){.hp-pin{animation:hpswing 2.4s ease-in-out infinite alternate}}
+@keyframes hpswing{from{transform:rotate(-8deg)}to{transform:rotate(8deg)}}
+.hp-pin .shk{transform-box:fill-box;transform-origin:50% 50%}
+.hp-pin .shk.hit{animation:hphit .32s ease-out}
+@keyframes hphit{0%{transform:scale(1)}25%{transform:scale(.86) rotate(-12deg)}55%{transform:scale(1.07) rotate(9deg)}100%{transform:scale(1)}}
+.hp-pin .crk{opacity:0;transition:opacity .15s}
+.hp-pin[data-hp="1"] .c1,.hp-pin[data-hp="2"] .c1,.hp-pin[data-hp="2"] .c2{opacity:1}
+.hp-dots{display:flex;gap:8px}.hp-dots i{width:14px;height:14px;border-radius:50%;background:rgba(255,255,255,.18)}.hp-dots i.on{background:#ffd34d;box-shadow:0 0 12px #ffd34d}
+.hp-hint{font-weight:900;font-size:18px;color:var(--cream)}
+@media (prefers-reduced-motion:no-preference){.hp-hint{animation:hpnudge 1.2s ease-in-out infinite}}
+@keyframes hpnudge{50%{transform:translateY(-4px)}}
+.hp-boom{position:absolute;left:50%;top:40%;width:0;height:0;pointer-events:none;z-index:1}
+.hp-boom span{position:absolute;left:0;top:0;font-size:30px;opacity:0;animation:hpfly 1.5s cubic-bezier(.15,.7,.3,1) forwards}
+@keyframes hpfly{0%{opacity:1;transform:translate(-50%,-50%) scale(.4)}70%{opacity:1}100%{opacity:0;transform:translate(calc(var(--x) - 50%),calc(var(--y) - 50%)) rotate(var(--r)) scale(1)}}
+.hp-done{position:relative;z-index:2;backdrop-filter:blur(2px);background-color:rgba(22,34,74,.85)!important;display:grid;justify-items:center;gap:10px;text-align:center;max-width:340px;padding:20px;border-radius:24px;background:linear-gradient(160deg,rgba(245,165,36,.2),rgba(226,51,127,.14));border:1px solid rgba(245,198,106,.45);animation:hppop .45s cubic-bezier(.2,1.5,.4,1) both}
+.hp-done b{font-family:var(--display);font-weight:400;font-size:26px;line-height:1.1}
+.hp-done p{font-size:15px}
+.hp-done .cta{width:100%}
+.hp-again{font:inherit;font-weight:800;font-size:14px;color:var(--muted);background:none;border:0;cursor:pointer;padding:4px 8px}
+@keyframes hppop{from{transform:scale(.7);opacity:0}to{transform:none;opacity:1}}
+.login{margin-top:14px;font-size:14px;font-weight:700;color:var(--muted)}.login a{color:var(--gold)}
+.ctas{margin-top:18px}
+@media (max-width:860px){
+  .hero{grid-template-columns:1fr;grid-template-areas:"txt" "play" "cta";padding-top:16px}
+  .hero h1{font-size:clamp(34px,10vw,52px);margin:10px 0 8px}
+  .hplay{min-height:0;padding:6px 0 0}
+  .hp-wrap{width:min(150px,38vw)}
+  .hp-hint{font-size:16px}.hplay{gap:6px}
+  .ctas{margin-top:14px}
+}
+/* game cards: swipe sideways on phones so the page stays short */
+@media (max-width:860px){
+  .minis{grid-template-columns:none;grid-auto-flow:column;grid-auto-columns:78%;overflow-x:auto;scroll-snap-type:x mandatory;padding-bottom:8px;margin-left:-18px;margin-right:-18px;padding-left:18px;padding-right:18px;scrollbar-width:none}
+  .minis::-webkit-scrollbar{display:none}.minicard{scroll-snap-align:start}
+  section{padding:40px 0}
+}
+
 </style>
 </head>
 <body>
@@ -113,15 +159,28 @@ footer a{color:var(--muted)}
     <div class="navr"><a class="mybtn" href="/host" data-t="navMine">🔑 Log in</a><a class="gamesbtn" href="/juegos" data-t="navGames">🎮 Games</a><div class="seg" role="group" aria-label="Language / Idioma"><button data-l="en" aria-pressed="true">EN</button><button data-l="es" aria-pressed="false">ES</button></div></div></nav>
 
   <header class="hero">
-    <div>
+    <div class="htxt">
       <span class="kicker" data-t="kick">Free · No apps · English & Español</span>
-      <h1 data-t="h1" data-html>Secret Santa, <em>con sabor.</em></h1>
-      <p class="lede" data-t="lede">Your family writes letters to Santa, names get drawn in secret, and everyone breaks a piñata to find their match. Then the whole family battles it out in La Posada.</p>
-      <div class="ctas"><a class="cta" href="/host" data-t="cta">🎄 Start your Secret Santa</a><a class="cta alt" href="/juegos" data-t="cta2">🎮 Play the mini games</a></div>
-      <p class="mine-note" data-t="mine" data-html>🔑 The organizer signs in with just an email and a code, so the whole posada is saved and every letter comes back to you. Your family needs no account. <a href="/host">Already organizing? Log in →</a></p>
-      <div class="trust"><span data-t="tr1">Set up in 5 minutes</span><span data-t="tr2">Invites by WhatsApp or text</span><span data-t="tr3">Nobody sees the matches, not even you</span></div>
+      <h1 data-t="h1" data-html>Your family gift exchange, <em>piñata and all.</em></h1>
+      <p class="lede" data-t="lede">Letters to Santa, a secret name draw, and a piñata to find out who you got.</p>
     </div>
-    <div class="phones" aria-hidden="true"><div class="phone a"><img src="/assets/letter.png" alt=""></div><div class="phone b"><img src="/assets/pinata.png" alt=""></div></div>
+    <div class="hplay" id="hplay">
+      <button class="hp-wrap" id="hpBtn" type="button" aria-label="Hit the piñata"><svg class="hp-pin" viewBox="-100 -50 200 250" data-hp="0" aria-hidden="true"><path d="M0 -50 V42" stroke="#e9d8b4" stroke-width="3"/><g transform="translate(0,105)"><g class="shk"><g transform="rotate(0.000)"><path d="M-17 -44 L0 -98 L17 -44Z" fill="#ff4fa3"/><path d="M-3 -96 L0 -112 L3 -96Z" fill="#fff8ec"/><path d="M0 -98 q-6 14 -2 26 M0 -98 q6 14 2 26" stroke="#ffd34d" stroke-width="3" fill="none"/></g><g transform="rotate(51.429)"><path d="M-17 -44 L0 -98 L17 -44Z" fill="#ffd34d"/><path d="M-3 -96 L0 -112 L3 -96Z" fill="#fff8ec"/><path d="M0 -98 q-6 14 -2 26 M0 -98 q6 14 2 26" stroke="#ff4fa3" stroke-width="3" fill="none"/></g><g transform="rotate(102.857)"><path d="M-17 -44 L0 -98 L17 -44Z" fill="#2fb3a3"/><path d="M-3 -96 L0 -112 L3 -96Z" fill="#fff8ec"/><path d="M0 -98 q-6 14 -2 26 M0 -98 q6 14 2 26" stroke="#ff7a2f" stroke-width="3" fill="none"/></g><g transform="rotate(154.286)"><path d="M-17 -44 L0 -98 L17 -44Z" fill="#ff7a2f"/><path d="M-3 -96 L0 -112 L3 -96Z" fill="#fff8ec"/><path d="M0 -98 q-6 14 -2 26 M0 -98 q6 14 2 26" stroke="#2fb3a3" stroke-width="3" fill="none"/></g><g transform="rotate(205.714)"><path d="M-17 -44 L0 -98 L17 -44Z" fill="#7a5cff"/><path d="M-3 -96 L0 -112 L3 -96Z" fill="#fff8ec"/><path d="M0 -98 q-6 14 -2 26 M0 -98 q6 14 2 26" stroke="#ffd34d" stroke-width="3" fill="none"/></g><g transform="rotate(257.143)"><path d="M-17 -44 L0 -98 L17 -44Z" fill="#53b84a"/><path d="M-3 -96 L0 -112 L3 -96Z" fill="#fff8ec"/><path d="M0 -98 q-6 14 -2 26 M0 -98 q6 14 2 26" stroke="#ff4fa3" stroke-width="3" fill="none"/></g><g transform="rotate(308.571)"><path d="M-17 -44 L0 -98 L17 -44Z" fill="#ef3b3b"/><path d="M-3 -96 L0 -112 L3 -96Z" fill="#fff8ec"/><path d="M0 -98 q-6 14 -2 26 M0 -98 q6 14 2 26" stroke="#7a5cff" stroke-width="3" fill="none"/></g><circle r="52" fill="#ff4fa3"/><circle r="52" fill="none" stroke="#fff8ec" stroke-width="3" stroke-dasharray="6 7"/><circle r="38" fill="#ffd34d"/><circle r="24" fill="#2fb3a3"/><circle r="10" fill="#fff8ec"/><g class="crk c1" stroke="#1c1430" stroke-width="3.5" fill="none" stroke-linecap="round"><path d="M-40 -20 L-22 -6 L-30 8 L-12 18"/></g><g class="crk c2" stroke="#1c1430" stroke-width="3.5" fill="none" stroke-linecap="round"><path d="M34 -30 L18 -12 L30 2 L14 22 L22 36"/></g></g></g></svg></button>
+      <div class="hp-boom" id="hpBoom" aria-hidden="true"></div>
+      <div class="hp-dots" id="hpDots" aria-hidden="true"><i></i><i></i><i></i></div>
+      <p class="hp-hint" id="hpHint" data-t="hint">👆 Hit it 3 times!</p>
+      <div class="hp-done" id="hpDone" hidden>
+        <b data-t="doneT">🎉 That's how your family finds out!</b>
+        <p data-t="doneP">Everyone gets their own piñata with their Secret Santa match inside.</p>
+        <a class="cta" href="/host" data-t="doneCta" data-ev="home_pinata_cta">🎄 Do it with my family</a>
+        <button class="hp-again" id="hpAgain" type="button" data-t="again">↻ Again</button>
+      </div>
+    </div>
+    <div class="hcta">
+      <div class="ctas"><a class="cta" href="/host" data-t="cta" data-ev="home_cta_host">🎄 Start your gift exchange</a><a class="cta alt" href="/juegos" data-t="cta2" data-ev="home_cta_games">🎮 Play free games</a></div>
+      <div class="trust"><span data-t="tr1">Set up in 5 minutes</span><span data-t="tr2">Invites by WhatsApp or text</span><span data-t="tr3">Your family needs no account</span></div>
+      <p class="login" data-t="login" data-html>Already organizing? <a href="/host">Log in →</a></p>
+    </div>
   </header>
   <section id="mine" hidden><div class="center"><span class="kicker" id="mineK"></span><h2 id="mineT"></h2></div><div class="mines" id="mineList"></div><p class="homeTip" id="homeTip"></p></section>
 
@@ -131,26 +190,6 @@ footer a{color:var(--muted)}
       <div class="step"><span class="n">👨‍👩‍👧‍👦</span><small data-t="s1k">Step 1</small><h3 data-t="s1t">Add your people</h3><p data-t="s1p">Type them in, paste a list from your group chat, or pick from your contacts.</p></div>
       <div class="step"><span class="n">✉️</span><small data-t="s2k">Step 2</small><h3 data-t="s2t">They write letters to Santa</h3><p data-t="s2p">Sizes, three wishes and gift hints, in English or Spanish. Each letter lands on your page automatically.</p></div>
       <div class="step"><span class="n">🪅</span><small data-t="s3k">Step 3</small><h3 data-t="s3t">Draw names, send piñatas</h3><p data-t="s3p">One tap draws names (partners can't get each other). Everyone breaks a piñata to see who they're shopping for.</p></div>
-    </div>
-  </section>
-
-  <section>
-    <div class="center"><span class="kicker" data-t="fK">Made for familias</span><h2 data-t="fT">Everything a Mexican Christmas needs</h2></div>
-    <div class="feats">
-      <div class="feat"><span class="i">📮</span><div><h3 data-t="f1t">Letters to Santa</h3><p data-t="f1p">A festive letter instead of a boring form. Your Santa gets real sizes and real hints.</p></div></div>
-      <div class="feat"><span class="i">🪅</span><div><h3 data-t="f2t">Piñata reveals</h3><p data-t="f2p">Swing until it breaks, then save your match and shopping list as a picture.</p></div></div>
-      <div class="feat"><span class="i">🏆</span><div><h3 data-t="f3t">Family leaderboard</h3><p data-t="f3p">Live scores just for your group. Tío Beto is not going to like losing.</p></div></div>
-      <div class="feat"><span class="i">🇲🇽</span><div><h3 data-t="f4t">Bilingual from the start</h3><p data-t="f4p">Every person gets messages and pages in their own language, English or Spanish.</p></div></div>
-    </div>
-  </section>
-
-  <section>
-    <div class="game">
-      <img src="/assets/game.png" alt="La Posada game: dodging La Verdulera's fruit in the mercado" loading="lazy">
-      <div><span class="kicker" data-t="gK">The game</span><h2 data-t="gT" style="margin:10px 0 12px">La Posada</h2>
-        <p data-t="gP">Five levels of posada chaos. Dodge flying chanclas, chile smoke and judgy tías, chain combos up to ×5, and take down a boss at the end of every level.</p>
-        <div class="bosses"><span>👴 Don Gruñón</span><span>🍅 La Verdulera</span><span>🎆 El Cohetero</span><span>🪅 La Piñatota</span><span>👻 El Cucuy Navideño</span></div>
-        <a class="cta" href="/play" data-t="gCta">🎮 Play now</a></div>
     </div>
   </section>
 
@@ -164,15 +203,16 @@ footer a{color:var(--muted)}
     </div>
   </section>
 
-  <section><div class="final"><span class="kicker" data-t="endK">¡Ándale!</span><h2 data-t="endT">Your posada is waiting</h2><p data-t="endP">Start in five minutes. Your family needs no account, no downloads, no cost.</p><a class="cta" href="/host" data-t="cta">🎄 Start your Secret Santa</a></div></section>
+  <section><div class="final"><span class="kicker" data-t="endK">¡Ándale!</span><h2 data-t="endT">Your posada is waiting</h2><p data-t="endP">Start in five minutes. Your family needs no account, no downloads, no cost.</p><a class="cta" href="/host" data-t="endCta" data-ev="home_cta_end">🎄 Start your gift exchange</a></div></section>
 
   <footer><span class="veci"><img src="/assets/laveci-tree.svg" alt="" width="18" height="25"><span data-t="veci">Made with cariño by La Veci Productions</span></span><span>© 2026 Posada Santa</span><span><a href="/privacy" data-t="priv">Privacy & terms</a></span></footer>
 </div>
 <script>
 (function(){ const p=document.getElementById("picado"), fl=["#d7372f","#2f8f4e","#f5a524","#e2337f","#f4efe4","#22a9c4"], bl=["#ff4d4d","#ffd34d","#4ddc7a","#5ac8ff","#ff6fb5"];
   for(let i=0;i<30;i++){ const f=document.createElement("span"); if(i%2){ f.className="bulb"; f.style.setProperty("--c",bl[(i>>1)%5]); f.style.setProperty("--d",(i*.17)+"s"); } else { f.className="flag"; f.style.background=fl[(i>>1)%6]; } p.appendChild(f); } })();
-const ES={kick:"Gratis · Sin apps · Español e inglés",h1:"Secret Santa, <em>con sabor.</em>",lede:"Tu familia escribe cartas a Santa, los nombres se sortean en secreto y cada quien rompe una piñata para ver a quién le tocó. Después, toda la familia se enfrenta en La Posada.",
-  cta:"🎄 Organiza tu Secret Santa",cta2:"🎮 Juega los minijuegos",navGames:"🎮 Juegos",mAll:"🎮 Ver todos los juegos →",navMine:"🔑 Entrar",mine:"🔑 El organizador entra solo con su correo y un código, así toda la posada queda guardada y cada carta te llega a ti. Tu familia no necesita cuenta. <a href=\"/host\">¿Ya organizas uno? Entrar →</a>",tr1:"Listo en 5 minutos",tr2:"Invitaciones por WhatsApp o mensaje",tr3:"Nadie ve las parejas, ni tú",
+const ES={kick:"Gratis · Sin apps · Español e inglés",h1:"Tu intercambio navideño, <em>con piñata y todo.</em>",lede:"Cartas a Santa, un sorteo secreto y una piñata para descubrir a quién te tocó.",
+  hint:"👆 ¡Pégale 3 veces!",doneT:"🎉 ¡Así se entera tu familia!",doneP:"Cada quien recibe su propia piñata y adentro viene a quién le va a regalar.",doneCta:"🎄 Hacerlo con mi familia",again:"↻ Otra vez",login:"¿Ya organizas uno? <a href=\"/host\">Entrar →</a>",
+  cta:"🎄 Organiza tu intercambio",cta2:"🎮 Juegos gratis",navGames:"🎮 Juegos",mAll:"🎮 Ver todos los juegos →",navMine:"🔑 Entrar",mine:"🔑 El organizador entra solo con su correo y un código, así toda la posada queda guardada y cada carta te llega a ti. Tu familia no necesita cuenta. <a href=\"/host\">¿Ya organizas uno? Entrar →</a>",tr1:"Listo en 5 minutos",tr2:"Invitaciones por WhatsApp o mensaje",tr3:"Tu familia no necesita cuenta",
   howK:"Cómo funciona",howT:"Tres pasos. Cero hojas de cálculo.",s1k:"Paso 1",s1t:"Agrega a tu gente",s1p:"Escríbelos, pega una lista del grupo o escoge de tus contactos.",
   s2k:"Paso 2",s2t:"Escriben su carta a Santa",s2p:"Tallas, tres deseos y pistas, en español o inglés. Cada carta te llega solita.",
   s3k:"Paso 3",s3t:"Sortea y manda piñatas",s3p:"Un toque sortea los nombres (las parejas no se tocan entre sí). Cada quien rompe su piñata para ver a quién le compra.",
@@ -181,10 +221,10 @@ const ES={kick:"Gratis · Sin apps · Español e inglés",h1:"Secret Santa, <em>
   f4t:"Bilingüe desde el principio",f4p:"Cada persona recibe mensajes y páginas en su idioma, español o inglés.",
   gK:"El juego",gT:"La Posada",gP:"Cinco niveles de puro relajo posadero. Esquiva chanclas voladoras, humo de chile y tías criticonas, arma combos hasta ×5 y vence a un jefe al final de cada nivel.",gCta:"🎮 Jugar ahora",
   mK:"Minijuegos",mT:"Juegos rápidos para toda la familia",m1:"Bájate hasta la posada esquivando mariachis, burros, el carrito de tamales y la chancla de la tía.",m2:"Carga la resortera y gánale los terrenos a tus tías y tíos. Nunca a la Abuelita.",m3:"Cinco niveles, cinco jefes y una tabla familiar en vivo.",m4:"Gánale al reloj, pega golpes dorados y luego agarra los dulces.",mGo:"Jugar →",
-  endK:"¡Ándale!",endT:"Tu posada te espera",endP:"Empieza en cinco minutos. Tu familia no necesita cuenta, ni descargas, ni pagar nada.",priv:"Privacidad y términos",veci:"Hecho con cariño por La Veci Productions"};
+  endK:"¡Ándale!",endT:"Tu posada te espera",endP:"Empieza en cinco minutos. Tu familia no necesita cuenta, ni descargas, ni pagar nada.",endCta:"🎄 Organiza tu intercambio",priv:"Privacidad y términos",veci:"Hecho con cariño por La Veci Productions"};
 const EN={}; document.querySelectorAll("[data-t]").forEach(el=>{ if(!(el.dataset.t in EN)) EN[el.dataset.t]=el.innerHTML; });
 function returning(){ try{ const d=JSON.parse(localStorage.getItem("santa-host-v1")||"null"); if(d&&d.groups&&Object.values(d.groups).some(g=>g.setup)) return true; return !!localStorage.getItem("posada-auth-v1"); }catch(e){ return false; } }
-if(returning()){ ES.cta="🎄 Abre tu Secret Santa"; EN.cta="🎄 Open your Secret Santa"; document.querySelectorAll('[data-t="cta"]').forEach(a=>a.innerHTML=EN.cta); }
+if(returning()){ ES.cta=ES.endCta="🎄 Abre tu intercambio"; EN.cta=EN.endCta="🎄 Open your gift exchange"; }
 function setLang(l){ document.documentElement.lang=l; const D=l==="es"?ES:EN; document.querySelectorAll("[data-t]").forEach(el=>{ const v=D[el.dataset.t]; if(v!=null) el.innerHTML=v; });
   document.querySelectorAll("[data-l]").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.l===l))); try{ localStorage.setItem("posada-lang",l); }catch(e){} }
 document.querySelectorAll("[data-l]").forEach(b=>b.onclick=()=>setLang(b.dataset.l));
@@ -215,6 +255,28 @@ function render(){ const L=W[document.documentElement.lang==="es"?"es":"en"], gs
   if(!asked){ asked=true; gs.slice(0,6).forEach(g=>board(g.gid)); } }
 const _sl=setLang; setLang=function(l){ _sl(l); render(); }; render();
 if(groups().length){ const sec=document.getElementById("mine"), hd=document.querySelector("header.hero"); if(sec&&hd){ hd.parentNode.insertBefore(sec,hd); sec.classList.add("top"); } }
+})();
+</script>
+
+<script>
+/* hero piñata: 3 taps, it breaks, candy flies, then "do it with my family" */
+(function(){ const btn=document.getElementById("hpBtn"), pin=btn.querySelector(".hp-pin"), sh=btn.querySelector(".shk"), dots=[...document.querySelectorAll("#hpDots i")],
+  hint=document.getElementById("hpHint"), done=document.getElementById("hpDone"), boom=document.getElementById("hpBoom"); let hp=0, ac=null, nb=null;
+  function A(){ try{ if(!ac){ ac=new (window.AudioContext||window.webkitAudioContext)(); const c=ac.createDynamicsCompressor(); c.threshold.value=-14; c.ratio.value=4; ac.m=ac.createGain(); ac.m.gain.value=.9; ac.m.connect(c).connect(ac.destination);
+      nb=ac.createBuffer(1,ac.sampleRate,ac.sampleRate); const d=nb.getChannelData(0); for(let i=0;i<d.length;i++) d[i]=Math.random()*2-1; } if(ac.state==="suspended") ac.resume(); }catch(e){ ac=null; } return ac; }
+  function o(type,f,t,dur,pk,sl){ const x=ac.createOscillator(), g=ac.createGain(); x.type=type; x.frequency.setValueAtTime(f,t); if(sl) x.frequency.exponentialRampToValueAtTime(sl,t+dur); g.gain.setValueAtTime(.0001,t); g.gain.exponentialRampToValueAtTime(pk,t+.005); g.gain.exponentialRampToValueAtTime(.0001,t+.005+dur); x.connect(g).connect(ac.m); x.start(t); x.stop(t+dur+.05); }
+  function n(t,dur,pk,type,f0,f1){ const s=ac.createBufferSource(); s.buffer=nb; const f=ac.createBiquadFilter(); f.type=type; f.frequency.setValueAtTime(f0,t); if(f1) f.frequency.exponentialRampToValueAtTime(f1,t+dur); const g=ac.createGain(); g.gain.setValueAtTime(.0001,t); g.gain.exponentialRampToValueAtTime(pk,t+dur*.35); g.gain.exponentialRampToValueAtTime(.0001,t+dur); s.connect(f).connect(g).connect(ac.m); s.start(t,Math.random()*.5); s.stop(t+dur+.05); }
+  function bonk(){ if(!A()) return; const t=ac.currentTime; o("sine",170,t,.18,.9,50); o("triangle",420,t,.07,.25,180); n(t,.08,.45,"highpass",1800); for(let i=0;i<3;i++) o("square",2200+Math.random()*1800,t+.04+i*.03,.03,.04); }
+  function smash(){ if(!A()) return; const t=ac.currentTime; o("sine",120,t,.4,1,35); n(t,.5,.8,"lowpass",4000,300); n(t,.25,.5,"highpass",2500); for(let i=0;i<22;i++) o("square",1800+Math.random()*3000,t+.05+Math.random()*.9,.025,.035);
+    [[67,.25],[72,.37],[76,.49],[79,.61]].forEach(([m,dt],i)=>{ const f=440*Math.pow(2,(m-69)/12); o("sawtooth",f,t+dt,i===3?.6:.12,.08); o("sawtooth",f*.8,t+dt,i===3?.6:.12,.05); }); }
+  function burst(){ const E=["🍬","🍭","🍫","⭐","🎁","🍊","🥜","✨","🍬","🍭"]; boom.innerHTML=""; for(let i=0;i<26;i++){ const s=document.createElement("span"), a=Math.random()*6.283, r=90+Math.random()*150;
+      s.textContent=E[i%E.length]; s.style.setProperty("--x",Math.cos(a)*r+"px"); s.style.setProperty("--y",Math.sin(a)*r*.8+60+"px"); s.style.setProperty("--r",(Math.random()*540-270)+"deg"); s.style.animationDelay=(Math.random()*.12)+"s"; boom.appendChild(s); } }
+  btn.addEventListener("click",()=>{ if(hp>=3) return; hp++; try{ navigator.vibrate&&navigator.vibrate(hp<3?25:[40,30,60]); }catch(e){}
+    dots.forEach((d,i)=>d.classList.toggle("on",i<hp));
+    if(hp<3){ pin.dataset.hp=String(hp); sh.classList.remove("hit"); void sh.getBBox(); sh.classList.add("hit"); bonk(); return; }
+    smash(); burst(); sh.classList.remove("hit"); void sh.getBBox(); sh.classList.add("hit"); pin.style.opacity="0"; pin.style.transition="opacity .25s"; hint.hidden=true; setTimeout(()=>{ btn.hidden=true; document.getElementById("hpDots").hidden=true; done.hidden=false; },750); typeof psTrack==="function"&&psTrack("home_pinata_break"); });
+  document.getElementById("hpAgain").addEventListener("click",()=>{ hp=0; pin.dataset.hp="0"; dots.forEach(d=>d.classList.remove("on")); pin.style.opacity=""; btn.hidden=false; document.getElementById("hpDots").hidden=false; hint.hidden=false; done.hidden=true; boom.innerHTML=""; });
+  document.addEventListener("click",ev=>{ const a=ev.target.closest&&ev.target.closest("[data-ev]"); if(a&&typeof psTrack==="function") psTrack(a.dataset.ev); },true);
 })();
 </script>
 </body>
