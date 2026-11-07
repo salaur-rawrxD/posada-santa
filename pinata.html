@@ -208,7 +208,7 @@ ol li::before{content:"★";color:var(--marigold);font-size:16px;line-height:1.4
       </g>
       <g id="zone" opacity=".85"><circle id="zoneRing" cx="282" cy="144" r="15" fill="none" stroke="#ffd34d" stroke-width="2.5" stroke-dasharray="4 4"/><path d="M282 134 l3 6.5 7 .8 -5.2 4.7 1.5 7 -6.3-3.6 -6.3 3.6 1.5-7 -5.2-4.7 7-.8z" fill="#ffd34d" opacity=".9"/></g>
       <!-- original big-head toy kid, blindfolded, with a ribboned stick -->
-      <g id="kid" transform="translate(24,58) scale(.85)">
+      <g id="kid" transform="translate(49.5,95.4) scale(.68)">
         <rect x="92" y="244" width="22" height="34" rx="8" fill="#2b3a7a"/>
         <rect x="126" y="244" width="22" height="34" rx="8" fill="#2b3a7a"/>
         <rect x="86" y="268" width="32" height="16" rx="8" fill="#3a2418"/>
@@ -711,7 +711,7 @@ function frame(now){
     if(G0.started){ G0.t+=dt;
       // the tío pulls the rope: slow at first, faster as it cracks
       G0.ph+=dt*G0.dir*(RM?1.1:(1.5+prog*1.7));
-      if(!RM&&prog>.3){ G0.flipT-=dt; if(G0.flipT<=0){ G0.flipT=2.5+Math.random()*3; if(Math.random()<.6){ G0.dir*=-1; say("flip"); const t0=now(); osc("triangle",520,t0,.12,.12,{slide:780}); } } }
+      if(!RM&&prog>.3){ G0.flipT-=dt; if(G0.flipT<=0){ G0.flipT=2.5+Math.random()*3; if(Math.random()<.6){ G0.dir*=-1; say("flip"); const t0=audio()?ac.currentTime:0; osc("triangle",520,t0,.12,.12,{slide:780}); } } }
       G0.goldT-=dt; if(G0.gold<=0&&G0.goldT<=0&&G0.blind<=0){ G0.gold=1.7; G0.goldT=4+Math.random()*3; $("zone").classList.add("gold"); pin.classList.add("goldp"); say("gold"); FIESTA.sting.key(); pinHype(); }
       if(G0.gold>0){ G0.gold-=dt; if(G0.gold<=0){ $("zone").classList.remove("gold"); pin.classList.remove("goldp"); pinHype(); } }
       if(ARCADE&&!G0.timeUp){ G0.left-=dt; const sl=Math.ceil(G0.left); if(sl!==G0.tick){ G0.tick=sl; renderHud(); if(sl<=5&&sl>0) FIESTA.sting.tick(sl<=3); if(sl===8) pinHype(); } if(G0.left<=0) timeUp(); }
@@ -734,7 +734,7 @@ function frame(now){
     $("zoneRing").setAttribute("stroke",on?"#7dff9a":d<30?"#ffd34d":"rgba(255,211,77,.5)"); $("zoneRing").setAttribute("stroke-width",on?"4":"2.5");
     if(G0.blind>0&&G0.started){ G0.beepT-=dt; if(G0.beepT<=0){ G0.beepT=Math.max(.07,d/260); beep(d); } }
   }
-  stick.setAttribute("transform",`rotate(${stickA.toFixed(1)} 150 220)`);
+  stick.setAttribute("transform",`rotate(${stickA.toFixed(1)} 150 220) translate(150 220) scale(1.25) translate(-150 -220)`);
   stepGrab(dt);
   requestAnimationFrame(frame);
 }
