@@ -75,6 +75,18 @@ section{margin-top:26px}
 .idea .go{font-weight:900;font-size:12.5px;color:#1c1430;background:linear-gradient(180deg,#ffd77a,#f5a524);border-radius:99px;padding:7px 11px;white-space:nowrap;box-shadow:0 3px 0 #c98417}
 .idea.wish{border:2px solid var(--marigold)}
 .idea .rib{position:absolute;top:-8px;left:12px;font-size:10.5px;font-weight:900;letter-spacing:.1em;text-transform:uppercase;background:var(--red);color:#fff;border-radius:99px;padding:2px 8px}
+.wishm{grid-template-columns:64px 1fr;align-items:start}.wbody{display:grid;gap:4px;min-width:0}.wbody b{overflow-wrap:anywhere}
+.idea .ai{color:#6b3fa0;font-weight:700}.idea .ai strong{font-weight:900}.shim{animation:shim 1.2s ease-in-out infinite alternate}@keyframes shim{from{opacity:.45}to{opacity:1}}
+.wbtns{display:flex;flex-wrap:wrap;align-items:center;gap:6px 12px;margin-top:6px}.wbtns .go{text-decoration:none}.wbtns .raw{font-weight:800;font-size:12.5px;color:var(--muted);text-underline-offset:3px}
+.askcard{background:linear-gradient(160deg,#2a1f5c,#3b2470 55%,#5a2463);border:1.5px solid rgba(255,182,220,.35);border-radius:24px;padding:20px 18px;display:grid;gap:12px;box-shadow:0 18px 40px rgba(0,0,0,.3)}
+.ask-h{display:grid;grid-template-columns:auto 1fr;gap:14px;align-items:start}.ask-e{font-size:40px;line-height:1}.ask-h h2{margin:0;font-family:var(--display);font-weight:400;font-size:clamp(22px,5.6vw,28px);line-height:1.1;color:#fff}.ask-h p{margin:4px 0 0;font-weight:700;font-size:14px;color:#e6dcff}
+.sugg{display:flex;flex-wrap:wrap;gap:7px}.sugg button{font:inherit;font-weight:800;font-size:13px;color:#fff;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18);border-radius:99px;padding:7px 12px;cursor:pointer}
+#askq{font:inherit;font-weight:700;font-size:16px;width:100%;border-radius:14px;border:1.5px solid rgba(255,255,255,.2);background:rgba(255,255,255,.95);color:var(--ink);padding:12px 14px;resize:vertical;min-height:58px}
+#askq.shake{animation:shk .35s}@keyframes shk{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+.askbtn{font:inherit;font-weight:900;font-size:17px;min-height:54px;border:0;border-radius:16px;cursor:pointer;color:#1c1430;background:linear-gradient(180deg,#ffd77a,#f5a524);box-shadow:0 4px 0 #b8741a}.askbtn:disabled{opacity:.6}
+.askfine{margin:0;text-align:center;font-size:12px;font-weight:700;color:#cfc3ee}
+.qrow{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);border-radius:16px;padding:12px 14px;display:grid;gap:6px}.qq{font-weight:800;color:#fff}.qst{font-size:13px;font-weight:700;color:#d9cff5}.qst a{color:var(--gold);font-weight:900}
+.qa{background:var(--card);color:var(--ink);border-radius:14px;padding:10px 12px;font-weight:800;font-size:15px}.qa span{display:block;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-weight:900;margin-bottom:2px}
 .brands{display:flex;flex-wrap:wrap;gap:8px}
 .brand{font-weight:900;font-size:14px;text-decoration:none;padding:9px 14px;border-radius:99px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.16);color:var(--cream)}
 .empty{background:var(--card);color:var(--ink);border-radius:22px;padding:30px 22px;text-align:center;margin-top:20px}
@@ -91,6 +103,16 @@ section{margin-top:26px}
 <script>
 const KEY="eva-santa-2026-wrap";
 const AMZ_TAG="posadasanta-20";
+const SB_URL="https://ktssnlyspwzhdhffpgqm.supabase.co", SB_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt0c3NubHlzcHd6aGRoZmZwZ3FtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTM5MjYwMDgsImV4cCI6MjEwOTUwMjAwOH0.3lHaJYRYCyeqcdgS2EIfT1_6qr0B5CxNqYQNHkyevCk";
+async function rpc(fn,args){ const c=new AbortController(), tm=setTimeout(()=>c.abort(),9000);
+  try{ const r=await fetch(SB_URL+"/rest/v1/rpc/"+fn,{method:"POST",headers:{"Content-Type":"application/json",apikey:SB_KEY,Authorization:"Bearer "+SB_KEY},body:JSON.stringify(args),signal:c.signal});
+    if(!r.ok) throw new Error("rpc "+r.status); return await r.json(); } finally{ clearTimeout(tm); } }
+const ORIGIN=location.origin;
+const MINE={K:"posada-groups-v1", load(){ try{ const d=JSON.parse(localStorage.getItem(this.K)||"null"); if(d&&d.groups) return d; }catch(e){} return {groups:{},cur:null}; },
+  join(gid,gn,me,extra){ if(!gid) return; const d=this.load(), g=d.groups[gid]||(d.groups[gid]={gn:gn||"",e:{}}); if(gn) g.gn=gn; if(me) g.me=String(me).trim().slice(0,18); Object.assign(g,extra||{}); g.seen=Date.now(); d.cur=gid; try{ localStorage.setItem(this.K,JSON.stringify(d)); }catch(e){} } };
+const QLINK_URL="https://buy.stripe.com/5kQ4gs0dLa505JNdA9ejK02";
+
+const QLINK=typeof QLINK_URL!=="undefined"?QLINK_URL:"";
 function decode(code){ if(!/^x[0-9a-f]+$/.test(code)||code.length%2!==1) return null; const hex=code.slice(1), b=new Uint8Array(hex.length/2);
   for(let i=0;i<b.length;i++) b[i]=parseInt(hex.substr(i*2,2),16)^KEY.charCodeAt(i%KEY.length); try{ return JSON.parse(new TextDecoder().decode(b)); }catch(e){ return null; } }
 let RAW=null;
@@ -170,6 +192,49 @@ function card(it,pal,base,opts={}){ const max=opts.max!=null?opts.max:BUD; const
 function section(title,sub,cards,three){ if(!cards.length) return ""; return `<section><div class="sh"><div><h2>${esc(title)}</h2>${sub?`<p>${esc(sub)}</p>`:""}</div></div><div class="grid ${three?"three":""}">${cards.join("")}</div></section>`; }
 
 const nick=s=>{ const w=String(s||"").trim().split(/\s+/); return w.slice(0,/^(t[ií][ao]|abuel[ao]|abuelit[ao]|prim[ao]|mam[aá]|pap[aá]|don|doña|nin[ao]|padrino|madrina|aunt|uncle|grandma|grandpa|cousin)$/i.test(w[0]||"")?2:1).join(" "); };
+/* ---------- smart wish match (Claude turns each wish into one precise Amazon search) ---------- */
+let WM=null, loadingWM=false;
+async function loadMatches(wishes){ const key="wm1:"+RAW; try{ const c=sessionStorage.getItem(key); if(c){ WM=JSON.parse(c); return; } }catch(e){}
+  if(typeof SB_URL==="undefined"){ WM=[]; return; }
+  const ctx={size,shoe:D.h||"",budget:B0||"",vibe:X.vb.map(i=>OPT.vb[i][0]).join(", "),colors:X.co.map(i=>OPT.co[i][0]).join(", "),loves:X.lv.map(i=>OPT.lv[i][0]).join(", "),kid:!!D.k};
+  try{ const c=new AbortController(), tm=setTimeout(()=>c.abort(),25000);
+    const r=await fetch(SB_URL+"/functions/v1/wish-match",{method:"POST",headers:{"Content-Type":"application/json",apikey:SB_KEY,Authorization:"Bearer "+SB_KEY},body:JSON.stringify({w:wishes,c:ctx}),signal:c.signal}); clearTimeout(tm);
+    const j=await r.json(); WM=(j&&Array.isArray(j.m))?j.m:[]; if(WM.some(Boolean)) try{ sessionStorage.setItem(key,JSON.stringify(WM)); }catch(e){} }catch(e){ WM=[]; } }
+function wishCard(w,i){ const m=WM&&WM[i], loading=WM===null, nm=m&&(L==="es"?m.es||m.en:m.en||m.es), wy=m&&(L==="es"?m.why_es:m.why_en);
+  return `<div class="idea wish wishm"><span class="rib">#${i+1}</span><span class="tile" style="--c1:${PAL.wish[0]};--c2:${PAL.wish[1]}" aria-hidden="true">${["🌟","🎁","🎄"][i]||"🎁"}</span>
+    <span class="wbody"><b>${esc(w)}</b>${loading?`<small class="ai shim">✨ ${esc(T("Finding the best match…","Buscando el mejor match…"))}</small>`
+      :m&&m.q?`<small class="ai">✨ <strong>${esc(T("Smart match: ","Match inteligente: "))}${esc(nm||m.q)}</strong>${wy?`<br>${esc(wy)}`:""}</small>`:`<small>${esc(T("Wish #","Deseo #")+(i+1))}</small>`}
+      <span class="wbtns">${m&&m.q?`<a class="go" href="${esc(amz(m.q,BUD))}" target="_blank" rel="sponsored noopener">${esc(T("See the match ›","Ver el match ›"))}</a><a class="raw" href="${esc(amz(w,BUD))}" target="_blank" rel="sponsored noopener">${esc(T("Search as written","Buscar tal cual"))}</a>`
+        :`<a class="go" href="${esc(amz(w,BUD))}" target="_blank" rel="sponsored noopener">${esc(T("Find it ›","Buscarlo ›"))}</a>`}</span></span></div>`; }
+
+/* ---------- secret question to the match ($1.99, anonymous) ---------- */
+const qList=()=>{ try{ return JSON.parse(localStorage.getItem("posada-q")||"[]"); }catch(e){ return []; } };
+const qSave=l=>{ try{ localStorage.setItem("posada-q",JSON.stringify(l.slice(-40))); }catch(e){} };
+let QS={}, qTimer=null;
+const canAsk=()=>!!(D&&D.gid&&D.r&&QLINK&&typeof rpc!=="undefined");
+function qRow(q){ const s=QS[q.id];
+  const st=!s?["…",""]:s.answered?null:!s.paid?["⏳ "+T("Waiting for the payment to go through","Esperando que se confirme el pago"),"pay"]:!s.delivered?["📮 "+T("Paid. Your organizer will pass it along (they can't see it or who sent it).","Pagada. Tu organizador(a) se la va a mandar (sin verla ni saber quién la mandó)."),""]:["📬 "+T("Delivered. Waiting for their answer…","Ya le llegó. Esperando su respuesta…"),""];
+  return `<div class="qrow"><div class="qq">🤫 “${esc(q.q)}”</div>${s&&s.answered?`<div class="qa"><span>${esc(T("Their answer","Su respuesta"))}</span>${esc(s.answer||"")}</div>`
+    :`<div class="qst">${esc(st[0])}${st[1]==="pay"?` <a href="${esc(QLINK+"?client_reference_id="+q.id)}">${esc(T("Finish paying","Terminar el pago"))}</a>`:""}</div>`}</div>`; }
+function askSection(fn){ if(!canAsk()) return ""; const mine=qList().filter(q=>q.code===RAW);
+  const sg=L==="es"?["¿Qué talla de zapato usas?","¿Qué color te gusta más?","¿Prefieres algo útil o algo divertido?","¿Qué te hace falta en tu casa?","¿Cuál es tu antojo favorito?"]:["What's your shoe size?","What color do you like most?","Something useful or something fun?","What does your home need?","What's your favorite treat?"];
+  return `<section id="ask"><div class="askcard"><div class="ask-h"><span class="ask-e" aria-hidden="true">🤫</span><div><h2>${esc(T(`Ask ${fn} a secret question`,`Pregúntale algo a ${fn}`))}</h2>
+      <p>${esc(T("Stuck on the gift? Your question reaches them with no name on it, and their answer comes back right here. Nobody will know who asked.","¿No sabes qué regalar? Tu pregunta le llega sin tu nombre y su respuesta regresa aquí mismo. Nadie sabrá quién preguntó."))}</p></div></div>
+    ${mine.map(qRow).join("")}
+    <div class="sugg">${sg.map(x=>`<button type="button" data-sg="${esc(x)}">${esc(x)}</button>`).join("")}</div>
+    <textarea id="askq" maxlength="240" rows="2" placeholder="${esc(T("Type your question…","Escribe tu pregunta…"))}"></textarea>
+    <button class="askbtn" id="askGo">🤫 ${esc(T("Ask anonymously · $1.99","Preguntar en secreto · $1.99"))}</button>
+    <p class="askfine">${esc(T("One-time payment with Stripe. Your name is never shown to your match or your organizer.","Pago único con Stripe. Tu nombre nunca se le muestra a tu persona ni al organizador(a)."))}</p></div></section>`; }
+async function qRefresh(){ const mine=qList().filter(q=>q.code===RAW); if(!mine.length||!canAsk()) return; let ch=false;
+  for(const q of mine){ if(QS[q.id]&&QS[q.id].answered) continue; try{ const s=await rpc("question_status",{p_id:q.id,p_tok:q.tok}); if(s&&JSON.stringify(s)!==JSON.stringify(QS[q.id])){ QS[q.id]=s; ch=true; } }catch(e){} }
+  if(ch&&!(document.activeElement&&document.activeElement.id==="askq")){ const y=scrollY; render(); scrollTo(0,y); } }
+async function askGo(){ const ta=document.getElementById("askq"), b=document.getElementById("askGo"), q=(ta.value||"").trim();
+  if(q.length<4){ ta.focus(); ta.classList.add("shake"); setTimeout(()=>ta.classList.remove("shake"),400); return; }
+  b.disabled=true; b.textContent=T("One moment…","Un momento…");
+  try{ const j=await rpc("ask_question",{p_gid:D.gid,p_to:D.r,p_q:q,p_lang:L}); if(!j||!j.id) throw 0;
+    const l=qList(); l.push({id:j.id,tok:j.tok,code:RAW,to:D.r,q,at:Date.now()}); qSave(l); try{ localStorage.setItem("posada-q-pending",j.id); }catch(e){}
+    location.href=QLINK+"?client_reference_id="+encodeURIComponent(j.id); }
+  catch(e){ b.disabled=false; b.textContent="🤫 "+T("Ask anonymously · $1.99","Preguntar en secreto · $1.99"); alert(T("Couldn't save your question. Check your connection and try again.","No se pudo guardar tu pregunta. Revisa tu conexión e intenta otra vez.")); } }
 function render(){ document.documentElement.lang=L; const app=document.getElementById("app");
   const top=`<div class="top">${RAW?`<a class="back" href="/pinata#${esc(RAW)}">← ${esc(T("My piñata","Mi piñata"))}</a>`:`<a class="back" href="/">← Posada Santa</a>`}<div class="lang" role="group" aria-label="Language / Idioma"><button data-l="en" aria-pressed="${L==="en"}">EN</button><button data-l="es" aria-pressed="${L==="es"}">ES</button></div></div>`;
   if(!D||!D.r){ app.innerHTML=top+`<div class="empty"><div style="font-size:44px">🎁</div><h1>${esc(T("Open your piñata first","Primero rompe tu piñata"))}</h1><p style="font-weight:700;color:#5b4a3c">${esc(T("Gift ideas are made from your match's letter to Santa. Open the piñata link your organizer sent you, then tap “Gift ideas”.","Las ideas se arman con la carta a Santa de tu persona. Abre el link de piñata que te mandaron y toca “Ideas de regalo”."))}</p></div>`+foot(); wire(); return; }
@@ -187,7 +252,9 @@ function render(){ document.documentElement.lang=L; const app=document.getElemen
   const take=(list,pal,base,n,o)=>{ const cs=[]; for(const it0 of list){ const it=usable(it0); if(!it) continue; const q=fill(it.q), tk=it.t[0].toLowerCase(); if(used.has(q)||used.has(tk)) continue; used.add(q); used.add(tk); cs.push(card(it,pal,base,o)); if(cs.length>=(n||4)) break; } return cs; };
   // 1. their wishes
   const wishes=(D.g||[]).filter(Boolean).map(w=>String(w).replace(/https?:\/\/\S+/g,"").trim()).filter(w=>w.length>1);
-  out+=section(T("⭐ What they asked for","⭐ Lo que pidió"),T("Straight from the letter. Start here.","Directo de su carta. Empieza por aquí."),wishes.map((w,i)=>card({e:["🌟","🎁","🎄"][i]||"🎁",t:[w,w],q:w},PAL.wish,"",{wish:1,raw:1,rib:"#"+(i+1),note:T("Wish #"+(i+1),"Deseo #"+(i+1))})));
+  out+=wishes.length?`<section><div class="sh"><div><h2>${esc(T("⭐ What they asked for","⭐ Lo que pidió"))}</h2><p>${esc(T("Straight from the letter, matched to Amazon with a little AI help.","Directo de su carta, con un match en Amazon hecho con ayuda de IA."))}</p></div></div><div class="grid">${wishes.map(wishCard).join("")}</div></section>`:"";
+  out+=askSection(fn);
+  if(WM===null&&wishes.length&&!loadingWM){ loadingWM=true; loadMatches(wishes).then(()=>{ const y=scrollY; render(); scrollTo(0,y); }); }
   // 2. kids
   if(D.k) out+=section(T("🧸 Fun for kids","🧸 Para chiquitos"),T("Kids' exchange favorites.","Lo que más les gusta en el intercambio de niños."),take(KIDS,PAL.kid,"",4),false);
   // 3. style picks
@@ -208,10 +275,11 @@ function render(){ document.documentElement.lang=L; const app=document.getElemen
   app.innerHTML=out+foot(); wire(); }
 function foot(){ return `<div class="foot"><span class="hush">🤫 ${esc(T("Shhh, this page is only for you.","Shhh, esta página es solo para ti."))}</span><br>${esc(T("Shopping links go to Amazon. As an Amazon Associate, Posada Santa earns from qualifying purchases, at no cost to you. Prices and availability are set by Amazon.","Los links de compras van a Amazon. Como Asociado de Amazon, Posada Santa gana por compras elegibles, sin costo extra para ti. Los precios y la disponibilidad los pone Amazon."))}
   <br><span class="veci"><svg viewBox="40 20 120 165" width="13" height="18" aria-hidden="true"><path d="M91 174 Q97 146 95 108 L101 108 Q102 136 109 174 Z" fill="#6B4A33"/><g fill="#2F4A2F"><circle cx="100" cy="72" r="44"/><circle cx="64" cy="88" r="30"/><circle cx="136" cy="88" r="30"/><circle cx="78" cy="52" r="28"/><circle cx="122" cy="52" r="28"/><circle cx="100" cy="100" r="30"/></g><g fill="#E8782A"><circle cx="72" cy="78" r="7.5"/><circle cx="112" cy="60" r="7.5"/><circle cx="136" cy="94" r="7.5"/><circle cx="96" cy="96" r="7.5"/><circle cx="60" cy="106" r="7"/></g></svg> Posada Santa · La Veci Productions</span></div>`; }
-function wire(){ document.querySelectorAll("[data-l]").forEach(b=>b.onclick=()=>{ L=b.dataset.l; try{ localStorage.setItem("posada-lang",L); }catch(e){} render(); });
+function wire(){ document.querySelectorAll("[data-sg]").forEach(b=>b.onclick=()=>{ const ta=document.getElementById("askq"); ta.value=b.dataset.sg; ta.focus(); });
+  const ag=document.getElementById("askGo"); if(ag) ag.onclick=askGo; document.querySelectorAll("[data-l]").forEach(b=>b.onclick=()=>{ L=b.dataset.l; try{ localStorage.setItem("posada-lang",L); }catch(e){} render(); });
   document.querySelectorAll("[data-b]").forEach(b=>b.onclick=()=>{ BUD=+b.dataset.b; const y=scrollY; render(); scrollTo(0,y); }); }
 document.getElementById("picado").innerHTML=Array.from({length:30},(_,i)=>`<i style="background:${["#ff4fa3","#ffd34d","#2fb3a3","#ff7a2f","#7a5cff","#53b84a","#ef3b3b"][i%7]}"></i>`).join("");
-render();
+render(); qRefresh(); setInterval(()=>{ if(document.visibilityState==="visible") qRefresh(); },15000); document.addEventListener("visibilitychange",()=>{ if(document.visibilityState==="visible") qRefresh(); });
 addEventListener("hashchange",()=>location.reload());
 </script>
 </body>

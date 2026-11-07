@@ -29,7 +29,7 @@ p,li{color:#d3d9ef}a{color:#f5c66a}small{color:#9aa6cf}
 <body><main>
 <p><a href="/">← Posada Santa</a></p>
 <h1>Privacy & terms</h1>
-<small>Last updated November 7, 2026</small>
+<small>Last updated November 7, 2026 · secret questions and smart wish matching added</small>
 
 <h2>The short version</h2>
 <p>Posada Santa is a free tool for running a family or friends Secret Santa. Only the organizer makes an account (an email and a code, no password). Family members never need one. There are no ads, and we don't sell anything you enter.</p>
@@ -48,6 +48,7 @@ p,li{color:#d3d9ef}a{color:#f5c66a}small{color:#9aa6cf}
 <li><b>Organizer accounts:</b> the organizer's email address, and their Secret Santa groups (names, phone numbers they entered, couples, the draw and letters) so they can open them from any device. Only the logged-in organizer can read their groups. Login codes are emailed through our email provider, Resend.</li>
 <li><b>Posada Plus purchases:</b> payments are handled by Stripe. We never see card numbers. We keep which group was upgraded, the receipt email and the amount.</li>
 <li><b>Tips ("Buy us a tamal"):</b> optional, handled entirely on Stripe's checkout page. Tips go to EVA Systems LLC, the small business that runs Posada Santa, and are not tax-deductible donations.</li>
+<li><b>Secret questions:</b> when a Santa pays $1.99 to ask their match a question, we store the question, the match's first name, the group, and later the answer. We never store who asked: not their name, email or phone, and the payment record at Stripe isn't linked to anyone in the group. The organizer only sees that a question is waiting for someone, never the question or the asker. Questions and answers are deleted after 120 days.</li>
 </ul>
 <p>Our database is hosted by Supabase and the site by Vercel. Their servers log ordinary technical data like IP addresses for security.</p>
 
@@ -56,6 +57,7 @@ p,li{color:#d3d9ef}a{color:#f5c66a}small{color:#9aa6cf}
 
 <h2>Shopping links</h2>
 <p>When someone opens their match, each wish can have a "Find it" link to Amazon. As an Amazon Associate, Posada Santa earns from qualifying purchases, at no extra cost to you. The link only contains the wish text; we don't send Amazon any names.</p>
+<p>On the gift ideas page, the three wishes plus a few letter answers (sizes, style, colors, what they love; never names) are sent to Anthropic's Claude to turn each wish into a better Amazon search. Results are cached for up to 60 days so the same wish isn't sent twice.</p>
 
 <h2>Kids</h2>
 <p>The game is made to be family-friendly. We don't run ads, profile players, or collect anything from players besides the name they type and their scores. A parent or organizer should set up groups that include children.</p>

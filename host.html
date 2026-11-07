@@ -207,6 +207,8 @@ details summary{cursor:pointer;font-weight:800;font-size:13px;color:var(--muted)
 .tv-board li:first-child{background:linear-gradient(90deg,rgba(245,165,36,.35),rgba(245,165,36,.08));border-color:#f5c66a}
 .tv-board li b{font-family:var(--display);color:var(--gold);font-weight:400}
 .tv-board li span:nth-child(2){text-align:left;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.giver b{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.qcard{border-color:rgba(190,150,255,.4);background:linear-gradient(160deg,rgba(74,36,112,.9),rgba(34,51,107,.94))}
 .sendpair{display:grid;grid-template-columns:auto auto;gap:6px;justify-items:stretch}.sendpair .again{grid-column:1/-1;text-align:center;font-size:11px;font-weight:800;color:var(--muted);margin-bottom:-2px}
 .sbtn{display:inline-flex;align-items:center;justify-content:center;gap:5px;min-height:40px;padding:0 11px;border-radius:12px;font-weight:900;font-size:13px;text-decoration:none;white-space:nowrap}
 .sbtn.wa{background:linear-gradient(180deg,#3ad46a,#20b356);color:#06280f}.sbtn.im{background:linear-gradient(180deg,#4aa8ff,#1d84f0);color:#fff}
@@ -406,7 +408,7 @@ Object.assign(W.en,{startT:"Create your organizer account",startP:"It takes 30 s
 Object.assign(W.es,{startT:"Crea tu cuenta de organizador",startP:"Toma 30 segundos: tu correo y un código. Sin contraseña.",why1:"Abre tu posada desde cualquier teléfono o compu",why2:"Las cartas de tu familia llegan a tu cuenta, nunca se pierden",why3:"Sigue las invitaciones, las cartas y el sorteo",onlyYou:"Solo tú, el organizador, necesitas cuenta. Tu familia solo abre su link.",gateT:"Primero guarda tu posada",gateP:"Antes de mandar invitaciones, crea tu cuenta de organizador para que las cartas te lleguen a ti, aunque cambies de teléfono.",startCta:"Crear cuenta y empezar",haveAcct2:"Ya tengo cuenta · Entrar",bannerT:"Tu posada solo está en este teléfono",bannerP:"Crea tu cuenta de organizador para no perderla y seguir cada carta.",bannerB:"Crear mi cuenta",acctPill:"Cuenta"});
 Object.assign(W.en,{plusK:"Posada Plus",plusT:"Make it a Posada Plus",plusP:"One payment for your whole group. It keeps Posada Santa free for everyone else.",plusPrice:"$4.99 · one time",plusB:"⭐ Get Posada Plus",
   plus1:"A kids' exchange: a second draw just for the little ones, with its own budget",plus2:"Reveal night on the TV: every Secret Santa revealed piñata-style, with music and the family leaderboard",plus3:"Room for the whole familia: more than 25 people",plus4:"Supports a small family-made project 🧡",plus5:"Bonus: every costume unlocked in the games",
-  capT:"Your group is full",capP:n=>`Free groups fit up to ${n} people. Posada Plus lets everyone in.`,plusOn:"⭐ Posada Plus is on. ¡Gracias!",plusWait:"Payment received, turning on Plus…",plusLate:"We're still waiting on the payment confirmation. It can take a minute; reopen the menu to check.",plusRow:"⭐ Posada Plus: kids' exchange + TV reveal night",pinAgain:"Send again",smsBtn:"SMS",sentTo:n=>`✓ Sent to ${n}`,qAuto:"After you send it, come back here and the next person will be ready.",chanPick:"Send with",
+  capT:"Your group is full",capP:n=>`Free groups fit up to ${n} people. Posada Plus lets everyone in.`,plusOn:"⭐ Posada Plus is on. ¡Gracias!",plusWait:"Payment received, turning on Plus…",plusLate:"We're still waiting on the payment confirmation. It can take a minute; reopen the menu to check.",plusRow:"⭐ Posada Plus: kids' exchange + TV reveal night",qkK:"Secret questions",qkT:n=>n?(n===1?"1 secret question to deliver":`${n} secret questions to deliver`):"Secret questions sent",qkP:"A Santa asked their match a question. Send it with one tap. You won't see the question or who asked 🤫",qkNew:"Ready to send",qkSent:"Sent · waiting for answer",qkAgain:"New link",qMsg:(n,u)=>`🤫 ${n}, your Secret Santa has a question for you! 🎁\n\nAnswer it here. Nobody will know who asked:\n${u}\n\n(This link is only for you.)`,pinAgain:"Send again",smsBtn:"SMS",sentTo:n=>`✓ Sent to ${n}`,qAuto:"After you send it, come back here and the next person will be ready.",chanPick:"Send with",
   kidsT:"Kids' exchange",kidsP:"A second draw just for the kids, with its own budget. Kids only draw kids, and grown-ups only draw grown-ups.",kidsOnL:"Kids' exchange is on",kidsBud:"Kids' gift budget",kidsWho:"Tap the kids",kidsNone:"Add the kids to your list first, then mark them here.",
   kidsLocked:"Names are already drawn. Redo the draw to change who's in the kids' exchange.",kidsCardT:"👧 Add a kids' exchange",kidsCardP:"A second draw for the little ones, with its own budget.",kidsEdit:"👧 Edit the kids' exchange",
   kidsSum:(k,a)=>`👧 ${k} kids · 🎁 ${a} grown-ups`,kNeed2:"The kids' exchange needs at least 2 kids with letters.",aNeed3:"The grown-ups' exchange needs at least 3 people with letters.",secKids:"👧 Kids' exchange",secAdults:"🎁 Grown-ups",kidOne:"In the kids' exchange",kidOneS:"Draws and gets drawn only with other kids",kidsGroup:n=>`${n} (kids 👧)`,
@@ -416,7 +418,7 @@ Object.assign(W.en,{plusK:"Posada Plus",plusT:"Make it a Posada Plus",plusP:"One
   tvEnd:"¡Feliz Navidad! 🎄",tvEndP:n=>`All ${n} gifts revealed`,tvClose:"Close",tvBack:"◀ Back",tvKidsFirst:"First, the kids! 👧",tvAdultsNow:"Now the grown-ups! 🎁",tvCount:(i,n)=>`${i} of ${n}`,tvNoDraw:"Draw names first, then reveal night opens up."});
 Object.assign(W.es,{plusK:"Posada Plus",plusT:"Hazla Posada Plus",plusP:"Un solo pago para todo tu grupo. Así Posada Santa sigue gratis para todos los demás.",plusPrice:"$4.99 · un solo pago",plusB:"⭐ Obtener Posada Plus",
   plus1:"Intercambio de niños: un segundo sorteo solo para los chiquitos, con su propio presupuesto",plus2:"Noche de revelación en la tele: cada Santa Secreto se revela a piñatazos, con música y la tabla de la familia",plus3:"Cabe toda la familia: más de 25 personas",plus4:"Apoyas un proyecto hecho en familia 🧡",plus5:"De regalo: todos los disfraces de los juegos",
-  capT:"Tu grupo está lleno",capP:n=>`Los grupos gratis son de hasta ${n} personas. Con Posada Plus cabe todo mundo.`,plusOn:"⭐ Posada Plus activada. ¡Gracias!",plusWait:"Pago recibido, activando Plus…",plusLate:"Todavía esperamos la confirmación del pago. Puede tardar un minuto; vuelve a abrir el menú para revisar.",plusRow:"⭐ Posada Plus: intercambio de niños + noche en la tele",pinAgain:"Mandar otra vez",smsBtn:"SMS",sentTo:n=>`✓ Enviado a ${n}`,qAuto:"Después de mandarlo, regresa aquí y el siguiente ya estará listo.",chanPick:"Mandar por",
+  capT:"Tu grupo está lleno",capP:n=>`Los grupos gratis son de hasta ${n} personas. Con Posada Plus cabe todo mundo.`,plusOn:"⭐ Posada Plus activada. ¡Gracias!",plusWait:"Pago recibido, activando Plus…",plusLate:"Todavía esperamos la confirmación del pago. Puede tardar un minuto; vuelve a abrir el menú para revisar.",plusRow:"⭐ Posada Plus: intercambio de niños + noche en la tele",qkK:"Preguntas secretas",qkT:n=>n?(n===1?"1 pregunta secreta por entregar":`${n} preguntas secretas por entregar`):"Preguntas secretas enviadas",qkP:"Un Santa le hizo una pregunta a su persona. Mándala con un toque. Tú no ves la pregunta ni quién la hizo 🤫",qkNew:"Lista para mandar",qkSent:"Enviada · esperando respuesta",qkAgain:"Link nuevo",qMsg:(n,u)=>`🤫 ¡${n}, tu Santa Secreto tiene una pregunta para ti! 🎁\n\nContéstala aquí. Nadie sabrá quién preguntó:\n${u}\n\n(Este link es solo para ti.)`,pinAgain:"Mandar otra vez",smsBtn:"SMS",sentTo:n=>`✓ Enviado a ${n}`,qAuto:"Después de mandarlo, regresa aquí y el siguiente ya estará listo.",chanPick:"Mandar por",
   kidsT:"Intercambio de niños",kidsP:"Un segundo sorteo solo para los niños, con su propio presupuesto. Los niños se sacan entre niños y los grandes entre grandes.",kidsOnL:"Intercambio de niños activado",kidsBud:"Presupuesto de los niños",kidsWho:"Toca a los niños",kidsNone:"Primero agrega a los niños a tu lista y luego márcalos aquí.",
   kidsLocked:"Ya se sortearon los nombres. Vuelve a sortear para cambiar quién va en el intercambio de niños.",kidsCardT:"👧 Agrega un intercambio de niños",kidsCardP:"Un segundo sorteo para los chiquitos, con su propio presupuesto.",kidsEdit:"👧 Editar el intercambio de niños",
   kidsSum:(k,a)=>`👧 ${k} niños · 🎁 ${a} grandes`,kNeed2:"El intercambio de niños necesita al menos 2 niños con carta.",aNeed3:"El intercambio de los grandes necesita al menos 3 personas con carta.",secKids:"👧 Intercambio de niños",secAdults:"🎁 Los grandes",kidOne:"En el intercambio de niños",kidOneS:"Solo saca y lo sacan otros niños",kidsGroup:n=>`${n} (niños 👧)`,
@@ -517,7 +519,7 @@ function blocked(a,b){ return G().pairs.some(([x,y])=>(x===a&&y===b)||(x===b&&y=
 function makeDraw(ids){ for(let tr=0;tr<40000;tr++){ const r=[...ids]; for(let i=r.length-1;i>0;i--){ const j=rand(i+1); [r[i],r[j]]=[r[j],r[i]]; }
     if(ids.every((g,i)=>g!==r[i]&&!blocked(g,r[i]))) return ids.map((g,i)=>[g,r[i]]); } return null; }
 function codeFor(giver,rec){ const g=G(), L=rec.letter||{}, kid=!!(rec.kid&&kidsOn(g)), o={n:first(giver.name),l:giver.lang||g.lang,r:rec.name,s:L.s||"",p:L.p||"",h:L.h||"",g:L.g||[]}; if(L.x&&Object.keys(L.x).length) o.x=L.x;
-  const b=kid&&g.kids&&g.kids.budget?g.kids.budget:g.budget; if(b) o.b=String(b).slice(0,20); if(kid) o.k=1; return pinCode(o); }
+  const b=kid&&g.kids&&g.kids.budget?g.kids.budget:g.budget; if(b) o.b=String(b).slice(0,20); if(kid) o.k=1; o.gid=g.gid; return pinCode(o); }
 function drawPool(){ const g=G(); return g.people.filter(p=>p.letter||g.includeAll); }
 const kidsOn=g=>!!(g&&g.kids&&g.kids.on);
 function drawSplit(){ const g=G(), pool=drawPool(); if(!kidsOn(g)) return {adults:pool,kids:[]}; return {adults:pool.filter(p=>!p.kid||p.me),kids:pool.filter(p=>p.kid&&!p.me)}; }
@@ -617,6 +619,7 @@ function homeV(){ const g=G(), ps=g.people, n=ps.length, inN=ps.filter(p=>p.lett
   <div class="card next in"><div class="row between"><span class="kicker">${esc(t("nextK"))}</span><span class="big" aria-hidden="true">${nx.e}</span></div><div class="stack tight"><h2>${esc(nx.T)}</h2><p>${esc(nx.p)}</p></div>
     ${nx.b.map(([l,a,alt])=>`<button class="cta ${alt?"alt":""}" data-act="${a}">${esc(l)}</button>`).join("")}
     ${meNo&&!D?`<a class="ghost" style="justify-self:start" href="${esc(inviteURL(meNo))}" target="_blank" rel="noopener">✍️ ${esc(t("writeMine"))}</a>`:""}</div>
+  ${qCard()}
   <div class="stats"><button class="stat" data-act="tab" data-v="people" style="font:inherit;color:inherit;text-align:left;cursor:pointer"><small>${esc(t("people"))}</small><b>${n}</b></button>
     <div class="stat"><small>${esc(t("letters"))}</small><b>${inN}<span style="font-size:14px;color:var(--muted)">/${n}</span></b><div class="meter"><i style="width:${n?inN/n*100:0}%"></i></div></div>
     <button class="stat" data-act="tab" data-v="draw" style="font:inherit;color:inherit;text-align:left;cursor:pointer"><small>${esc(t("draw"))}</small><b style="font-size:16px">${D?esc(t("done"))+" ✓":esc(t("notYet"))}</b><span>${D?esc(t("of",sentN,cardsN)):esc(dl)}</span></button></div>
@@ -818,6 +821,8 @@ const ACT={
   switch:a=>{ DB.cur=a.dataset.g; view="home"; closeSheet(); persist(); render(); },
   newGroup:()=>{ closeSheet(); newGroup(); wiz=1; render(); },
   delGroupQ:()=>confirmSheet(t("mDeleteQ"),t("mDeleteP"),t("mDeleteY"),"delGroupY"),
+  qDeliver:a=>{ const g=G(), q=(g.qs||[]).find(x=>x.id===a.dataset.id); if(q){ q.d=true; persist(); try{ rpc("mark_question_delivered",{p_gid:g.gid,p_key:g.key,p_id:q.id}); }catch(e){} setTimeout(()=>{ render(); toast(t("sentTo",first(q.to))); },400); } return "follow"; },
+  qRelink:async a=>{ const g=G(); try{ const r=await rpc("question_link",{p_gid:g.gid,p_key:g.key,p_id:a.dataset.id}); if(r){ QL[a.dataset.id]=r; render(); } }catch(e){ toast(t("syncFail")); } },
   kidsOpen:()=>{ if(kidsGated()&&!kidsOn(G())){ plusSheet("kids"); return; } kidsSheet(); },
   kidTog:a=>{ const g=G(); if(g.draw) return; const p=P(a.dataset.id); if(!p) return; p.kid=!p.kid; persist(); kidsSheet(true); render(); },
   kidsSwitch:a=>{ const g=G(); if(g.draw) return; g.kids=g.kids||{on:false,budget:""}; g.kids.on=a.getAttribute("aria-checked")!=="true"; persist(); kidsSheet(true); render(); },
@@ -841,6 +846,21 @@ function wireInputs(){ const f=$("addForm"); if(f) f.onsubmit=e=>{ e.preventDefa
 addEventListener("keydown",e=>{ if(e.key==="Escape"&&$("sheetRoot").innerHTML) closeSheet(); });
 function qBack(){ if(!Q||!Q.away||Date.now()-Q.away<1200) return; const p=P(Q.ids[Q.i]); Q.away=0; if(p) toast(t("sentTo",first(p.name))); setTimeout(()=>{ if(Q){ Q.i++; Q.tapped=false; renderQueue(); } },450); }
 document.addEventListener("visibilitychange",()=>{ if(document.visibilityState==="visible") qBack(); }); addEventListener("focus",qBack);
+
+/* ---------- secret questions: HQ relays them without seeing the text or the asker ---------- */
+const QL={}; // question id -> one-time answer link secret (memory only, never saved)
+async function qPull(){ const g=G(); if(!g||!g.setup||!g.key||g.cloud!==1||typeof rpc==="undefined") return; let ch=false;
+  try{ const rows=await rpc("questions_to_deliver",{p_gid:g.gid,p_key:g.key}); if(!Array.isArray(rows)) return;
+    const qs=rows.map(r=>({id:r.id,to:r.to_name,l:r.lang,d:!!r.delivered_at,a:!!r.answered})); if(JSON.stringify(qs)!==JSON.stringify(g.qs||[])){ g.qs=qs; ch=true; }
+    for(const q of qs){ if(!q.d&&!q.a&&!QL[q.id]){ const r=await rpc("question_link",{p_gid:g.gid,p_key:g.key,p_id:q.id}); if(r){ QL[q.id]=r; ch=true; } } }
+  }catch(e){} if(ch){ persist(); if(!document.activeElement||!/INPUT|TEXTAREA|SELECT/.test(document.activeElement.tagName)) render(); } }
+function qMsgFor(q,p){ const g=G(), l=(p&&p.lang)||q.l||g.lang, W0=l==="es"?W.es:W.en, base=typeof ORIGIN!=="undefined"?ORIGIN:location.origin; return W0.qMsg(first(q.to),`${base}/q#a=${q.id}.${QL[q.id]}`); }
+function qCard(){ const g=G(), open=(g.qs||[]).filter(q=>!q.a); if(!open.length) return ""; const toSend=open.filter(q=>!q.d).length;
+  return `<div class="card qcard"><div class="stack tight"><span class="kicker">🤫 ${esc(t("qkK"))}</span><h3>${esc(t("qkT",toSend))}</h3><p class="help">${esc(t("qkP"))}</p></div>
+    <div class="drawn">${open.map(q=>{ const p=g.people.find(x=>norm(x.name)===norm(q.to)), ready=!!QL[q.id], m=ready?qMsgFor(q,p):"";
+      return `<div class="giver"><div class="av" style="--c:${colorOf(p?p.id:q.to)}">${esc(ini(q.to)||"?")}</div><div style="min-width:0"><b style="display:block">${esc(q.to)}</b><span class="st ${q.d?"sent":"inv"}">${esc(q.d?t("qkSent"):t("qkNew"))}</span></div>
+        ${ready?`<span class="sendpair"><a class="sbtn wa ${q.d?"done":""}" data-act="qDeliver" data-id="${q.id}" href="${esc(waLink(p&&p.phone,m))}" target="_blank" rel="noopener">${WA_ICON}${esc(t("waBtn"))}</a><a class="sbtn im ${q.d?"done":""}" data-act="qDeliver" data-id="${q.id}" href="${esc(imLink(p&&p.phone,m))}">💬 ${esc(t("smsBtn"))}</a></span>`
+          :`<button class="cta sm alt" data-act="qRelink" data-id="${q.id}">🔗 ${esc(t("qkAgain"))}</button>`}</div>`; }).join("")}</div></div>`; }
 
 /* ---------- Posada Plus: kids' exchange ---------- */
 const kidsGated=()=>!!(PLUSCFG()&&!isPlus());
@@ -1011,6 +1031,7 @@ async function cloudPull(show){ const g=G(); if(!g||!g.setup||pulling) return; p
     if(Array.isArray(rows)&&rows.length){ g.lastL=rows[rows.length-1].id; persist(); const ls=[]; rows.forEach(r=>{ const o=unseal(r.code,"L"); if(o&&o.gid===g.gid&&o.n) ls.push(o); }); if(ls.length) importLetters(ls); }
     const bd=await rpc("get_board",{p_gid:g.gid});
     if(Array.isArray(bd)&&bd.length&&mergeBoard(g,bd.map(r=>[r.player,r.score,r.stars,r.top_level,Date.parse(r.updated_at)||0]))){ persist(); render(); }
+    await qPull();
     if(show) toast(t("synced"));
   }catch(e){ if(show) toast(t("syncFail")); } finally{ pulling=false; } }
 setInterval(()=>{ if(document.visibilityState==="visible") cloudPull(false); },20000);
