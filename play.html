@@ -252,11 +252,45 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--marigold);outline-o
 .unlist{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;justify-content:center;gap:8px}
 .unlist li{display:grid;padding:8px 14px;border-radius:14px;background:rgba(245,165,36,.16);border:1px solid rgba(245,198,106,.5)}
 .unlist b{font-size:16px;font-weight:800;color:#fff8ec}.unlist small{font-size:11px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:#f5c66a}
+
+
+/* ---------- bigger play area: the street fills the screen, like El Trineo ---------- */
+html,body{height:100%}
+.picado{height:44px}
+.wrap{height:calc(100dvh - 44px);min-height:520px;max-width:min(1100px,100%);grid-template-rows:auto auto auto minmax(260px,1fr) auto auto;align-content:stretch;gap:8px;padding-block:4px 8px}
+.wrap .head,.wrap .missions,.wrap .goalbar,.wrap>.controls,.wrap>.skip{max-width:520px;width:100%;justify-self:center}
+.stage{height:auto;min-height:260px}
+.head{gap:0}.head h1{font-size:clamp(22px,6vw,28px)}
+.sub{display:none}
+@media (max-width:640px){.glabel{display:none}.wrap{gap:6px}.skip{padding:2px}}
+/* phones turned sideways and short laptop windows: one slim bar on top, the street gets the rest */
+@media (max-height:560px) and (orientation:landscape){
+  .picado{display:none}
+  .wrap{height:100dvh;min-height:0;max-width:100%;padding:6px max(10px,env(safe-area-inset-right,0px)) 6px max(10px,env(safe-area-inset-left,0px));gap:6px;
+    grid-template-columns:118px minmax(0,1.5fr) minmax(0,1fr) auto;grid-template-rows:auto minmax(0,1fr);grid-template-areas:". m g c" "s s s s"}
+  .wrap .head,.wrap>.skip,.glabel,.hint{display:none}
+  .wrap .missions{grid-area:m;max-width:none}.wrap .goalbar{grid-area:g;max-width:none;align-self:center}.wrap>.controls{grid-area:c;max-width:none;width:auto;gap:6px}.wrap>.stage{grid-area:s;min-height:0}
+  .m{padding:2px 2px}.m .e{font-size:13px}.m b{font-size:14px}.m small{display:none}
+}
+
+.hud{display:contents}
+.stage{--hudTop:0px}.stage .hearts{top:calc(8px + var(--hudTop))}.stage .bubble{top:calc(42px + var(--hudTop))}
+/* phones held upright: the street fills the screen and the level info floats over the sky, like El Trineo */
+@media (max-width:640px) and (orientation:portrait){
+  .wrap{grid-template-rows:minmax(0,1fr) auto auto;height:calc(100dvh - 44px);gap:6px;padding-top:0}
+  .hud{display:grid;gap:6px;grid-row:1;grid-column:1;align-self:start;z-index:5;padding:10px 10px 0;pointer-events:none}
+  .hud .head h1{font-size:22px}.hud .eyebrow{font-size:11px}
+  .hud .m{background:rgba(22,34,74,.62);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px)}
+  .wrap>.stage{grid-row:1;grid-column:1;min-height:0}
+  .wrap>.controls{grid-row:2}.wrap>.skip{grid-row:3}
+}
+
 </style>
 
 <div class="picado" id="picado" aria-hidden="true"></div>
 
 <div class="wrap">
+  <div class="hud" id="hud">
   <div class="head">
     <div class="eyebrow" id="lvlEyebrow">Level 1 of 5</div>
     <h1 id="lvlTitle">Calle de las velitas</h1>
@@ -276,6 +310,7 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--marigold);outline-o
     <div class="gtrack"><i id="goalFill"></i><b id="goalKid" aria-hidden="true">🎅</b></div>
     <span class="gend" aria-hidden="true">📮</span>
     <small class="glabel" data-t="goalLbl">Get your letter to Santa's buzón</small>
+  </div>
   </div>
   <div class="stage" id="stage" tabindex="0" role="button" aria-label="Tap to hop">
     <canvas id="game" aria-hidden="true"></canvas>
@@ -508,12 +543,14 @@ document.querySelectorAll(".lang button,.seg button").forEach(b=>b.addEventListe
 
 /* ---------- the canvas ---------- */
 const cv=$("game"); let ctx=cv.getContext("2d");
-const H=300, GY=262, KW=51, KH=64, CEIL=26;
+const H=300, GY=262, KW=51, KH=64, CEIL=26, MINVIEW=255; let oy=0; // on tall screens the street sits at the bottom and the sky grows
 let scale=1, viewW=400, dpr=1, kidSX=90;
 function resize(){ const r=$("stage").getBoundingClientRect(); dpr=Math.min(2,devicePixelRatio||1);
-  cv.width=Math.round(r.width*dpr); cv.height=Math.round(r.height*dpr); scale=r.height/H; viewW=r.width/scale; kidSX=Math.max(70,viewW*0.27);
+  cv.width=Math.round(r.width*dpr); cv.height=Math.round(r.height*dpr); scale=Math.min(r.height/H, r.width/MINVIEW); oy=Math.max(0,r.height-H*scale); viewW=r.width/scale; kidSX=Math.max(70,viewW*0.27);
   placeTapme(); }
-addEventListener("resize",resize);
+addEventListener("resize",resize); try{ new ResizeObserver(()=>resize()).observe($("stage")); }catch(e){}
+function hudSync(){ const h=$("hud"), st=$("stage"); if(!h||!st) return; const cs=getComputedStyle(h); st.style.setProperty("--hudTop", cs.display==="contents"?"0px":Math.max(0,h.getBoundingClientRect().bottom-st.getBoundingClientRect().top)+"px"); }
+try{ new ResizeObserver(hudSync).observe($("hud")); }catch(e){} addEventListener("resize",hudSync); setTimeout(hudSync,50);
 
 /* little seeded random so the village looks the same every time you pass a house */
 function rng(seed){ return ()=>{ seed|=0; seed=seed+0x6D2B79F5|0; let x=Math.imul(seed^seed>>>15,1|seed); x=x+Math.imul(x^x>>>7,61|x)^x; return ((x^x>>>14)>>>0)/4294967296; }; }
@@ -955,7 +992,9 @@ function arrived(){ state="arrived"; kid.walk=0; say("arrive",99); chime();
 
 /* ---------- drawing ---------- */
 function draw(){
-  ctx.setTransform(dpr*scale,0,0,dpr*scale,shakeX*dpr*scale,shakeY*dpr*scale);
+  if(oy>0){ const th=TH(); ctx.setTransform(dpr,0,0,dpr,0,0); const g=ctx.createLinearGradient(0,0,0,oy+2); g.addColorStop(0,"#0b1230"); g.addColorStop(1,th.sky[0]); ctx.fillStyle=g; ctx.fillRect(0,0,cv.width/dpr,oy+2);
+    ctx.fillStyle="#fff"; SKYSTARS.forEach((st,i)=>{ ctx.globalAlpha=(.3+.3*Math.sin(clock*1.3+st.p+i)); ctx.beginPath(); ctx.arc(((st.x*1.7+i*.137)%1)*cv.width/dpr,((st.y*2.3+i*.071)%1)*oy,st.s*.9,0,6.283); ctx.fill(); }); ctx.globalAlpha=1; }
+  ctx.setTransform(dpr*scale,0,0,dpr*scale,shakeX*dpr*scale,shakeY*dpr*scale+dpr*oy);
   drawSkyL(); drawFarL(); drawSleigh(); drawMidL(); drawYard(); drawStreetL();
   if(post) drawPost(post.x-camX,flagUp);
   drawRelatives();
@@ -1161,7 +1200,7 @@ $("replayBtn").addEventListener("click",()=>startLevel(L.n));
 $("toLevels").addEventListener("click",()=>open("menu"));
 $("menuBtn").addEventListener("click",()=>{ state=state==="play"?"ready":state; open("menu"); });
 const stage=$("stage");
-function placeTapme(){ const m=$("tapme"); if(!m) return; m.style.left=(kidSX*scale)+"px"; m.style.top=((GY-KH-60)*scale)+"px"; }
+function placeTapme(){ const m=$("tapme"); if(!m) return; m.style.left=(kidSX*scale)+"px"; m.style.top=(oy+(GY-KH-60)*scale)+"px"; }
 stage.addEventListener("pointerdown",e=>{ if(e.button>0) return; unlock(); hop(); });
 addEventListener("keydown",e=>{ if(overlays.some(id=>!$(id).hidden)) return; const ae=document.activeElement; if(ae&&ae!==stage&&/^(BUTTON|A|INPUT)$/.test(ae.tagName)) return;
   if(e.key===" "||e.key==="ArrowUp"||(e.key==="Enter"&&document.activeElement===stage)){ e.preventDefault(); unlock(); hop(); } });
@@ -2394,7 +2433,7 @@ function nearMissWorld(cx,cy,R){ const C=[];
   C.forEach(([o,x,y,r,hit])=>{ if(o._nmR) return; if(hit){ o._nmR=true; return; } const dx=x-cx; if(Math.abs(dx)<60){ const c=Math.hypot(dx,y-cy)-r-R; o._nm=Math.min(o._nm??99,c); }
     if(dx<-40&&o._nm!==undefined){ o._nmR=true; if(o._nm<14&&o._nm>-6) nearMissFX(x,y); } }); }
 const _drawArc=draw; draw=function(){ _drawArc();
-  ctx.setTransform(dpr*scale,0,0,dpr*scale,shakeX*dpr*scale,shakeY*dpr*scale); drawBossLayer();
+  ctx.setTransform(dpr*scale,0,0,dpr*scale,shakeX*dpr*scale,shakeY*dpr*scale+dpr*oy); drawBossLayer();
   if(ARC.invul>0&&Math.floor(clock*12)%2&&!ARC.failed){ ctx.save(); ctx.globalAlpha=.45; ctx.fillStyle="#fff"; ctx.beginPath(); ctx.ellipse(kidSX,kid.y-KH*.5,KW*.5,KH*.55,0,0,6.283); ctx.fill(); ctx.restore(); }
   if(ARC.flash>0){ ctx.save(); const g=ctx.createRadialGradient(viewW/2,H/2,H*.3,viewW/2,H/2,H*.95); g.addColorStop(0,"rgba(215,55,47,0)"); g.addColorStop(1,`rgba(215,55,47,${(ARC.flash/.35*.55).toFixed(2)})`); ctx.fillStyle=g; ctx.fillRect(0,0,viewW,H); ctx.restore(); }
   const c=ARC.callout; if(c){ const k=Math.min(1,c.t/.18), a=c.t>1?1-(c.t-1)/.3:1, s=(k<1?.6+.6*k:1.2-.2*Math.min(1,(c.t-.18)/.3));
