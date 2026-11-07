@@ -239,6 +239,96 @@ const svgURL=s=>"data:image/svg+xml;charset=utf-8,"+encodeURIComponent(s);
 const AV_OLD={sombrero:{hat:"sombrero"},sarape:{clothes:"sarape"},charro:{hat:"charro",clothes:"charro"},barba:{face:"santa"},corona:{hat:"crown"},estrella:{hat:"halo"}};
 function myChar(){ try{ const d=JSON.parse(localStorage.getItem("posada-family-v1")||"null"); const n=d&&d.current, p=n&&d.players&&d.players[n]; if(!p) return null; let a=p.avatar; if(typeof a==="string") a=AV_OLD[a]||{}; return {name:n,av:{...AV_DEFAULT,...(a||{})},made:!!p.avatar}; }catch(e){ return null; } }
 
+/* Fiesta music for the mini games: the same Latin Christmas band as La Posada (mariachi, cumbia, son jarocho),
+   with a tempo knob and a "hype" knob, plus stingers (fanfare, grito, crowd). Self-contained: FIESTA.init(getCtx, getOut). */
+const FIESTA=(()=>{ let getCtx=()=>null, getOut=()=>null, BUS=null, SFX=null, NB=null, on=false, timer=null, nb=0, bt=0, RATE=1, HYPE=0;
+const A=()=>{ const a=getCtx(); if(!a) return null; if(!BUS){ const o=getOut()||a.destination; BUS=a.createGain(); BUS.gain.value=.3; BUS.connect(o); SFX=a.createGain(); SFX.gain.value=.55; SFX.connect(o);
+    NB=a.createBuffer(1,a.sampleRate,a.sampleRate); const d=NB.getChannelData(0); for(let i=0;i<d.length;i++) d[i]=Math.random()*2-1; } return a; };
+function noise(t,dur,peak,type,freq,f1,dest){ const a=A(); if(!a) return; const s=a.createBufferSource(); s.buffer=NB; const f=a.createBiquadFilter(); f.type=type||"lowpass"; f.frequency.setValueAtTime(freq||1200,t); if(f1) f.frequency.exponentialRampToValueAtTime(f1,t+dur);
+  const g=a.createGain(); g.gain.setValueAtTime(.0001,t); g.gain.exponentialRampToValueAtTime(peak,t+Math.min(.02,dur*.3)); g.gain.exponentialRampToValueAtTime(.0001,t+dur); s.connect(f).connect(g).connect(dest||BUS); s.start(t,Math.random()*.5); s.stop(t+dur+.05); }
+/* =========================================================
+   Latin Christmas music: three arrangements that rotate
+   1) Ranchera navideña  — the original villancico, mariachi style (trumpets, guitarrón, vihuela, maracas)
+   2) Cumbia del cascabel — Jingle Bells chorus (public domain) as a cumbia (accordion, güiro, bombo, bass)
+   3) Son de la piñata   — an original son jarocho in 6/8 (harp, jarana, requinto, zapateado)
+   ========================================================= */
+const NOTEN=n=>{ const m=/^([A-G])(s|b)?(\d)$/.exec(n); if(!m) return 0; return (+m[3]+1)*12+{C:0,D:2,E:4,F:5,G:7,A:9,B:11}[m[1]]+(m[2]==="s"?1:m[2]==="b"?-1:0); };
+const HZ=m=>440*Math.pow(2,(m-69)/12);
+const CHD={C:[60,64,67],F:[60,65,69],G:[59,62,67],D:[62,66,69],A:[61,64,69],Em:[59,64,67],Bm:[59,62,66]};
+const BASS={C:[36,43],F:[41,48],G:[43,38],D:[38,45],A:[45,40],Em:[40,47],Bm:[47,42]};
+const bars=s=>s.trim().split("|").map(b=>b.trim().split(/\s+/));
+const SONGS=[
+  {id:"ranchera",beats:4,eighth:.23,style:"mariachi",
+   bars:bars("G4 B4 D5 B4|C5 E5 G5 E5|D5 Fs5 A5 Fs5|G5 - D5 -|B4 B4 C5 D5|E5 E5 D5 C5|A4 B4 C5 A4|G4 - - -|G5 Fs5 E5 B4|C5 D5 E5 C5|D5 E5 Fs5 D5|G5 - G5 -|E5 G5 E5 C5|D5 B4 G4 B4|A4 C5 Fs5 A5|G5 - - -"),
+   ch:"G C D G G C D G Em C D G C G D G".split(" ")},
+  {id:"cumbia",beats:4,eighth:.175,style:"cumbia",
+   bars:bars("E5 - E5 -|E5 - - -|E5 - E5 -|E5 - - -|E5 - G5 -|C5 - - D5|E5 - - -|- - - -|F5 - F5 -|F5 - - F5|F5 - E5 -|E5 - E5 E5|E5 - D5 -|D5 - E5 -|D5 - - -|G5 - - -"),
+   ch:"C C C C C C C C F F C C G G G G".split(" ")},
+  {id:"son",beats:6,eighth:.15,style:"son",
+   bars:bars("A4 - D5 Fs5 - E5|D5 - A4 B4 - A4|G4 - B4 D5 - Cs5|B4 - - A4 - -|A4 - D5 Fs5 - A5|G5 - Fs5 E5 - D5|E5 - G5 Fs5 - E5|D5 - - - - -|Fs5 - Fs5 G5 - A5|B5 - A5 Fs5 - D5|G5 - G5 Fs5 - E5|A5 - - - - -|Fs5 - A5 G5 - E5|D5 - Fs5 E5 - Cs5|D5 - E5 Fs5 - E5|D5 - - - - -"),
+   ch:"D D G A D G A D D G G A D A A D".split(" ")}
+];
+let song=SONGS[1], songIdx=1;
+function setSong(i){ songIdx=((i%SONGS.length)+SONGS.length)%SONGS.length; song=SONGS[songIdx]; }
+// little instrument helpers, all routed into the music bus
+function v(type,f,t,dur,peak,lp,att,det){ const a=A(); if(!a) return; const o=a.createOscillator(),g=a.createGain(); o.type=type; o.frequency.setValueAtTime(f,t); if(det) o.detune.setValueAtTime(det,t);
+  let out=g; if(lp){ const fl=a.createBiquadFilter(); fl.type="lowpass"; fl.frequency.value=lp; o.connect(fl).connect(g); } else o.connect(g);
+  g.gain.setValueAtTime(.0001,t); g.gain.exponentialRampToValueAtTime(peak,t+(att||.006)); g.gain.exponentialRampToValueAtTime(.0001,t+dur); g.connect(BUS); o.start(t); o.stop(t+dur+.05); }
+function trumpet(f,t,dur){ v("sawtooth",f,t,dur,.05,2300,.025,-7); v("sawtooth",f,t,dur,.05,2300,.025,7); v("square",f*2,t,dur*.8,.012,3000,.03); }
+function marimba(f,t,dur){ v("triangle",f,t,Math.min(.5,dur),.2); v("sine",f*4,t,.08,.04); }
+function accordion(f,t,dur){ v("square",f,t,dur,.035,1700,.02,-9); v("square",f,t,dur,.035,1700,.02,9); v("triangle",f/2,t,dur,.05); }
+function pluck(f,t,peak){ v("sawtooth",f,t,.22,peak||.05,1800,.003); }
+function harp(f,t){ v("triangle",f,t,.35,.09); v("sine",f*2,t,.18,.03); }
+function strum(chord,t,oct,peak){ chord.forEach((m,j)=>pluck(HZ(m+(oct||0)),t+j*.012,peak||.045)); }
+function bassN(m,t,dur,peak){ v("triangle",HZ(m),t,dur,peak||.32); v("sine",HZ(m),t,dur,(peak||.32)*.5); }
+function shaker(t,peak){ noise(t,.06,peak,"highpass",6000); }
+function guiro(t,long){ noise(t,long?.14:.05,long?.09:.06,"bandpass",3200); }
+function bombo(t){ v("sine",90,t,.25,.35); v("sine",55,t,.3,.25); }
+function stomp(t){ noise(t,.08,.14,"lowpass",400); v("sine",70,t,.12,.18); }
+function bells(t){ for(let i=0;i<4;i++) v("triangle",2800+Math.random()*1500,t+i*.035,.18,.03); }
+function playBar(sg,b,t){
+  const bar=sg.bars[b%sg.bars.length], ch=sg.ch[b%sg.ch.length], E=sg.eighth, chord=CHD[ch], bs=BASS[ch];
+  // melody
+  bar.forEach((n,i)=>{ if(n==="-"||n==="R") return; let len=1; for(let k=i+1;k<bar.length&&bar[k]==="-";k++) len++; const f=HZ(NOTEN(n)), tt=t+i*E, d=Math.min(.9,len*E*.92);
+    if(sg.style==="mariachi"){ trumpet(f,tt,d); marimba(f/2,tt,d); }
+    else if(sg.style==="cumbia") accordion(f,tt,d);
+    else { pluck(f,tt,.09); v("triangle",f,tt,d,.12); } });
+  if(sg.style==="mariachi"){ bassN(bs[0],t,E*1.7); bassN(bs[1],t+2*E,E*1.7);                       // guitarrón on the beats
+    [1,3].forEach(k=>strum(chord,t+k*E)); [0,1,2,3].forEach(k=>shaker(t+k*E,k%2?.05:.03)); if(b%4===3) bells(t+2*E); }
+  else if(sg.style==="cumbia"){ bassN(bs[0],t,E*1.5,.34); bassN(bs[1],t+2*E,E*.9,.28); bassN(bs[0]+12,t+3*E,E*.8,.2);   // bass: root, fifth, octave
+    bombo(t); [1,3].forEach(k=>chord.forEach(m=>v("square",HZ(m),t+k*E,E*.6,.016,1500)));                                 // accordion chops
+    [0,1,2,3].forEach(k=>guiro(t+k*E,k%2===1)); if(b%8===7) bells(t+3*E); }
+  else { bassN(bs[0],t,E*2.6,.3); bassN(bs[1],t+3*E,E*2.6,.26);                                         // son jarocho 6/8
+    [0,2,3,5].forEach(k=>strum(chord,t+k*E,12,.035)); [0,3].forEach(k=>stomp(t+k*E));                    // jarana + zapateado
+    chord.concat([chord[0]+12,chord[1]+12]).forEach((m,i)=>harp(HZ(m+12),t+i*E*.5)); }                  // harp runs
+}
+
+// extra layers when the game heats up
+function hype(sg,b,t){ const E=sg.eighth, n=sg.beats;
+  if(HYPE>=1){ for(let k=0;k<n*2;k++) noise(t+k*E/2,.04,k%2?.03:.05,"highpass",7000); [1,3].forEach(k=>{ if(k<n) noise(t+k*E,.09,.12,"bandpass",1500); }); }
+  if(HYPE>=2){ for(let k=0;k<n;k++){ v("sine",90,t+k*E,.2,.3); } bells(t); if(b%2) bells(t+E*(n-1)); v("sawtooth",HZ(CHD[sg.ch[b%sg.ch.length]][2]+12),t,E*n*.9,.018,2600,.05); } }
+function start(i){ const a=A(); if(!a) return; if(on) stop(); if(i!=null) setSong(i); on=true; nb=0; bt=a.currentTime+.12;
+  timer=setInterval(()=>{ const ac=getCtx(); if(!ac||!on) return; while(bt<ac.currentTime+.5){ const sg=Object.assign({},song,{eighth:song.eighth/RATE}); playBar(sg,nb,bt); hype(sg,nb,bt); bt+=sg.beats*sg.eighth; nb++; } },90); }
+function stop(){ on=false; clearInterval(timer); }
+// stingers go to their own bus so they cut through the band
+function sv(type,f,t,dur,peak,slide,lp){ const a=A(); if(!a) return; const o=a.createOscillator(), g=a.createGain(); o.type=type; o.frequency.setValueAtTime(f,t); if(slide) o.frequency.exponentialRampToValueAtTime(slide,t+dur);
+  let n=o; if(lp){ const fl=a.createBiquadFilter(); fl.type="lowpass"; fl.frequency.value=lp; o.connect(fl); n=fl; } n.connect(g); g.gain.setValueAtTime(.0001,t); g.gain.exponentialRampToValueAtTime(peak,t+.012); g.gain.exponentialRampToValueAtTime(.0001,t+dur); g.connect(SFX); o.start(t); o.stop(t+dur+.05); }
+const T=()=>{ const a=A(); return a?a.currentTime:0; };
+const sting={
+  fanfare(){ const t=T(); [[67,0,.12],[72,.12,.12],[76,.24,.12],[79,.36,.5]].forEach(([m,o,d])=>{ sv("sawtooth",HZ(m),t+o,d,.09,0,2600); sv("sawtooth",HZ(m-4),t+o,d,.06,0,2400); }); noise(t+.36,.5,.12,"highpass",6000,0,SFX); },
+  big(){ const t=T(); [[67,0],[67,.09],[67,.18],[72,.3],[76,.42],[79,.54],[84,.7]].forEach(([m,o],i)=>{ const d=i===6?.7:.08; sv("sawtooth",HZ(m),t+o,d,.1,0,2800); sv("sawtooth",HZ(m-5),t+o,d,.07,0,2400); }); for(let i=0;i<6;i++) sv("triangle",2600+Math.random()*1500,t+.7+i*.05,.2,.04); },
+  grito(){ const t=T(); // ¡ajúa! a rising yelp, a held "ú", a falling "a"
+    sv("sawtooth",380,t,.16,.07,720,1800); sv("sawtooth",720,t+.15,.34,.08,980,2200); sv("sawtooth",980,t+.48,.32,.07,420,1900); noise(t,.12,.05,"bandpass",2500,0,SFX); },
+  cheer(n){ const t=T(), k=n||1; noise(t,.9*k,.16*k,"bandpass",1200,2400,SFX); noise(t+.05,.8*k,.1*k,"bandpass",600,1100,SFX); for(let i=0;i<4*k;i++) noise(t+Math.random()*.6,.05,.06,"highpass",3500,0,SFX); },
+  awww(){ const t=T(); noise(t,.8,.12,"bandpass",900,350,SFX); },
+  wah(){ const t=T(); [[466,.0],[440,.3],[415,.6],[392,.9]].forEach(([f,o],i)=>sv("sawtooth",f,t+o,i===3?.8:.28,.07,i===3?370:0,1200)); },
+  tick(hi){ const t=T(); sv("square",hi?1320:880,t,.05,.06); sv("sine",hi?2640:1760,t,.03,.03); },
+  ladder(n){ const t=T(), sc=[0,2,4,7,9,12,14,16,19,21,24]; const m=72+sc[Math.min(sc.length-1,n)]; sv("triangle",HZ(m),t,.14,.09); sv("sine",HZ(m+12),t+.02,.1,.04); },
+  key(){ const t=T(); [0,4,7,12].forEach((s,i)=>sv("square",HZ(79+s),t+i*.05,.1,.05)); }
+};
+return {init(c,o){ getCtx=c; getOut=o||(()=>null); }, start, stop, setRate(r){ RATE=r; }, setHype(h){ HYPE=h; }, get on(){ return on; }, sting, setSong};
+})();
+
 /* shared bits for the posada mini games: language, sound, best scores, sharing */
 const $=id=>document.getElementById(id);
 const RM=matchMedia("(prefers-reduced-motion: reduce)").matches;

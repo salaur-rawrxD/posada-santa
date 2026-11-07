@@ -114,6 +114,7 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offse
       <div><span>🤠</span><b data-t="how2">Bonk the tíos and tías fighting over the land</b></div>
       <div><span>👵</span><b data-t="how3">Never hit Abuelita. She has the escrituras.</b></div>
       <div><span>🎯</span><b data-t="how4">Pull the resortera back and let go. Watch the wind!</b></div>
+      <div><span>🔥</span><b data-t="how6">Hit 8 in a row for a TAMALADA: endless tamales and double points</b></div>
       <div><span>📜</span><b data-t="how5">When El Licenciado runs by with the escrituras, nail him for +150</b></div>
     </div>
     <button class="cta" id="go" type="button" data-t="go">🫔 ¡A ganar los terrenos!</button>
@@ -143,7 +144,7 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offse
 <script>
 const WORDS={
   en:{kick:"La guerra de los terrenos",title:"¡Tamalazo!",intro:"Your tíos and tías want to keep the family land. Load your resortera with tamales and <b>win los terrenos back</b> before the posada's over. Every hit wins you more m².",
-    how1:"Knock down the cans and break the piñatas",how2:"Bonk the tíos and tías fighting over the land",how3:"Never hit Abuelita. She has the escrituras.",how4:"Pull the resortera back and let go. Watch the wind!",how5:"When El Licenciado runs by with the escrituras, nail him for +150",pullHint:"Pull the resortera back, then let go 🫔",licWarn:"📜 El Licenciado is coming!",wind:"Wind",
+    how1:"Knock down the cans and break the piñatas",how2:"Bonk the tíos and tías fighting over the land",how3:"Never hit Abuelita. She has the escrituras.",how4:"Pull the resortera back and let go. Watch the wind!",how5:"When El Licenciado runs by with the escrituras, nail him for +150",how6:"Hit 8 in a row for a TAMALADA: endless tamales and double points",pullHint:"Pull the resortera back, then let go 🫔",licWarn:"📜 El Licenciado is coming!",wind:"Wind",
     go:"🫔 ¡A ganar los terrenos!",more:"← More posada games",pausedT:"Paused",resume:"▶ Keep throwing",quit:"Restart",
     goN:(n,name)=>`🫔 Play level ${n}: ${name}`,lvlGoal:(g,s)=>`Win ${g} m² in ${s} s`,locked:"🔒 Win the level before",toLvls:"All levels",nextLv:n=>`▶ Next: ${n}`,
     won:"¡Terreno ganado! 🏡",wonK:n=>`Level ${n} won`,lostK:n=>`Level ${n}`,lostT:"¡Los tíos se quedaron con el terreno!",need:(g,s)=>`You needed ${g} m². You won ${s}.`,allDone:"¡Eres el dueño de todo! 🏆",
@@ -151,10 +152,10 @@ const WORDS={
     overK:"¡Se acabó la posada!",sScore:"m² won",sAcc:"aim",sCombo:"best combo",again:"🔄 Fight for more land",share:"📣 Challenge the family",best:n=>`Your record: ${n} m²`,newBest:"🏆 New record!",
     titles:[[3000,"¡Te quedaste con todo el rancho!"],[1800,"¡La parcela es tuya!"],[900,"¡Ganaste un buen pedazo!"],[0,"¡Los tíos se quedaron con todo!"]],
     line:(c,p,r)=>`${c} cans · ${p} piñatas · ${r} relatives sent to court`,reload:"¡Más tamales!",chuza:"¡CHUZA! +50 m²",abuela:"¡A la abuela no! She has the escrituras −50",cucuy:"¡Le quitaste las escrituras al licenciado! +150",pin:"¡Piñata rota! +60",
-    oye:["¡Ta' bueno, quédatelo!","¡Te veo en el juzgado!","¡Ay, mi sombrero!","¡Grosero!","¡Le voy a decir a tu mamá!","¡Ese terreno era mío!"],miss:"¡Plaf!",go2:"¡Por los terrenos!",last:"¡Últimos 10!",unit:"m²",
+    oye:["¡Ta' bueno, quédatelo!","¡Te veo en el juzgado!","¡Ay, mi sombrero!","¡Grosero!","¡Le voy a decir a tu mamá!","¡Ese terreno era mío!"],miss:"¡Plaf!",frenzy:"🔥 TAMALADA! Endless tamales!",frenzyEnd:"Tamalada over",clock:"⏰ +5 seconds!",clockTip:"⏰ Hit the clock for more time",go2:"¡Por los terrenos!",last:"¡Últimos 10!",unit:"m²",
     msg:(s,url)=>`🫔 I won ${s} m² of ${(LEVELS[curLv-1]||{}).name||"the family land"} from my tíos in ¡Tamalazo! Think you can win more? 👇\n${url}`},
   es:{kick:"La guerra de los terrenos",title:"¡Tamalazo!",intro:"Tus tíos y tías se quieren quedar con los terrenos de la familia. Carga tu resortera de tamales y <b>¡gánale los terrenos a tus tías y tíos!</b> Cada tamalazo te gana más m².",
-    how1:"Tumba las latas y rompe las piñatas",how2:"Pégale a los tíos y tías que se pelean el terreno",how3:"Nunca le pegues a la Abuelita. Ella tiene las escrituras.",how4:"Jala la resortera hacia atrás y suelta. ¡Ojo con el viento!",how5:"Cuando pase El Licenciado con las escrituras, ¡dale! +150",pullHint:"Jala la resortera hacia atrás y suelta 🫔",licWarn:"📜 ¡Ahí viene El Licenciado!",wind:"Viento",
+    how1:"Tumba las latas y rompe las piñatas",how2:"Pégale a los tíos y tías que se pelean el terreno",how3:"Nunca le pegues a la Abuelita. Ella tiene las escrituras.",how4:"Jala la resortera hacia atrás y suelta. ¡Ojo con el viento!",how5:"Cuando pase El Licenciado con las escrituras, ¡dale! +150",how6:"Pega 8 seguidos para una TAMALADA: tamales sin fin y puntos dobles",pullHint:"Jala la resortera hacia atrás y suelta 🫔",licWarn:"📜 ¡Ahí viene El Licenciado!",wind:"Viento",
     go:"🫔 ¡A ganar los terrenos!",more:"← Más juegos de la posada",pausedT:"En pausa",resume:"▶ Seguir aventando",quit:"Empezar otra vez",
     goN:(n,name)=>`🫔 Jugar nivel ${n}: ${name}`,lvlGoal:(g,s)=>`Gana ${g} m² en ${s} s`,locked:"🔒 Gana el nivel anterior",toLvls:"Todos los niveles",nextLv:n=>`▶ Sigue: ${n}`,
     won:"¡Terreno ganado! 🏡",wonK:n=>`Nivel ${n} ganado`,lostK:n=>`Nivel ${n}`,lostT:"¡Los tíos se quedaron con el terreno!",need:(g,s)=>`Necesitabas ${g} m². Ganaste ${s}.`,allDone:"¡Eres el dueño de todo! 🏆",
@@ -162,7 +163,7 @@ const WORDS={
     overK:"¡Se acabó la posada!",sScore:"m² ganados",sAcc:"puntería",sCombo:"mejor combo",again:"🔄 Pelear más terreno",share:"📣 Reta a la familia",best:n=>`Tu récord: ${n} m²`,newBest:"🏆 ¡Nuevo récord!",
     titles:[[3000,"¡Te quedaste con todo el rancho!"],[1800,"¡La parcela es tuya!"],[900,"¡Ganaste un buen pedazo!"],[0,"¡Los tíos se quedaron con todo!"]],
     line:(c,p,r)=>`${c} latas · ${p} piñatas · ${r} parientes al juzgado`,reload:"¡Más tamales!",chuza:"¡CHUZA! +50 m²",abuela:"¡A la abuela no! Ella tiene las escrituras −50",cucuy:"¡Le quitaste las escrituras al licenciado! +150",pin:"¡Piñata rota! +60",
-    oye:["¡Ta' bueno, quédatelo!","¡Te veo en el juzgado!","¡Ay, mi sombrero!","¡Grosero!","¡Le voy a decir a tu mamá!","¡Ese terreno era mío!"],miss:"¡Plaf!",go2:"¡Por los terrenos!",last:"¡Últimos 10!",unit:"m²",
+    oye:["¡Ta' bueno, quédatelo!","¡Te veo en el juzgado!","¡Ay, mi sombrero!","¡Grosero!","¡Le voy a decir a tu mamá!","¡Ese terreno era mío!"],miss:"¡Plaf!",frenzy:"🔥 ¡TAMALADA! ¡Tamales sin fin!",frenzyEnd:"Se acabó la tamalada",clock:"⏰ ¡+5 segundos!",clockTip:"⏰ Pégale al reloj para más tiempo",go2:"¡Por los terrenos!",last:"¡Últimos 10!",unit:"m²",
     msg:(s,url)=>`🫔 ¡Le gané ${s} m² de ${(LEVELS[curLv-1]||{}).name||"terreno"} a mis tíos en ¡Tamalazo! ¿A que no ganas más? 👇\n${url}`}};
 const JUICIOS={en:["That land is MINE!","Dad left it to me!","I paid the predial!","I already got a lawyer!","I'm building there!","Where are the escrituras?","You don't even visit!"],
   es:["¡Ese terreno es MÍO!","¡Mi papá me lo dejó a mí!","¡Yo pagué el predial!","¡Ya tengo abogado!","¡Ahí voy a construir!","¿Y las escrituras qué?","¡Ni nos visitas!"]};
@@ -277,6 +278,96 @@ const svgURL=s=>"data:image/svg+xml;charset=utf-8,"+encodeURIComponent(s);
 const AV_OLD={sombrero:{hat:"sombrero"},sarape:{clothes:"sarape"},charro:{hat:"charro",clothes:"charro"},barba:{face:"santa"},corona:{hat:"crown"},estrella:{hat:"halo"}};
 function myChar(){ try{ const d=JSON.parse(localStorage.getItem("posada-family-v1")||"null"); const n=d&&d.current, p=n&&d.players&&d.players[n]; if(!p) return null; let a=p.avatar; if(typeof a==="string") a=AV_OLD[a]||{}; return {name:n,av:{...AV_DEFAULT,...(a||{})},made:!!p.avatar}; }catch(e){ return null; } }
 
+/* Fiesta music for the mini games: the same Latin Christmas band as La Posada (mariachi, cumbia, son jarocho),
+   with a tempo knob and a "hype" knob, plus stingers (fanfare, grito, crowd). Self-contained: FIESTA.init(getCtx, getOut). */
+const FIESTA=(()=>{ let getCtx=()=>null, getOut=()=>null, BUS=null, SFX=null, NB=null, on=false, timer=null, nb=0, bt=0, RATE=1, HYPE=0;
+const A=()=>{ const a=getCtx(); if(!a) return null; if(!BUS){ const o=getOut()||a.destination; BUS=a.createGain(); BUS.gain.value=.3; BUS.connect(o); SFX=a.createGain(); SFX.gain.value=.55; SFX.connect(o);
+    NB=a.createBuffer(1,a.sampleRate,a.sampleRate); const d=NB.getChannelData(0); for(let i=0;i<d.length;i++) d[i]=Math.random()*2-1; } return a; };
+function noise(t,dur,peak,type,freq,f1,dest){ const a=A(); if(!a) return; const s=a.createBufferSource(); s.buffer=NB; const f=a.createBiquadFilter(); f.type=type||"lowpass"; f.frequency.setValueAtTime(freq||1200,t); if(f1) f.frequency.exponentialRampToValueAtTime(f1,t+dur);
+  const g=a.createGain(); g.gain.setValueAtTime(.0001,t); g.gain.exponentialRampToValueAtTime(peak,t+Math.min(.02,dur*.3)); g.gain.exponentialRampToValueAtTime(.0001,t+dur); s.connect(f).connect(g).connect(dest||BUS); s.start(t,Math.random()*.5); s.stop(t+dur+.05); }
+/* =========================================================
+   Latin Christmas music: three arrangements that rotate
+   1) Ranchera navideña  — the original villancico, mariachi style (trumpets, guitarrón, vihuela, maracas)
+   2) Cumbia del cascabel — Jingle Bells chorus (public domain) as a cumbia (accordion, güiro, bombo, bass)
+   3) Son de la piñata   — an original son jarocho in 6/8 (harp, jarana, requinto, zapateado)
+   ========================================================= */
+const NOTEN=n=>{ const m=/^([A-G])(s|b)?(\d)$/.exec(n); if(!m) return 0; return (+m[3]+1)*12+{C:0,D:2,E:4,F:5,G:7,A:9,B:11}[m[1]]+(m[2]==="s"?1:m[2]==="b"?-1:0); };
+const HZ=m=>440*Math.pow(2,(m-69)/12);
+const CHD={C:[60,64,67],F:[60,65,69],G:[59,62,67],D:[62,66,69],A:[61,64,69],Em:[59,64,67],Bm:[59,62,66]};
+const BASS={C:[36,43],F:[41,48],G:[43,38],D:[38,45],A:[45,40],Em:[40,47],Bm:[47,42]};
+const bars=s=>s.trim().split("|").map(b=>b.trim().split(/\s+/));
+const SONGS=[
+  {id:"ranchera",beats:4,eighth:.23,style:"mariachi",
+   bars:bars("G4 B4 D5 B4|C5 E5 G5 E5|D5 Fs5 A5 Fs5|G5 - D5 -|B4 B4 C5 D5|E5 E5 D5 C5|A4 B4 C5 A4|G4 - - -|G5 Fs5 E5 B4|C5 D5 E5 C5|D5 E5 Fs5 D5|G5 - G5 -|E5 G5 E5 C5|D5 B4 G4 B4|A4 C5 Fs5 A5|G5 - - -"),
+   ch:"G C D G G C D G Em C D G C G D G".split(" ")},
+  {id:"cumbia",beats:4,eighth:.175,style:"cumbia",
+   bars:bars("E5 - E5 -|E5 - - -|E5 - E5 -|E5 - - -|E5 - G5 -|C5 - - D5|E5 - - -|- - - -|F5 - F5 -|F5 - - F5|F5 - E5 -|E5 - E5 E5|E5 - D5 -|D5 - E5 -|D5 - - -|G5 - - -"),
+   ch:"C C C C C C C C F F C C G G G G".split(" ")},
+  {id:"son",beats:6,eighth:.15,style:"son",
+   bars:bars("A4 - D5 Fs5 - E5|D5 - A4 B4 - A4|G4 - B4 D5 - Cs5|B4 - - A4 - -|A4 - D5 Fs5 - A5|G5 - Fs5 E5 - D5|E5 - G5 Fs5 - E5|D5 - - - - -|Fs5 - Fs5 G5 - A5|B5 - A5 Fs5 - D5|G5 - G5 Fs5 - E5|A5 - - - - -|Fs5 - A5 G5 - E5|D5 - Fs5 E5 - Cs5|D5 - E5 Fs5 - E5|D5 - - - - -"),
+   ch:"D D G A D G A D D G G A D A A D".split(" ")}
+];
+let song=SONGS[1], songIdx=1;
+function setSong(i){ songIdx=((i%SONGS.length)+SONGS.length)%SONGS.length; song=SONGS[songIdx]; }
+// little instrument helpers, all routed into the music bus
+function v(type,f,t,dur,peak,lp,att,det){ const a=A(); if(!a) return; const o=a.createOscillator(),g=a.createGain(); o.type=type; o.frequency.setValueAtTime(f,t); if(det) o.detune.setValueAtTime(det,t);
+  let out=g; if(lp){ const fl=a.createBiquadFilter(); fl.type="lowpass"; fl.frequency.value=lp; o.connect(fl).connect(g); } else o.connect(g);
+  g.gain.setValueAtTime(.0001,t); g.gain.exponentialRampToValueAtTime(peak,t+(att||.006)); g.gain.exponentialRampToValueAtTime(.0001,t+dur); g.connect(BUS); o.start(t); o.stop(t+dur+.05); }
+function trumpet(f,t,dur){ v("sawtooth",f,t,dur,.05,2300,.025,-7); v("sawtooth",f,t,dur,.05,2300,.025,7); v("square",f*2,t,dur*.8,.012,3000,.03); }
+function marimba(f,t,dur){ v("triangle",f,t,Math.min(.5,dur),.2); v("sine",f*4,t,.08,.04); }
+function accordion(f,t,dur){ v("square",f,t,dur,.035,1700,.02,-9); v("square",f,t,dur,.035,1700,.02,9); v("triangle",f/2,t,dur,.05); }
+function pluck(f,t,peak){ v("sawtooth",f,t,.22,peak||.05,1800,.003); }
+function harp(f,t){ v("triangle",f,t,.35,.09); v("sine",f*2,t,.18,.03); }
+function strum(chord,t,oct,peak){ chord.forEach((m,j)=>pluck(HZ(m+(oct||0)),t+j*.012,peak||.045)); }
+function bassN(m,t,dur,peak){ v("triangle",HZ(m),t,dur,peak||.32); v("sine",HZ(m),t,dur,(peak||.32)*.5); }
+function shaker(t,peak){ noise(t,.06,peak,"highpass",6000); }
+function guiro(t,long){ noise(t,long?.14:.05,long?.09:.06,"bandpass",3200); }
+function bombo(t){ v("sine",90,t,.25,.35); v("sine",55,t,.3,.25); }
+function stomp(t){ noise(t,.08,.14,"lowpass",400); v("sine",70,t,.12,.18); }
+function bells(t){ for(let i=0;i<4;i++) v("triangle",2800+Math.random()*1500,t+i*.035,.18,.03); }
+function playBar(sg,b,t){
+  const bar=sg.bars[b%sg.bars.length], ch=sg.ch[b%sg.ch.length], E=sg.eighth, chord=CHD[ch], bs=BASS[ch];
+  // melody
+  bar.forEach((n,i)=>{ if(n==="-"||n==="R") return; let len=1; for(let k=i+1;k<bar.length&&bar[k]==="-";k++) len++; const f=HZ(NOTEN(n)), tt=t+i*E, d=Math.min(.9,len*E*.92);
+    if(sg.style==="mariachi"){ trumpet(f,tt,d); marimba(f/2,tt,d); }
+    else if(sg.style==="cumbia") accordion(f,tt,d);
+    else { pluck(f,tt,.09); v("triangle",f,tt,d,.12); } });
+  if(sg.style==="mariachi"){ bassN(bs[0],t,E*1.7); bassN(bs[1],t+2*E,E*1.7);                       // guitarrón on the beats
+    [1,3].forEach(k=>strum(chord,t+k*E)); [0,1,2,3].forEach(k=>shaker(t+k*E,k%2?.05:.03)); if(b%4===3) bells(t+2*E); }
+  else if(sg.style==="cumbia"){ bassN(bs[0],t,E*1.5,.34); bassN(bs[1],t+2*E,E*.9,.28); bassN(bs[0]+12,t+3*E,E*.8,.2);   // bass: root, fifth, octave
+    bombo(t); [1,3].forEach(k=>chord.forEach(m=>v("square",HZ(m),t+k*E,E*.6,.016,1500)));                                 // accordion chops
+    [0,1,2,3].forEach(k=>guiro(t+k*E,k%2===1)); if(b%8===7) bells(t+3*E); }
+  else { bassN(bs[0],t,E*2.6,.3); bassN(bs[1],t+3*E,E*2.6,.26);                                         // son jarocho 6/8
+    [0,2,3,5].forEach(k=>strum(chord,t+k*E,12,.035)); [0,3].forEach(k=>stomp(t+k*E));                    // jarana + zapateado
+    chord.concat([chord[0]+12,chord[1]+12]).forEach((m,i)=>harp(HZ(m+12),t+i*E*.5)); }                  // harp runs
+}
+
+// extra layers when the game heats up
+function hype(sg,b,t){ const E=sg.eighth, n=sg.beats;
+  if(HYPE>=1){ for(let k=0;k<n*2;k++) noise(t+k*E/2,.04,k%2?.03:.05,"highpass",7000); [1,3].forEach(k=>{ if(k<n) noise(t+k*E,.09,.12,"bandpass",1500); }); }
+  if(HYPE>=2){ for(let k=0;k<n;k++){ v("sine",90,t+k*E,.2,.3); } bells(t); if(b%2) bells(t+E*(n-1)); v("sawtooth",HZ(CHD[sg.ch[b%sg.ch.length]][2]+12),t,E*n*.9,.018,2600,.05); } }
+function start(i){ const a=A(); if(!a) return; if(on) stop(); if(i!=null) setSong(i); on=true; nb=0; bt=a.currentTime+.12;
+  timer=setInterval(()=>{ const ac=getCtx(); if(!ac||!on) return; while(bt<ac.currentTime+.5){ const sg=Object.assign({},song,{eighth:song.eighth/RATE}); playBar(sg,nb,bt); hype(sg,nb,bt); bt+=sg.beats*sg.eighth; nb++; } },90); }
+function stop(){ on=false; clearInterval(timer); }
+// stingers go to their own bus so they cut through the band
+function sv(type,f,t,dur,peak,slide,lp){ const a=A(); if(!a) return; const o=a.createOscillator(), g=a.createGain(); o.type=type; o.frequency.setValueAtTime(f,t); if(slide) o.frequency.exponentialRampToValueAtTime(slide,t+dur);
+  let n=o; if(lp){ const fl=a.createBiquadFilter(); fl.type="lowpass"; fl.frequency.value=lp; o.connect(fl); n=fl; } n.connect(g); g.gain.setValueAtTime(.0001,t); g.gain.exponentialRampToValueAtTime(peak,t+.012); g.gain.exponentialRampToValueAtTime(.0001,t+dur); g.connect(SFX); o.start(t); o.stop(t+dur+.05); }
+const T=()=>{ const a=A(); return a?a.currentTime:0; };
+const sting={
+  fanfare(){ const t=T(); [[67,0,.12],[72,.12,.12],[76,.24,.12],[79,.36,.5]].forEach(([m,o,d])=>{ sv("sawtooth",HZ(m),t+o,d,.09,0,2600); sv("sawtooth",HZ(m-4),t+o,d,.06,0,2400); }); noise(t+.36,.5,.12,"highpass",6000,0,SFX); },
+  big(){ const t=T(); [[67,0],[67,.09],[67,.18],[72,.3],[76,.42],[79,.54],[84,.7]].forEach(([m,o],i)=>{ const d=i===6?.7:.08; sv("sawtooth",HZ(m),t+o,d,.1,0,2800); sv("sawtooth",HZ(m-5),t+o,d,.07,0,2400); }); for(let i=0;i<6;i++) sv("triangle",2600+Math.random()*1500,t+.7+i*.05,.2,.04); },
+  grito(){ const t=T(); // ¡ajúa! a rising yelp, a held "ú", a falling "a"
+    sv("sawtooth",380,t,.16,.07,720,1800); sv("sawtooth",720,t+.15,.34,.08,980,2200); sv("sawtooth",980,t+.48,.32,.07,420,1900); noise(t,.12,.05,"bandpass",2500,0,SFX); },
+  cheer(n){ const t=T(), k=n||1; noise(t,.9*k,.16*k,"bandpass",1200,2400,SFX); noise(t+.05,.8*k,.1*k,"bandpass",600,1100,SFX); for(let i=0;i<4*k;i++) noise(t+Math.random()*.6,.05,.06,"highpass",3500,0,SFX); },
+  awww(){ const t=T(); noise(t,.8,.12,"bandpass",900,350,SFX); },
+  wah(){ const t=T(); [[466,.0],[440,.3],[415,.6],[392,.9]].forEach(([f,o],i)=>sv("sawtooth",f,t+o,i===3?.8:.28,.07,i===3?370:0,1200)); },
+  tick(hi){ const t=T(); sv("square",hi?1320:880,t,.05,.06); sv("sine",hi?2640:1760,t,.03,.03); },
+  ladder(n){ const t=T(), sc=[0,2,4,7,9,12,14,16,19,21,24]; const m=72+sc[Math.min(sc.length-1,n)]; sv("triangle",HZ(m),t,.14,.09); sv("sine",HZ(m+12),t+.02,.1,.04); },
+  key(){ const t=T(); [0,4,7,12].forEach((s,i)=>sv("square",HZ(79+s),t+i*.05,.1,.05)); }
+};
+return {init(c,o){ getCtx=c; getOut=o||(()=>null); }, start, stop, setRate(r){ RATE=r; }, setHype(h){ HYPE=h; }, get on(){ return on; }, sting, setSong};
+})();
+
 /* shared bits for the posada mini games: language, sound, best scores, sharing */
 const $=id=>document.getElementById(id);
 const RM=matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -371,11 +462,11 @@ const saveProg=()=>{ try{ localStorage.setItem(PKEY,JSON.stringify(prog)); }catc
 const starsFor=(sc,goal)=>sc>=goal*1.8?3:sc>=goal*1.4?2:sc>=goal?1:0;
 let S=null, state="start", last=0, shake=0, curLv=1;
 function newRound(n){ curLv=n||curLv; const cfg=LEVELS[curLv-1]; S={lv:curLv,cfg,goal:cfg.goal,won:false,starMark:1,t:0,left:cfg.time,score:0,ammo:6,reload:0,combo:0,bestCombo:0,throws:0,hits:0,cans:0,pins:0,rels:0,
-  tams:[],parts:[],splats:[],floats:[],cansList:[],pinatas:[],wins:WIN.map(w=>({...w,who:null,t:0,dur:0,hit:0,cool:rnd(.3,1.4)})),cucuy:null,cucuyT:cfg.lic?rnd(cfg.lic[0],cfg.lic[1]):1e9,licWarn:0,canRespawn:0,ticked:-1,wind:0,windTo:0,windT:2,canDir:Math.random()<.5?-1:1};
+  tams:[],parts:[],splats:[],floats:[],cansList:[],pinatas:[],wins:WIN.map(w=>({...w,who:null,t:0,dur:0,hit:0,cool:rnd(.3,1.4)})),cucuy:null,cucuyT:cfg.lic?rnd(cfg.lic[0],cfg.lic[1]):1e9,licWarn:0,canRespawn:0,ticked:-1,wind:0,windTo:0,windT:2,canDir:Math.random()<.5?-1:1,frenzy:0,clock:null,clockT:rnd(12,17),pullF:0};
   makeCans(); S.pinatas=[{x:120,ph:0,hp:cfg.pin,max:cfg.pin,shake:0,dead:0,len:62},{x:270,ph:2.2,hp:cfg.pin,max:cfg.pin,shake:0,dead:0,len:88}]; renderAmmo(); renderLand(); }
 function renderLand(){ if(!S) return; const cap=S.goal*1.8, pct=Math.min(100,S.score/cap*100); $("landFill").style.width=pct.toFixed(1)+"%"; $("hScore").textContent=S.score.toLocaleString(); $("hGoal").textContent=S.goal.toLocaleString();
   $("hScore").classList.toggle("won",S.score>=S.goal); $("lvName").textContent="🏡 "+S.cfg.name; [[1,1],[2,1.4],[3,1.8]].forEach(([i,k])=>$("mk"+i).classList.toggle("on",S.score>=S.goal*k));
-  if(state==="play"){ const st=starsFor(S.score,S.goal); if(st>=S.starMark){ S.starMark=st+1; if(st===1){ S.won=true; toast(t("won")); const t0=now(); [523,659,784,1047].forEach((f,i)=>tone("square",f,t0+i*.08,.18,.07)); } else toast(st===2?t("star2"):t("star3")); } } }
+  if(state==="play"){ const st=starsFor(S.score,S.goal); if(st>=S.starMark){ S.starMark=st+1; if(st===1){ S.won=true; toast(t("won")); FIESTA.sting.fanfare(); FIESTA.sting.cheer(1); for(let i=0;i<30;i++) S.parts.push({x:rnd(20,VW-20),y:-10,vx:rnd(-40,40),vy:rnd(60,220),t:0,l:2.2,r:rnd(3,5),c:pick(["#d7372f","#2f8f4e","#f5a524","#e2337f","#22a9c4"])}); } else { toast(st===2?t("star2"):t("star3")); FIESTA.sting.fanfare(); } } } }
 function makeCans(){ const cx=rnd(90,300); S.cansList=[]; const rows=[[0,3],[1,2],[2,1]]; rows.forEach(([r,n])=>{ for(let i=0;i<n;i++) S.cansList.push({x:cx+(i-(n-1)/2)*28,y:FENCE-17-r*34,vx:0,vy:0,rot:0,vr:0,down:false,c:pick(["#d7372f","#2f8f4e","#f5a524","#22a9c4"])}); }); }
 
 function drawNaranjo(c,x,gy,k){ c.save(); c.translate(x,gy); c.scale(k,k);
@@ -390,7 +481,7 @@ cv.style.touchAction="none"; let aim=null, hintT=0;
 cv.addEventListener("pointerdown",e=>{ if(state!=="play") return; e.preventDefault(); const p=toV(e.clientX,e.clientY);
   if(S.ammo<=0){ if(S.reload<=0){ reload(); toast(t("reload")); } return; }
   aim={x0:p.x,y0:p.y,dx:0,dy:0,id:e.pointerId}; try{ cv.setPointerCapture(e.pointerId); }catch(er){} const t0=now(); tone("triangle",220,t0,.06,.03,260); });
-cv.addEventListener("pointermove",e=>{ if(!aim||e.pointerId!==aim.id) return; const p=toV(e.clientX,e.clientY); let dx=p.x-aim.x0, dy=p.y-aim.y0; const L=Math.hypot(dx,dy); if(L>PULL){ dx*=PULL/L; dy*=PULL/L; } aim.dx=dx; aim.dy=dy; });
+cv.addEventListener("pointermove",e=>{ if(!aim||e.pointerId!==aim.id) return; const p=toV(e.clientX,e.clientY); let dx=p.x-aim.x0, dy=p.y-aim.y0; const L=Math.hypot(dx,dy); if(L>PULL){ dx*=PULL/L; dy*=PULL/L; } aim.dx=dx; aim.dy=dy; const L2=Math.hypot(dx,dy); if(Math.abs(L2-(aim.lastL||0))>14){ aim.lastL=L2; const t0=now(); tone("triangle",140+L2*2.2,t0,.05,.025,170+L2*2.4); } });
 function letGo(e){ if(!aim||(e&&e.pointerId!==aim.id)) return; const a=aim; aim=null; if(state!=="play") return;
   const L=Math.hypot(a.dx,a.dy); if(L<16||a.dy<6){ if(S.t-hintT>4){ hintT=S.t; toast(t("pullHint")); } return; }
   const tg=aimTarget(a.dx,a.dy); throwAt(tg.x,tg.y,L/PULL); }
@@ -402,7 +493,7 @@ $("olla").addEventListener("click",e=>{ e.stopPropagation(); if(state==="play") 
 function renderAmmo(){ $("tams").innerHTML=Array.from({length:6},(_,i)=>`<i class="${i<S.ammo?"":"off"}"></i>`).join(""); $("olla").classList.toggle("empty",S.ammo===0&&S.reload<=0); }
 function reload(){ if(S.reload>0||S.ammo===6) return; S.reload=.55; const t0=now(); noise(t0,.3,.2,"lowpass",500); tone("triangle",300,t0+.1,.2,.06,500); }
 function throwAt(x,y,pw){ if(S.ammo<=0){ if(S.reload<=0){ reload(); toast(t("reload")); } return; }
-  S.ammo--; S.throws++; renderAmmo(); if(S.ammo===0) setTimeout(()=>{ if(state==="play"&&S.ammo===0&&S.reload<=0) reload(); },250);
+  if(S.frenzy<=0) S.ammo--; S.throws++; renderAmmo(); if(S.ammo===0) setTimeout(()=>{ if(state==="play"&&S.ammo===0&&S.reload<=0) reload(); },250);
   const d=Math.max(0,Math.min(1,(FENCE+40-y)/(FENCE-ROOF+40))); const T=.3+d*.26; x+=S.wind*(.35+d*.65);
   S.tams.push({x0:SLX,y0:SLY-22,x,y,t:0,T,d,rot:rnd(0,6),spin:rnd(10,16)*(Math.random()<.5?-1:1)});
   S.snap=.18; const t0=now(); noise(t0,.12,.22,"highpass",2200); tone("square",140,t0,.08,.07,70); noise(t0+.04,.16,.14,"bandpass",900,2600); }
@@ -411,28 +502,39 @@ function throwAt(x,y,pw){ if(S.ammo<=0){ if(S.reload<=0){ reload(); toast(t("rel
 function land(tm){ const x=tm.x, y=tm.y;
   // the closest-to-camera things win ties: cans, then piñatas, then windows, then the roof
   for(const c of S.cansList){ if(!c.down&&Math.abs(x-c.x)<16&&y>c.y-20&&y<c.y+20){ hitCan(c,x); return; } }
+  if(S.clock&&!S.clock.hit){ const q=clockPos(); if(Math.hypot(x-q.x,y-q.y)<26){ hitClock(); return; } }
   for(const p of S.pinatas){ if(p.dead) continue; const q=pinPos(p); if(Math.hypot(x-q.x,y-q.y)<30){ hitPin(p,q); return; } }
   for(const w of S.wins){ if(w.who&&!w.hit&&Math.abs(x-w.x)<40&&y>w.y-58&&y<w.y+44){ hitWin(w); return; } }
   if(x<48&&y>FENCE+38&&y<FENCE+96){ for(let i=0;i<3;i++) S.parts.push({x:26+rnd(-12,12),y:FENCE+55,vx:rnd(-60,60),vy:rnd(-160,-40),t:0,l:1.2,r:0,emoji:"🍊",rot:rnd(-4,4)}); const t0=now(); tone("triangle",988,t0,.12,.06); tone("triangle",1319,t0+.08,.16,.05); return; }
   const c=S.cucuy; if(c&&!c.hit&&Math.abs(x-c.x)<34&&y>ROOF-112&&y<ROOF+8){ hitCucuy(c); return; }
   // ¡plaf! on whatever is behind
-  S.combo=0; S.splats.push({x,y,t:0,s:.6+(1-tm.d)*.5,r:rnd(0,6)}); const t0=now(); noise(t0,.14,.25,"lowpass",600,200); floatTxt(t("miss"),x,y-14,"#e9c46a"); updMult(); }
-function gain(pts,x,y,col){ S.hits++; S.combo++; S.bestCombo=Math.max(S.bestCombo,S.combo); const m=mult(); const v=pts*m; S.score+=v; floatTxt("+"+v+" m²",x,y-18,col||"#ffd34d");
-  if(S.combo>0&&S.combo%3===0&&m<=4){ const t0=now(); [660,880,1100].forEach((f,i)=>tone("square",f,t0+i*.05,.09,.06)); } updMult(); }
+  const had=S.combo; S.combo=0; S.splats.push({x,y,t:0,s:.6+(1-tm.d)*.5,r:rnd(0,6)}); const t0=now(); noise(t0,.14,.25,"lowpass",600,200); tone("sine",220,t0,.12,.12,90); if(had>=4) FIESTA.sting.awww(); floatTxt(t("miss"),x,y-14,"#e9c46a"); updMult(); }
+function gain(pts,x,y,col){ S.hits++; S.combo++; S.bestCombo=Math.max(S.bestCombo,S.combo); const m=mult()*(S.frenzy>0?2:1); const v=pts*m; S.score+=v; floatTxt("+"+v+" m²",x,y-18,col||"#ffd34d"); FIESTA.sting.ladder(Math.min(10,S.combo-1));
+  if(S.combo===8&&S.frenzy<=0) startFrenzy();
+  updMult(); }
+function startFrenzy(){ S.frenzy=6; S.ammo=6; S.reload=0; renderAmmo(); toast(t("frenzy")); FIESTA.sting.grito(); FIESTA.sting.cheer(1.5); FIESTA.setRate(1.12+(curLv-1)*.035); shake=6; updMult(); }
 const mult=()=>1+Math.min(3,Math.floor(S.combo/3));
-function updMult(){ const m=mult(), el=$("hMult"); el.hidden=m<2; el.textContent="🔥 ×"+m; renderLand(); }
+function setHype(){ FIESTA.setHype(S&&S.frenzy>0?2:mult()>=3?2:mult()>=2?1:0); }
+let lastMult=1;
+function updMult(){ const m=mult(), el=$("hMult"); el.hidden=m<2&&!(S&&S.frenzy>0); el.textContent=(S&&S.frenzy>0?"🔥🫔 ×"+(m*2):"🔥 ×"+m); if(m>lastMult&&state==="play"){ FIESTA.sting.key(); floatTxt("¡COMBO ×"+m+"!",VW/2,FENCE-30,"#ff8a3d"); } lastMult=m; setHype(); renderLand(); }
 function hitCan(c,x){ c.down=true; c.vx=(c.x-x)*10+rnd(-60,60); c.vy=-rnd(260,380); c.vr=rnd(-14,14); S.cans++; gain(10,c.x,c.y); burst(c.x,c.y,8,"#e9c46a");
-  const t0=now(); tone("square",1600,t0,.06,.05,900); noise(t0,.12,.15,"highpass",3500); shake=3;
-  if(S.cansList.every(k=>k.down)){ S.score+=50*mult(); toast(t("chuza")); updMult(); S.canRespawn=1.4; } }
+  const t0=now(); tone("square",1600,t0,.06,.05,900); noise(t0,.12,.15,"highpass",3500); for(let i=0;i<4;i++) tone("square",rnd(1900,3200),t0+.05+i*.06+rnd(0,.03),.04,.035); tone("triangle",420,t0+.28,.08,.05,300); shake=3;
+  if(S.cansList.every(k=>k.down)){ S.score+=50*mult(); toast(t("chuza")); FIESTA.sting.fanfare(); updMult(); S.canRespawn=1.4; } }
 function pinPos(p){ const a=Math.sin(S.t*1.6+p.ph)*.55; return {x:p.x+Math.sin(a)*p.len, y:ROPE+Math.cos(a)*p.len, a}; }
 function hitPin(p,q){ p.hp--; p.shake=.35; gain(20,q.x,q.y,"#ff8ab8"); burst(q.x,q.y,10,pick(["#e2337f","#f5a524","#22a9c4"])); const t0=now(); tone("sine",170,t0,.18,.5,60); shake=4;
-  if(p.hp<=0){ p.dead=2.6; S.pins++; S.score+=60*mult(); toast(t("pin")); updMult(); for(let i=0;i<26;i++) S.parts.push({x:q.x,y:q.y,vx:rnd(-220,220),vy:rnd(-320,-60),t:0,l:rnd(1,1.6),r:0,emoji:pick(["🍬","🍭","🍊","🥜","⭐"]),rot:rnd(-6,6)}); const t1=now(); noise(t1,.4,.5,"lowpass",3000,200); } }
+  if(p.hp<=0){ p.dead=2.6; S.pins++; S.score+=60*mult(); toast(t("pin")); updMult(); for(let i=0;i<26;i++) S.parts.push({x:q.x,y:q.y,vx:rnd(-220,220),vy:rnd(-320,-60),t:0,l:rnd(1,1.6),r:0,emoji:pick(["🍬","🍭","🍊","🥜","⭐"]),rot:rnd(-6,6)}); const t1=now(); noise(t1,.4,.5,"lowpass",3000,200); for(let i=0;i<14;i++) tone("square",rnd(1800,4200),t1+.05+Math.random()*.8,.025,.03); FIESTA.sting.cheer(1); } }
 function hitWin(w){ w.hit=.9; const t0=now();
-  if(w.who.k==="abuela"){ S.combo=0; S.score=Math.max(0,S.score-50); toast(t("abuela")); updMult(); tone("triangle",880,t0,.4,.15,520); shake=8; floatTxt("💔",w.x,w.y-40,"#ff8a8a"); return; }
+  if(w.who.k==="abuela"){ S.combo=0; S.score=Math.max(0,S.score-50); toast(t("abuela")); updMult(); FIESTA.sting.wah(); shake=8; floatTxt("💔",w.x,w.y-40,"#ff8a8a"); return; }
   S.rels++; gain(40,w.x,w.y-30,"#7ee8ff"); w.who.say=pick(t("oye")); w.who.hatV={x:rnd(-90,90),y:-rnd(240,320),r:rnd(-10,10),px:0,py:0,a:0};
-  const f=w.who.k==="tia"?520:200; tone("sawtooth",f,t0,.12,.12,f*1.6); tone("sawtooth",f*1.5,t0+.1,.22,.12,f*.8); noise(t0,.1,.2,"lowpass",900); shake=5; }
-function hitCucuy(c){ c.hit=1; S.score+=0; gain(150,c.x,ROOF-30,"#c9a7ff"); toast(t("cucuy")); const t0=now(); tone("sawtooth",130,t0,.5,.15,60); noise(t0,.5,.3,"lowpass",600); shake=8;
+  const f=w.who.k==="tia"?520:200; tone("sawtooth",f,t0,.12,.12,f*1.6); tone("sawtooth",f*1.5,t0+.1,.22,.12,f*.8); noise(t0,.1,.2,"lowpass",900); noise(t0,.06,.3,"lowpass",300); tone("sine",120,t0,.1,.25,60); if(S.combo>=3) FIESTA.sting.cheer(.6); shake=5; }
+function hitCucuy(c){ c.hit=1; S.score+=0; gain(150,c.x,ROOF-30,"#c9a7ff"); toast(t("cucuy")); const t0=now(); tone("sawtooth",130,t0,.5,.15,60); noise(t0,.5,.3,"lowpass",600); FIESTA.sting.big(); setTimeout(()=>FIESTA.sting.grito(),650); FIESTA.sting.cheer(1.4); shake=8;
   for(let i=0;i<10;i++) S.parts.push({x:c.x,y:ROOF-20,vx:rnd(-160,160),vy:rnd(-260,-80),t:0,l:1.4,r:0,emoji:i%3?"📜":"🏡",rot:rnd(-5,5)}); }
+function clockPos(){ const c=S.clock; return {x:c.x, y:ROPE+34+Math.sin(S.t*3)*6}; }
+function hitClock(){ const c=S.clock, q=clockPos(); c.hit=.6; S.left+=5; S.combo++; S.hits++; toast(t("clock")); floatTxt("+5s",q.x,q.y-24,"#7dff9a"); burst(q.x,q.y,12,"#7dff9a"); const t0=now(); [1568,2093,1568,2093].forEach((f,i)=>tone("triangle",f,t0+i*.07,.1,.07)); FIESTA.sting.key(); updMult(); }
+function stepClock(dt){ if(!S.clock){ S.clockT-=dt; if(S.clockT<=0&&S.left>6){ const dir=Math.random()<.5?1:-1; S.clock={x:dir>0?-20:VW+20,dir,v:rnd(50,70)*S.cfg.speed,hit:0}; S.clockT=rnd(13,19); if(!S.clockSeen){ S.clockSeen=1; toast(t("clockTip")); } const t0=now(); tone("triangle",2093,t0,.08,.05); tone("triangle",2093,t0+.12,.08,.05); } return; }
+  const c=S.clock; if(c.hit){ c.hit-=dt; if(c.hit<=0) S.clock=null; return; } c.x+=c.dir*c.v*dt; if(c.x<-30||c.x>VW+30) S.clock=null; }
+function drawClock(){ const c=S.clock; if(!c) return; const q=clockPos(); ctx.save(); ctx.globalAlpha=c.hit?Math.max(0,c.hit/.6):1; ctx.strokeStyle="#e8dcc4"; ctx.lineWidth=1.5; ctx.beginPath(); ctx.moveTo(q.x,ROPE); ctx.lineTo(q.x,q.y-12); ctx.stroke();
+  ctx.fillStyle="rgba(125,255,154,.25)"; ctx.beginPath(); ctx.arc(q.x,q.y,22+Math.sin(S.t*8)*3,0,6.283); ctx.fill(); ctx.font="26px sans-serif"; ctx.textAlign="center"; ctx.textBaseline="middle"; ctx.fillText("⏰",q.x,q.y); ctx.restore(); }
 function burst(x,y,n,c){ for(let i=0;i<n;i++) S.parts.push({x,y,vx:rnd(-170,170),vy:rnd(-220,40),t:0,l:rnd(.35,.7),r:rnd(2,4.5),c}); }
 function floatTxt(txt,x,y,c){ S.floats.push({txt,x,y,c,t:0}); }
 
@@ -534,7 +636,8 @@ function drawSign(){ const x=VW-70, y=FENCE+44; ctx.fillStyle="#5a3a26"; ctx.fil
   ctx.fillStyle="#7a2a1f"; ctx.font="900 10px Nunito,sans-serif"; ctx.textAlign="center"; ctx.textBaseline="middle"; ctx.fillText(LANG==="es"?"TERRENO FAMILIAR":"FAMILY LAND",0,-7); ctx.fillStyle="#d7372f"; ctx.font="900 9px Nunito,sans-serif"; ctx.fillText(LANG==="es"?"¡NO SE VENDE!":"NOT FOR SALE!",0,8); ctx.restore(); }
 function drawCan(c){ ctx.save(); ctx.translate(c.x,c.y); ctx.rotate(c.rot); ctx.fillStyle="#c9ccd6"; ctx.fillRect(-12,-16,24,32); ctx.fillStyle=c.c; ctx.fillRect(-12,-9,24,18); ctx.fillStyle="#fff8ec"; ctx.font="900 6px Nunito,sans-serif"; ctx.textAlign="center"; ctx.textBaseline="middle"; ctx.fillText("CHILES",0,0);
   ctx.fillStyle="#9aa3b5"; ctx.fillRect(-12,-16,24,3); ctx.fillRect(-12,13,24,3); ctx.restore(); }
-function tamal(x,y,s,rot){ ctx.save(); ctx.translate(x,y); ctx.rotate(rot); ctx.scale(s,s);
+function tamal(x,y,s,rot){ if(S&&S.frenzy>0){ ctx.save(); ctx.shadowColor="#ffb02e"; ctx.shadowBlur=14; } try{ tamal0(x,y,s,rot); } finally { if(S&&S.frenzy>0) ctx.restore(); } }
+function tamal0(x,y,s,rot){ ctx.save(); ctx.translate(x,y); ctx.rotate(rot); ctx.scale(s,s);
   ctx.fillStyle="#d9b25a"; ctx.beginPath(); ctx.moveTo(-8,-18); ctx.quadraticCurveTo(-12,0,-7,18); ctx.lineTo(7,18); ctx.quadraticCurveTo(12,0,8,-18); ctx.closePath(); ctx.fill();
   ctx.fillStyle="#f0d78a"; ctx.beginPath(); ctx.moveTo(-5,-14); ctx.quadraticCurveTo(-7,0,-4,14); ctx.lineTo(4,14); ctx.quadraticCurveTo(7,0,5,-14); ctx.closePath(); ctx.fill();
   ctx.strokeStyle="#b8862e"; ctx.lineWidth=1.2; ctx.beginPath(); ctx.moveTo(0,-16); ctx.lineTo(0,16); ctx.stroke(); ctx.fillStyle="#8a5a2a"; ctx.fillRect(-9,-12,18,2.5); ctx.fillRect(-9,9,18,2.5); ctx.restore(); }
@@ -565,12 +668,16 @@ function drawWind(){ if(!S.cfg.wind) return; const x=VW-60, y=FENCE+122, w=S.win
   ctx.fillStyle="rgba(15,24,56,.72)"; ctx.beginPath(); ctx.roundRect(x-48,y-16,96,32,12); ctx.fill();
   ctx.font="900 11px Nunito,sans-serif"; ctx.textAlign="left"; ctx.textBaseline="middle"; ctx.fillStyle="#aab4d6"; ctx.fillText("🌬️ "+t("wind"),x-42,y);
   ctx.fillStyle="#ffd34d"; ctx.font="900 14px Nunito,sans-serif"; ctx.textAlign="right"; ctx.fillText(n?(w>0?"›".repeat(n):"‹".repeat(n)):"·",x+42,y+1); }
-function draw(dt){ bg(); house(); drawCucuy(); rope(); fence(); drawTams(); drawFx(dt); }
+function draw(dt){ bg(); house(); drawCucuy(); rope(); drawClock(); fence(); drawTams(); drawFx(dt); drawFrenzy(); }
+function drawFrenzy(){ if(!S||!(S.frenzy>0)) return; const a=.45+.3*Math.sin(S.t*12); ctx.save();
+  ctx.strokeStyle=`rgba(255,140,40,${a})`; ctx.lineWidth=12; ctx.strokeRect(6,-200,VW-12,VH+400); ctx.strokeStyle=`rgba(255,211,77,${a*.8})`; ctx.lineWidth=4; ctx.strokeRect(14,-200,VW-28,VH+400);
+  const y=ROOF+12, w=170; ctx.fillStyle="rgba(28,20,48,.82)"; ctx.beginPath(); ctx.roundRect(VW/2-w/2,y-16,w,34,17); ctx.fill(); ctx.fillStyle="#ff8a3d"; ctx.beginPath(); ctx.roundRect(VW/2-w/2+4,y+10,(w-8)*Math.max(0,S.frenzy/6),4,2); ctx.fill();
+  ctx.font="900 15px Nunito,sans-serif"; ctx.textAlign="center"; ctx.textBaseline="middle"; ctx.fillStyle="#ffd34d"; ctx.fillText((LANG==="es"?"🔥 ¡TAMALADA! ×2":"🔥 TAMALADA! ×2"),VW/2,y-1); ctx.restore(); }
 
 /* ---------- update ---------- */
 function update(dt){ S.t+=dt; if(shake>0) shake=Math.max(0,shake-dt*30);
   S.left=Math.max(0,S.left-dt); const sec=Math.ceil(S.left); const tm=$("hTime"); tm.textContent=sec; tm.classList.toggle("low",sec<=10);
-  if(sec<=5&&sec!==S.ticked&&sec>0){ S.ticked=sec; const t0=now(); tone("square",sec===1?880:660,t0,.08,.07); } if(sec===10&&S.ticked!==10&&S.ticked!==-10){ S.ticked=-10; toast(t("last")); }
+  if(sec<=10&&sec!==S.ticked&&sec>0&&S.ticked!==-sec){ if(sec===10){ toast(t("last")); FIESTA.setRate(1.15+(curLv-1)*.035+(S.frenzy>0?.1:0)); } S.ticked=sec; FIESTA.sting.tick(sec<=3); }
   if(S.reload>0){ S.reload-=dt; if(S.reload<=0){ S.ammo=6; renderAmmo(); const t0=now(); tone("triangle",660,t0,.1,.06); } }
   S.tams.forEach(m=>{ m.t+=dt; if(m.t>=m.T&&!m.done){ m.done=true; land(m); } }); S.tams=S.tams.filter(m=>!m.done);
   if(S.cfg.canV){ const up=S.cansList.filter(c=>!c.down); if(up.length){ const lo=Math.min(...up.map(c=>c.x)), hi=Math.max(...up.map(c=>c.x)); if(lo<60) S.canDir=1; if(hi>VW-110) S.canDir=-1; up.forEach(c=>c.x+=S.canDir*S.cfg.canV*dt); } }
@@ -579,16 +686,19 @@ function update(dt){ S.t+=dt; if(shake>0) shake=Math.max(0,shake-dt*30);
   S.cansList.forEach(c=>{ if(!c.down) return; c.vy+=900*dt; c.x+=c.vx*dt; c.y+=c.vy*dt; c.rot+=c.vr*dt; });
   if(S.canRespawn>0){ S.canRespawn-=dt; if(S.canRespawn<=0) makeCans(); }
   S.pinatas.forEach(p=>{ if(p.shake>0) p.shake-=dt; if(p.dead){ p.dead-=dt; if(p.dead<=0){ p.dead=0; p.hp=p.max=Math.min(S.cfg.pin+2,p.max+1); p.len=rnd(55,95); p.x=rnd(80,310); } } });
-  stepWins(dt); stepCucuy(dt);
+  if(S.frenzy>0){ S.frenzy-=dt; if(S.frenzy<=0){ S.frenzy=0; toast(t("frenzyEnd")); FIESTA.setRate(1+(curLv-1)*.035+(S.left<=10?.15:0)); updMult(); } }
+  stepWins(dt); stepCucuy(dt); stepClock(dt);
   if(S.left<=0&&!S.tams.length) endRound(); }
 
 /* ---------- flow ---------- */
 function loop(ts){ const dt=Math.min(.05,(ts-(last||ts))/1000); last=ts; if(state==="play") update(dt); else if(state==="start"&&S){ S.t+=dt; stepWins(dt); } if(S) draw(dt); requestAnimationFrame(loop); }
 const SONG=[[7,.5,0],[7,.5,null],[9,.5,7],[7,.5,null],[12,.5,0],[11,1,null],[null,.5,7],[7,.5,0],[7,.5,null],[9,.5,7],[7,.5,null],[14,.5,2],[12,1,null],[null,.5,7],
   [7,.5,0],[19,.5,null],[16,.5,7],[12,.5,null],[11,.5,5],[9,1,null],[null,.5,5],[17,.5,5],[16,.5,null],[12,.5,7],[14,.5,null],[12,1.5,0],[null,.5,null]];
-function begin(n){ newRound(n); state="play"; ["start","over","paused"].forEach(id=>$(id).hidden=true); unlock(); startMusic(SONG,168); last=0; updMult(); toast(t("go2")); }
-function endRound(){ state="over"; stopMusic(); const sc=S.score, n=S.lv, st=starsFor(sc,S.goal), won=st>0, t0=now();
-  if(won){ [392,523,659,784].forEach((f,i)=>tone("square",f,t0+i*.15,.25,.08)); } else { [392,370,349,330].forEach((f,i)=>tone("sawtooth",f,t0+i*.28,i===3?.8:.26,.06)); }
+FIESTA.init(()=>audio(),()=>master);
+function music(on){ if(!on){ FIESTA.stop(); return; } FIESTA.setRate(1+(curLv-1)*.035); FIESTA.setHype(0); FIESTA.start(1); }
+function begin(n){ newRound(n); state="play"; ["start","over","paused"].forEach(id=>$(id).hidden=true); unlock(); music(true); last=0; updMult(); toast(t("go2")); setTimeout(()=>FIESTA.sting.grito(),150); }
+function endRound(){ state="over"; music(false); const sc=S.score, n=S.lv, st=starsFor(sc,S.goal), won=st>0, t0=now();
+  if(won){ FIESTA.sting.big(); setTimeout(()=>{ FIESTA.sting.grito(); FIESTA.sting.cheer(2); },800); } else { FIESTA.sting.wah(); setTimeout(()=>FIESTA.sting.awww(),300); }
   const prevBest=prog.best[n]||0; if(sc>prevBest) prog.best[n]=sc; if(st>(prog.stars[n]||0)) prog.stars[n]=st; if(won&&n>=prog.unlocked&&n<LEVELS.length) prog.unlocked=n+1; saveProg();
   $("overK").textContent=won?t("wonK",n):t("lostK",n); $("oStars").textContent=won?"⭐".repeat(st)+"☆".repeat(3-st):"";
   $("overT").textContent=won?(n===LEVELS.length?t("allDone"):t("wonT")[st-1]):t("lostT");
@@ -601,8 +711,8 @@ function renderLvls(){ const box=$("lvls"); box.innerHTML=LEVELS.map(L=>{ const 
     return `<button class="lvl${nxt?" next":""}" data-lv="${L.n}" ${lock?"disabled":""}><span class="n">${lock?"🔒":L.n}</span><span><b>${L.name}</b><small>${lock?t("locked"):t("lvlGoal",L.goal.toLocaleString(),L.time)}</small></span><span class="st">${"⭐".repeat(st)}${"☆".repeat(3-st)}</span></button>`; }).join("");
   box.querySelectorAll("[data-lv]").forEach(b=>b.onclick=()=>begin(+b.dataset.lv));
   const cont=Math.min(prog.unlocked,LEVELS.length); $("go").textContent=t("goN",cont,LEVELS[cont-1].name); $("go").onclick=()=>begin(cont); }
-function pause(on){ if(on&&state==="play"){ state="paused"; $("paused").hidden=false; stopMusic(); } else if(!on&&state==="paused"){ state="play"; $("paused").hidden=true; startMusic(SONG,168); last=0; } }
-function onSound(on){ if(!on) stopMusic(); else if(state==="play") startMusic(SONG,168); }
+function pause(on){ if(on&&state==="play"){ state="paused"; $("paused").hidden=false; music(false); } else if(!on&&state==="paused"){ state="play"; $("paused").hidden=true; music(true); setHype(); last=0; } }
+function onSound(on){ if(!on) music(false); else if(state==="play"){ music(true); setHype(); } }
 $("again").addEventListener("click",()=>begin(curLv)); $("nextLv").addEventListener("click",()=>begin(curLv+1)); $("toLvls").addEventListener("click",()=>{ $("over").hidden=true; state="start"; renderLvls(); $("start").hidden=false; });
 $("pause").addEventListener("click",e=>{ e.stopPropagation(); pause(state==="play"); }); $("resume").addEventListener("click",()=>pause(false)); $("quit").addEventListener("click",()=>begin(curLv));
 document.addEventListener("visibilitychange",()=>{ if(document.hidden) pause(true); });

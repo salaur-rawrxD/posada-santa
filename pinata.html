@@ -67,7 +67,7 @@ h1{font-family:var(--display);font-weight:400;font-size:clamp(28px,8vw,36px);lin
 @keyframes shout{from{transform:scale(.6) rotate(-6deg)}to{transform:none}}
 .hint{font-weight:600;font-size:14px;color:#aab4d6}
 .phud{position:absolute;left:50%;bottom:6px;transform:translateX(-50%);display:flex;align-items:center;gap:10px;padding:6px 12px;border-radius:99px;background:rgba(22,34,74,.82);color:var(--cream);font-weight:800;font-size:13px;white-space:nowrap;pointer-events:none;z-index:2}
-.phud .hp{display:flex;gap:2px}.phud .hp i{width:9px;height:10px;border-radius:3px;background:linear-gradient(180deg,#ff8ab8,#e2337f)}.phud .hp i.off{background:rgba(255,255,255,.18)}
+.phud .hp{display:flex;gap:2px}.phud .ptime{font-variant-numeric:tabular-nums;color:#ffd34d}.phud .ptime.low{color:#ff6b5e;animation:pt .5s infinite alternate}@keyframes pt{to{transform:scale(1.15)}}#zone.gold #zoneRing{stroke:#ffd34d!important;stroke-width:5!important;filter:drop-shadow(0 0 6px #ffd34d)}#pin.goldp{filter:drop-shadow(0 0 10px #ffd34d) brightness(1.15)}.phud .hp i{width:9px;height:10px;border-radius:3px;background:linear-gradient(180deg,#ff8ab8,#e2337f)}.phud .hp i.off{background:rgba(255,255,255,.18)}
 .phud .cmb{color:var(--marigold);min-width:62px;text-align:right}
 .skipbtn{font:inherit;font-weight:800;font-size:15px;color:var(--cream);background:rgba(255,248,236,.1);border:1.5px solid rgba(245,165,36,.65);border-radius:99px;min-height:44px;padding:0 18px;cursor:pointer;margin-top:8px}
 .grab{position:absolute;inset:0;z-index:3;cursor:pointer;touch-action:manipulation}
@@ -253,7 +253,7 @@ ol li::before{content:"★";color:var(--marigold);font-size:16px;line-height:1.4
       </g>
     </svg>
     <div class="pile" id="pile" aria-hidden="true"></div>
-    <div class="phud" id="phud" aria-hidden="true"><span>🪅</span><span class="hp" id="hpBar"></span><span class="cmb" id="cmb"></span></div>
+    <div class="phud" id="phud" aria-hidden="true"><span>🪅</span><span class="hp" id="hpBar"></span><span class="cmb" id="cmb"></span><span class="ptime" id="ptime" hidden></span></div>
   </div>
 
   <div class="play" id="play">
@@ -351,7 +351,99 @@ async function rpc(fn,args){ const c=new AbortController(), tm=setTimeout(()=>c.
 const ORIGIN=location.origin;
 const MINE={K:"posada-groups-v1", load(){ try{ const d=JSON.parse(localStorage.getItem(this.K)||"null"); if(d&&d.groups) return d; }catch(e){} return {groups:{},cur:null}; },
   join(gid,gn,me,extra){ if(!gid) return; const d=this.load(), g=d.groups[gid]||(d.groups[gid]={gn:gn||"",e:{}}); if(gn) g.gn=gn; if(me) g.me=String(me).trim().slice(0,18); Object.assign(g,extra||{}); g.seen=Date.now(); d.cur=gid; try{ localStorage.setItem(this.K,JSON.stringify(d)); }catch(e){} } };
+/*FIESTA*/
+/* Fiesta music for the mini games: the same Latin Christmas band as La Posada (mariachi, cumbia, son jarocho),
+   with a tempo knob and a "hype" knob, plus stingers (fanfare, grito, crowd). Self-contained: FIESTA.init(getCtx, getOut). */
+const FIESTA=(()=>{ let getCtx=()=>null, getOut=()=>null, BUS=null, SFX=null, NB=null, on=false, timer=null, nb=0, bt=0, RATE=1, HYPE=0;
+const A=()=>{ const a=getCtx(); if(!a) return null; if(!BUS){ const o=getOut()||a.destination; BUS=a.createGain(); BUS.gain.value=.3; BUS.connect(o); SFX=a.createGain(); SFX.gain.value=.55; SFX.connect(o);
+    NB=a.createBuffer(1,a.sampleRate,a.sampleRate); const d=NB.getChannelData(0); for(let i=0;i<d.length;i++) d[i]=Math.random()*2-1; } return a; };
+function noise(t,dur,peak,type,freq,f1,dest){ const a=A(); if(!a) return; const s=a.createBufferSource(); s.buffer=NB; const f=a.createBiquadFilter(); f.type=type||"lowpass"; f.frequency.setValueAtTime(freq||1200,t); if(f1) f.frequency.exponentialRampToValueAtTime(f1,t+dur);
+  const g=a.createGain(); g.gain.setValueAtTime(.0001,t); g.gain.exponentialRampToValueAtTime(peak,t+Math.min(.02,dur*.3)); g.gain.exponentialRampToValueAtTime(.0001,t+dur); s.connect(f).connect(g).connect(dest||BUS); s.start(t,Math.random()*.5); s.stop(t+dur+.05); }
+/* =========================================================
+   Latin Christmas music: three arrangements that rotate
+   1) Ranchera navideña  — the original villancico, mariachi style (trumpets, guitarrón, vihuela, maracas)
+   2) Cumbia del cascabel — Jingle Bells chorus (public domain) as a cumbia (accordion, güiro, bombo, bass)
+   3) Son de la piñata   — an original son jarocho in 6/8 (harp, jarana, requinto, zapateado)
+   ========================================================= */
+const NOTEN=n=>{ const m=/^([A-G])(s|b)?(\d)$/.exec(n); if(!m) return 0; return (+m[3]+1)*12+{C:0,D:2,E:4,F:5,G:7,A:9,B:11}[m[1]]+(m[2]==="s"?1:m[2]==="b"?-1:0); };
+const HZ=m=>440*Math.pow(2,(m-69)/12);
+const CHD={C:[60,64,67],F:[60,65,69],G:[59,62,67],D:[62,66,69],A:[61,64,69],Em:[59,64,67],Bm:[59,62,66]};
+const BASS={C:[36,43],F:[41,48],G:[43,38],D:[38,45],A:[45,40],Em:[40,47],Bm:[47,42]};
+const bars=s=>s.trim().split("|").map(b=>b.trim().split(/\s+/));
+const SONGS=[
+  {id:"ranchera",beats:4,eighth:.23,style:"mariachi",
+   bars:bars("G4 B4 D5 B4|C5 E5 G5 E5|D5 Fs5 A5 Fs5|G5 - D5 -|B4 B4 C5 D5|E5 E5 D5 C5|A4 B4 C5 A4|G4 - - -|G5 Fs5 E5 B4|C5 D5 E5 C5|D5 E5 Fs5 D5|G5 - G5 -|E5 G5 E5 C5|D5 B4 G4 B4|A4 C5 Fs5 A5|G5 - - -"),
+   ch:"G C D G G C D G Em C D G C G D G".split(" ")},
+  {id:"cumbia",beats:4,eighth:.175,style:"cumbia",
+   bars:bars("E5 - E5 -|E5 - - -|E5 - E5 -|E5 - - -|E5 - G5 -|C5 - - D5|E5 - - -|- - - -|F5 - F5 -|F5 - - F5|F5 - E5 -|E5 - E5 E5|E5 - D5 -|D5 - E5 -|D5 - - -|G5 - - -"),
+   ch:"C C C C C C C C F F C C G G G G".split(" ")},
+  {id:"son",beats:6,eighth:.15,style:"son",
+   bars:bars("A4 - D5 Fs5 - E5|D5 - A4 B4 - A4|G4 - B4 D5 - Cs5|B4 - - A4 - -|A4 - D5 Fs5 - A5|G5 - Fs5 E5 - D5|E5 - G5 Fs5 - E5|D5 - - - - -|Fs5 - Fs5 G5 - A5|B5 - A5 Fs5 - D5|G5 - G5 Fs5 - E5|A5 - - - - -|Fs5 - A5 G5 - E5|D5 - Fs5 E5 - Cs5|D5 - E5 Fs5 - E5|D5 - - - - -"),
+   ch:"D D G A D G A D D G G A D A A D".split(" ")}
+];
+let song=SONGS[1], songIdx=1;
+function setSong(i){ songIdx=((i%SONGS.length)+SONGS.length)%SONGS.length; song=SONGS[songIdx]; }
+// little instrument helpers, all routed into the music bus
+function v(type,f,t,dur,peak,lp,att,det){ const a=A(); if(!a) return; const o=a.createOscillator(),g=a.createGain(); o.type=type; o.frequency.setValueAtTime(f,t); if(det) o.detune.setValueAtTime(det,t);
+  let out=g; if(lp){ const fl=a.createBiquadFilter(); fl.type="lowpass"; fl.frequency.value=lp; o.connect(fl).connect(g); } else o.connect(g);
+  g.gain.setValueAtTime(.0001,t); g.gain.exponentialRampToValueAtTime(peak,t+(att||.006)); g.gain.exponentialRampToValueAtTime(.0001,t+dur); g.connect(BUS); o.start(t); o.stop(t+dur+.05); }
+function trumpet(f,t,dur){ v("sawtooth",f,t,dur,.05,2300,.025,-7); v("sawtooth",f,t,dur,.05,2300,.025,7); v("square",f*2,t,dur*.8,.012,3000,.03); }
+function marimba(f,t,dur){ v("triangle",f,t,Math.min(.5,dur),.2); v("sine",f*4,t,.08,.04); }
+function accordion(f,t,dur){ v("square",f,t,dur,.035,1700,.02,-9); v("square",f,t,dur,.035,1700,.02,9); v("triangle",f/2,t,dur,.05); }
+function pluck(f,t,peak){ v("sawtooth",f,t,.22,peak||.05,1800,.003); }
+function harp(f,t){ v("triangle",f,t,.35,.09); v("sine",f*2,t,.18,.03); }
+function strum(chord,t,oct,peak){ chord.forEach((m,j)=>pluck(HZ(m+(oct||0)),t+j*.012,peak||.045)); }
+function bassN(m,t,dur,peak){ v("triangle",HZ(m),t,dur,peak||.32); v("sine",HZ(m),t,dur,(peak||.32)*.5); }
+function shaker(t,peak){ noise(t,.06,peak,"highpass",6000); }
+function guiro(t,long){ noise(t,long?.14:.05,long?.09:.06,"bandpass",3200); }
+function bombo(t){ v("sine",90,t,.25,.35); v("sine",55,t,.3,.25); }
+function stomp(t){ noise(t,.08,.14,"lowpass",400); v("sine",70,t,.12,.18); }
+function bells(t){ for(let i=0;i<4;i++) v("triangle",2800+Math.random()*1500,t+i*.035,.18,.03); }
+function playBar(sg,b,t){
+  const bar=sg.bars[b%sg.bars.length], ch=sg.ch[b%sg.ch.length], E=sg.eighth, chord=CHD[ch], bs=BASS[ch];
+  // melody
+  bar.forEach((n,i)=>{ if(n==="-"||n==="R") return; let len=1; for(let k=i+1;k<bar.length&&bar[k]==="-";k++) len++; const f=HZ(NOTEN(n)), tt=t+i*E, d=Math.min(.9,len*E*.92);
+    if(sg.style==="mariachi"){ trumpet(f,tt,d); marimba(f/2,tt,d); }
+    else if(sg.style==="cumbia") accordion(f,tt,d);
+    else { pluck(f,tt,.09); v("triangle",f,tt,d,.12); } });
+  if(sg.style==="mariachi"){ bassN(bs[0],t,E*1.7); bassN(bs[1],t+2*E,E*1.7);                       // guitarrón on the beats
+    [1,3].forEach(k=>strum(chord,t+k*E)); [0,1,2,3].forEach(k=>shaker(t+k*E,k%2?.05:.03)); if(b%4===3) bells(t+2*E); }
+  else if(sg.style==="cumbia"){ bassN(bs[0],t,E*1.5,.34); bassN(bs[1],t+2*E,E*.9,.28); bassN(bs[0]+12,t+3*E,E*.8,.2);   // bass: root, fifth, octave
+    bombo(t); [1,3].forEach(k=>chord.forEach(m=>v("square",HZ(m),t+k*E,E*.6,.016,1500)));                                 // accordion chops
+    [0,1,2,3].forEach(k=>guiro(t+k*E,k%2===1)); if(b%8===7) bells(t+3*E); }
+  else { bassN(bs[0],t,E*2.6,.3); bassN(bs[1],t+3*E,E*2.6,.26);                                         // son jarocho 6/8
+    [0,2,3,5].forEach(k=>strum(chord,t+k*E,12,.035)); [0,3].forEach(k=>stomp(t+k*E));                    // jarana + zapateado
+    chord.concat([chord[0]+12,chord[1]+12]).forEach((m,i)=>harp(HZ(m+12),t+i*E*.5)); }                  // harp runs
+}
 
+// extra layers when the game heats up
+function hype(sg,b,t){ const E=sg.eighth, n=sg.beats;
+  if(HYPE>=1){ for(let k=0;k<n*2;k++) noise(t+k*E/2,.04,k%2?.03:.05,"highpass",7000); [1,3].forEach(k=>{ if(k<n) noise(t+k*E,.09,.12,"bandpass",1500); }); }
+  if(HYPE>=2){ for(let k=0;k<n;k++){ v("sine",90,t+k*E,.2,.3); } bells(t); if(b%2) bells(t+E*(n-1)); v("sawtooth",HZ(CHD[sg.ch[b%sg.ch.length]][2]+12),t,E*n*.9,.018,2600,.05); } }
+function start(i){ const a=A(); if(!a) return; if(on) stop(); if(i!=null) setSong(i); on=true; nb=0; bt=a.currentTime+.12;
+  timer=setInterval(()=>{ const ac=getCtx(); if(!ac||!on) return; while(bt<ac.currentTime+.5){ const sg=Object.assign({},song,{eighth:song.eighth/RATE}); playBar(sg,nb,bt); hype(sg,nb,bt); bt+=sg.beats*sg.eighth; nb++; } },90); }
+function stop(){ on=false; clearInterval(timer); }
+// stingers go to their own bus so they cut through the band
+function sv(type,f,t,dur,peak,slide,lp){ const a=A(); if(!a) return; const o=a.createOscillator(), g=a.createGain(); o.type=type; o.frequency.setValueAtTime(f,t); if(slide) o.frequency.exponentialRampToValueAtTime(slide,t+dur);
+  let n=o; if(lp){ const fl=a.createBiquadFilter(); fl.type="lowpass"; fl.frequency.value=lp; o.connect(fl); n=fl; } n.connect(g); g.gain.setValueAtTime(.0001,t); g.gain.exponentialRampToValueAtTime(peak,t+.012); g.gain.exponentialRampToValueAtTime(.0001,t+dur); g.connect(SFX); o.start(t); o.stop(t+dur+.05); }
+const T=()=>{ const a=A(); return a?a.currentTime:0; };
+const sting={
+  fanfare(){ const t=T(); [[67,0,.12],[72,.12,.12],[76,.24,.12],[79,.36,.5]].forEach(([m,o,d])=>{ sv("sawtooth",HZ(m),t+o,d,.09,0,2600); sv("sawtooth",HZ(m-4),t+o,d,.06,0,2400); }); noise(t+.36,.5,.12,"highpass",6000,0,SFX); },
+  big(){ const t=T(); [[67,0],[67,.09],[67,.18],[72,.3],[76,.42],[79,.54],[84,.7]].forEach(([m,o],i)=>{ const d=i===6?.7:.08; sv("sawtooth",HZ(m),t+o,d,.1,0,2800); sv("sawtooth",HZ(m-5),t+o,d,.07,0,2400); }); for(let i=0;i<6;i++) sv("triangle",2600+Math.random()*1500,t+.7+i*.05,.2,.04); },
+  grito(){ const t=T(); // ¡ajúa! a rising yelp, a held "ú", a falling "a"
+    sv("sawtooth",380,t,.16,.07,720,1800); sv("sawtooth",720,t+.15,.34,.08,980,2200); sv("sawtooth",980,t+.48,.32,.07,420,1900); noise(t,.12,.05,"bandpass",2500,0,SFX); },
+  cheer(n){ const t=T(), k=n||1; noise(t,.9*k,.16*k,"bandpass",1200,2400,SFX); noise(t+.05,.8*k,.1*k,"bandpass",600,1100,SFX); for(let i=0;i<4*k;i++) noise(t+Math.random()*.6,.05,.06,"highpass",3500,0,SFX); },
+  awww(){ const t=T(); noise(t,.8,.12,"bandpass",900,350,SFX); },
+  wah(){ const t=T(); [[466,.0],[440,.3],[415,.6],[392,.9]].forEach(([f,o],i)=>sv("sawtooth",f,t+o,i===3?.8:.28,.07,i===3?370:0,1200)); },
+  tick(hi){ const t=T(); sv("square",hi?1320:880,t,.05,.06); sv("sine",hi?2640:1760,t,.03,.03); },
+  ladder(n){ const t=T(), sc=[0,2,4,7,9,12,14,16,19,21,24]; const m=72+sc[Math.min(sc.length-1,n)]; sv("triangle",HZ(m),t,.14,.09); sv("sine",HZ(m+12),t+.02,.1,.04); },
+  key(){ const t=T(); [0,4,7,12].forEach((s,i)=>sv("square",HZ(79+s),t+i*.05,.1,.05)); }
+};
+return {init(c,o){ getCtx=c; getOut=o||(()=>null); }, start, stop, setRate(r){ RATE=r; }, setHype(h){ HYPE=h; }, get on(){ return on; }, sting, setSong};
+})();
+/*/FIESTA*/
+</script>
+<script>
 const KEY = "eva-santa-2026-wrap";
 const HITS = 7 + Math.floor(Math.random()*4); // 7–10 hits, never shown, so nobody knows when it'll break
 const SHOUTS = ["¡Dale!","¡Dale, dale!","¡Ándale!","¡Más fuerte!","¡Otra vez!","¡Eso!","¡No pierdas el tino!","¡Duro!","¡Ahí va!","¡Pégale!"];
@@ -413,7 +505,7 @@ const T={
     stage:"Swing at the piñata",shopping:"You're shopping for",sizes:"Their sizes",shirt:"Shirt",pants:"Pants",shoes:"Shoes",wishes:"Their top 3 wishes",hints:"Gift hints ✨",noIdeas:"No ideas listed",
     skip:"Skip to my match →",orJust:"No Secret Santa yet?",justPlay:"🪅 Just play the piñata",arcK:"You broke it!",arcHost:"🎄 Run your own Secret Santa →",share:"📣 Challenge the family",
     arcSub:"Just for fun: how fast can you break it?",arcTitles:[[2600,"Professional piñata breaker!"],[1800,"¡Qué tino! Great aim!"],[1000,"¡Nada mal!"],[0,"¡Dale, dale, dale!"]],
-    arcMsg:(s,url)=>`🪅 I broke the piñata with ${s} points! Think you can beat me? 👇\n${url}`,aim:"Swing when the piñata passes the ⭐",perfect:"¡PERFECTO! 💥",good:"¡Bien! 👊",miss:"¡Aire! 💨 Missed",yank:"¡El tío la jaló! He yanked it ⬆️",blind:"They spun you around! Listen for the beeps 👂",grab:"Grab the candy! 🍬",
+    arcMsg:(s,url)=>`🪅 I broke the piñata with ${s} points! Think you can beat me? 👇\n${url}`,aim:"Swing when the piñata passes the ⭐",perfect:"¡PERFECTO! 💥",good:"¡Bien! 👊",miss:"¡Aire! 💨 Missed",yank:"¡El tío la jaló! He yanked it ⬆️",gold:"⭐ GOLDEN SWING! Triple damage",flip:"¡Cambió de lado! He switched directions ↔️",timeUp:"⏱️ Time's up! The tío took the piñata",timeUpT:"Time's up! So close 😅",blind:"They spun you around! Listen for the beeps 👂",grab:"Grab the candy! 🍬",
     rematch:"🪅 Play the piñata again",pSw:"swings",pPf:"perfect",pCd:"candy",pSc:"points",best:"New best! 🏆",bestWas:n=>`Your best: ${n} points`,combo:"Combo",
     hush:"Shhh, it's top secret 🤫 Keep this text so you can check back while you shop.",shot:"📸 Save as image",playTips:"🎮 Play for elf tips",making:"Making your picture…",again:"🎺 Play the song again",
     bad1:"Almost there! Your secret code didn't come through.",bad2:"Go back to your text, copy the whole message (or just the link), and paste it here.",badLabel:"Your Secret Santa text",paste:"Paste here",go:"Let's break it! 🪅",
@@ -426,7 +518,7 @@ const T={
     stage:"Pégale a la piñata",shopping:"Le vas a regalar a",sizes:"Sus tallas",shirt:"Camisa",pants:"Pantalón",shoes:"Zapato",wishes:"Sus 3 deseos favoritos",hints:"Pistas para el regalo ✨",noIdeas:"No puso ideas",
     skip:"Ir directo a mi Secret Santa →",orJust:"¿Todavía no tienes Secret Santa?",justPlay:"🪅 Solo jugar la piñata",arcK:"¡La rompiste!",arcHost:"🎄 Organiza tu propio Secret Santa →",share:"📣 Reta a la familia",
     arcSub:"Solo por diversión: ¿qué tan rápido la rompes?",arcTitles:[[2600,"¡Rompepiñatas profesional!"],[1800,"¡Qué tino!"],[1000,"¡Nada mal!"],[0,"¡Dale, dale, dale!"]],
-    arcMsg:(s,url)=>`🪅 ¡Rompí la piñata con ${s} puntos! ¿A que no me ganas? 👇\n${url}`,aim:"Pégale cuando la piñata pase por la ⭐",perfect:"¡PERFECTO! 💥",good:"¡Bien! 👊",miss:"¡Aire! 💨",yank:"¡El tío la jaló! ⬆️",blind:"¡Te dieron vueltas! Escucha los bips 👂",grab:"¡Agarra los dulces! 🍬",
+    arcMsg:(s,url)=>`🪅 ¡Rompí la piñata con ${s} puntos! ¿A que no me ganas? 👇\n${url}`,aim:"Pégale cuando la piñata pase por la ⭐",perfect:"¡PERFECTO! 💥",good:"¡Bien! 👊",miss:"¡Aire! 💨",yank:"¡El tío la jaló! ⬆️",gold:"⭐ ¡GOLPE DORADO! Triple daño",flip:"¡Cambió de lado! ↔️",timeUp:"⏱️ ¡Se acabó el tiempo! El tío se llevó la piñata",timeUpT:"¡Se acabó el tiempo! Casi 😅",blind:"¡Te dieron vueltas! Escucha los bips 👂",grab:"¡Agarra los dulces! 🍬",
     rematch:"🪅 Jugar la piñata otra vez",pSw:"golpes",pPf:"perfectos",pCd:"dulces",pSc:"puntos",best:"¡Nuevo récord! 🏆",bestWas:n=>`Tu récord: ${n} puntos`,combo:"Combo",
     hush:"Shhh, es top secret 🤫 Guarda este mensaje para revisarlo mientras compras.",shot:"📸 Guardar como imagen",playTips:"🎮 Juega por tips",making:"Haciendo tu imagen…",again:"🎺 Tocar la canción otra vez",
     bad1:"¡Ya casi! Tu código secreto no llegó.",bad2:"Regresa a tu mensaje, copia todo el texto (o solo el link) y pégalo aquí.",badLabel:"Tu mensaje del Secret Santa",paste:"Pega aquí",go:"¡A romperla! 🪅",
@@ -599,9 +691,12 @@ const stick=$("stick"), pin=$("pin");
 const REST=-150, HIT=-38, ZX=282, ZY=144;
 let stickA=REST, pinA=0, pinV=0, hits=0, broken=false, swingT=-1, hitDone=false, last=performance.now();
 let G0=null, skipMode=false;
-function newGame(){ G0={hp:10+Math.floor(Math.random()*3),max:0,dmg:0,ph:Math.random()*6,dx:0,dy:0,yank:0,yankT:3.5+Math.random()*2,wob:0,blind:0,blindT:0,combo:0,best:0,perfect:0,good:0,miss:0,score:0,t0:0,t:0,beepT:0,candy:0,started:false}; G0.max=G0.hp; renderHud(); }
+function newGame(){ G0={hp:(ARCADE?15:10)+Math.floor(Math.random()*3),max:0,dmg:0,ph:Math.random()*6,dx:0,dy:0,yank:0,yankT:3.5+Math.random()*2,wob:0,blind:0,blindT:0,combo:0,best:0,perfect:0,good:0,miss:0,score:0,t0:0,t:0,beepT:0,candy:0,started:false,dir:1,flipT:4,gold:0,goldT:2.5+Math.random()*1.5,left:ARCADE?30:0,tick:-1,timeUp:false}; G0.max=G0.hp; renderHud(); FIESTA.stop(); }
 function renderHud(){ if(!G0) return; const left=Math.max(0,G0.hp-G0.dmg); $("hpBar").innerHTML=Array.from({length:G0.max},(_,i)=>`<i class="${i<left?"":"off"}"></i>`).join("");
-  $("cmb").textContent=G0.combo>=2?`${t("combo")} ×${G0.combo}`:""; }
+  $("cmb").textContent=G0.combo>=2?`🔥 ${t("combo")} ×${G0.combo}`:"";
+  const pt=$("ptime"); if(pt){ pt.hidden=!ARCADE; if(ARCADE){ const s=Math.ceil(G0.left); pt.textContent="⏱️ "+s; pt.classList.toggle("low",s<=5); } } }
+FIESTA.init(()=>audio(),()=>master);
+function pinHype(){ if(!G0) return; FIESTA.setHype(G0.gold>0||G0.combo>=6?2:G0.combo>=3?1:0); FIESTA.setRate(1+Math.min(1,G0.dmg/G0.max)*.3+(ARCADE&&G0.left<=8?.12:0)); }
 const pinXY=()=>({x:275+G0.dx,y:150+G0.dy});
 function frame(now){
   const dt=Math.min(0.05,(now-last)/1000); last=now;
@@ -615,7 +710,11 @@ function frame(now){
     const prog=G0.dmg/G0.max;
     if(G0.started){ G0.t+=dt;
       // the tío pulls the rope: slow at first, faster as it cracks
-      G0.ph+=dt*(RM?1.1:(1.5+prog*1.7));
+      G0.ph+=dt*G0.dir*(RM?1.1:(1.5+prog*1.7));
+      if(!RM&&prog>.3){ G0.flipT-=dt; if(G0.flipT<=0){ G0.flipT=2.5+Math.random()*3; if(Math.random()<.6){ G0.dir*=-1; say("flip"); const t0=now(); osc("triangle",520,t0,.12,.12,{slide:780}); } } }
+      G0.goldT-=dt; if(G0.gold<=0&&G0.goldT<=0&&G0.blind<=0){ G0.gold=1.7; G0.goldT=4+Math.random()*3; $("zone").classList.add("gold"); pin.classList.add("goldp"); say("gold"); FIESTA.sting.key(); pinHype(); }
+      if(G0.gold>0){ G0.gold-=dt; if(G0.gold<=0){ $("zone").classList.remove("gold"); pin.classList.remove("goldp"); pinHype(); } }
+      if(ARCADE&&!G0.timeUp){ G0.left-=dt; const sl=Math.ceil(G0.left); if(sl!==G0.tick){ G0.tick=sl; renderHud(); if(sl<=5&&sl>0) FIESTA.sting.tick(sl<=3); if(sl===8) pinHype(); } if(G0.left<=0) timeUp(); }
       // later on he yanks it up out of reach (with a little wobble first)
       G0.yankT-=dt; if(prog>.25&&G0.yankT<=0&&G0.yank<=0&&G0.wob<=0){ G0.wob=.45; }
       if(G0.wob>0){ G0.wob-=dt; if(G0.wob<=0){ G0.yank=.75; ropeZip(); say("yank"); } }
@@ -643,15 +742,17 @@ function say(k){ const h=$("hint"); hintKey=k; h.textContent=t(k); }
 function startSwing(){ swingT=0; hitDone=false; whoosh(); }
 function swing(){
   if(broken||!data||!G0) return;
-  unlock(); if(!G0.started){ G0.started=true; G0.t0=performance.now(); }
+  unlock(); if(!G0.started){ G0.started=true; G0.t0=performance.now(); FIESTA.start(2); pinHype(); }
   if(swingT>=0) return;        // no queued swings: timing matters
   startSwing();
 }
 function pop(text,hot){ const s=$("shout"); s.textContent=text; s.classList.toggle("hot",!!hot); s.classList.remove("pop"); void s.offsetWidth; s.classList.add("pop"); }
 function onHit(){
   hits++; const q=pinXY(), d=Math.hypot(q.x-ZX,q.y-ZY);
-  if(d<13||(d<30)){ const perfect=d<13, dmg=perfect?2:1; G0.dmg+=dmg; G0.combo++; G0.best=Math.max(G0.best,G0.combo);
-    const mult=1+Math.min(4,Math.floor(G0.combo/3))*.5; G0.score+=Math.round((perfect?150:80)*mult);
+  if(d<13||(d<30)){ const perfect=d<13, gold=G0.gold>0, dmg=(perfect?2:1)+(gold?(perfect?1:1):0); const before=G0.dmg/G0.max; G0.dmg+=dmg; G0.combo++; G0.best=Math.max(G0.best,G0.combo);
+    const mult=1+Math.min(4,Math.floor(G0.combo/3))*.5; G0.score+=Math.round((perfect?150:80)*mult*(gold?2.5:1));
+    FIESTA.sting.ladder(Math.min(10,G0.combo-1)); if(perfect||gold) FIESTA.sting.cheer(gold?1:.5); if(gold){ FIESTA.sting.fanfare(); G0.gold=0; $("zone").classList.remove("gold"); pin.classList.remove("goldp"); }
+    [.25,.5,.75].forEach(k=>{ if(before<k&&G0.dmg/G0.max>=k){ const t0=now(); noise(t0,.12,.5,"highpass",2400); osc("square",180,t0,.08,.15,{slide:90}); } }); pinHype();
     if(perfect){ G0.perfect++; } else G0.good++;
     bonk(); if(perfect) chime(); pinV-=perfect?240:160+Math.random()*50;
     pop(perfect?t("perfect"):SHOUTS[Math.floor(Math.random()*SHOUTS.length)],perfect);
@@ -660,7 +761,7 @@ function onHit(){
     if(G0.dmg>=3) burst(perfect?4:2, 0.6);
     if(hintKey==="aim"||hintKey==="yank"||hintKey==="blind") say("keep");
     renderHud(); if(G0.dmg>=G0.max) breakPinata();
-  } else { G0.miss++; G0.combo=0; pop(t("miss")); renderHud(); }
+  } else { const had=G0.combo; G0.miss++; G0.combo=0; pop(t("miss")); renderHud(); if(had>=3) FIESTA.sting.awww(); pinHype(); }
 }
 function chime(){ const t0=now(); [880,1175,1568].forEach((f,i)=>osc("triangle",f,t0+i*.05,.14,.18)); }
 function beep(d){ const t0=now(); osc("square",d<14?1320:d<30?990:660,t0,.05,d<14?.12:.06); }
@@ -680,11 +781,15 @@ function stepGrab(dt){ if(!GR) return; GR.t+=dt; const w=GR.box.clientWidth, h=G
     GR.list.push({el,x:w*(.15+Math.random()*.75),y:-20,vy:60+Math.random()*80,vx:(Math.random()*2-1)*30,r:(Math.random()*2-1)*200,a:0,got:false}); }
   GR.list.forEach(c=>{ if(c.got) return; c.vy+=180*dt; c.y+=c.vy*dt; c.x+=c.vx*dt; c.a+=c.r*dt; c.el.style.transform=`translate(${(c.x-15).toFixed(1)}px,${(c.y-15).toFixed(1)}px) rotate(${c.a.toFixed(0)}deg)`; if(c.y>h+30){ c.got=true; c.el.remove(); } });
   if(GR.t>=GR.len){ const g=GR; GR=null; g.box.remove(); setTimeout(()=>{ const c=$("grabct"); if(c) c.remove(); },900); finishGame(); } }
+function timeUp(){ if(broken||!G0) return; G0.timeUp=true; broken=true; FIESTA.stop(); FIESTA.sting.wah(); setTimeout(()=>FIESTA.sting.awww(),300); pop(t("timeUp")); say("timeUp");
+  $("zone").classList.remove("gold"); pin.classList.remove("goldp");
+  pin.animate([{transform:`translate(${G0.dx}px,${G0.dy}px)`},{transform:`translate(${G0.dx}px,-260px)`}],{duration:900,easing:"cubic-bezier(.5,0,.8,.3)",fill:"forwards"}).onfinish=()=>{ pin.style.opacity="0"; };
+  $("skipBtn").hidden=true; setTimeout(finishGame,1100); }
 function finishGame(){ const secs=(performance.now()-(G0.t0||performance.now()))/1000; G0.score+=Math.max(0,Math.round(600-secs*25))-G0.miss*40; G0.score=Math.max(100,G0.score);
   let prev=0; try{ prev=+localStorage.getItem("pinata-best")||0; if(G0.score>prev) localStorage.setItem("pinata-best",String(G0.score)); }catch(e){}
   $("pSw").textContent=hits; $("pPf").textContent=G0.perfect; $("pCd").textContent=G0.candy; $("pSc").textContent=G0.score.toLocaleString();
   $("pBest").textContent=G0.score>prev?t("best"):t("bestWas")(prev.toLocaleString()); $("pinRes").hidden=false;
-  flood(); banner(); setTimeout(ARCADE?showArcade:reveal, RM?200:900); }
+  if(!G0.timeUp){ flood(); banner(); } setTimeout(()=>{ (ARCADE?showArcade:reveal)(); const k=document.querySelector('#arcade [data-t="arcK"]'); if(k) k.textContent=G0.timeUp?(LANG==="es"?"⏱️ Se acabó el tiempo":"⏱️ Out of time"):t("arcK"); if(G0.timeUp&&$("arcT")) $("arcT").textContent=t("timeUpT"); }, RM?200:900); }
 let arcPrev=0;
 function showArcade(){ arcPrev=0; try{ arcPrev=+localStorage.getItem("pinata-best-prev")||0; }catch(e){} fillArcade(); const r=$("arcade"); r.hidden=false; r.classList.add("result-in"); try{ r.scrollIntoView({behavior:RM?"auto":"smooth",block:"center"}); }catch(e){} }
 function fillArcade(){ const sc=G0.score; $("arcT").textContent=t("arcTitles").find(([m])=>sc>=m)[1];
@@ -695,7 +800,7 @@ function fillArcade(){ const sc=G0.score; $("arcT").textContent=t("arcTitles").f
   $("arcHome").hidden=inClaude; $("arcHome").href="/"; $("arcHome").textContent=LANG==="es"?"🏠 Inicio":"🏠 Home";
   $("arcHost").href=inClaude?"/host":"/host"; }
 function skipGame(){ if(broken) { if(GR){ GR.t=GR.len; } return; } skipMode=true; breakPinata(); }
-function resetGame(){ broken=false; skipMode=false; hits=0; stickA=REST;
+function resetGame(){ broken=false; skipMode=false; hits=0; stickA=REST; pin.getAnimations().forEach(a=>a.cancel()); pin.style.opacity="";
   ["cTop","cRight","cLeft","cBR","cBL","core"].forEach(id=>{ const el=$(id); el.getAnimations().forEach(a=>a.cancel()); el.style.opacity=""; });
   document.querySelectorAll(".crack").forEach(c=>c.setAttribute("opacity","0")); $("pile").innerHTML=""; piled=0;
   $("blindfold").setAttribute("opacity","1"); $("eyes").setAttribute("opacity","0"); $("mouth").setAttribute("d","M110 160 Q120 168 130 160"); $("mouth").setAttribute("fill","none");
@@ -767,7 +872,8 @@ function breakPinata(){
   $("blindfold").setAttribute("opacity","0"); $("eyes").setAttribute("opacity","1");
   $("mouth").setAttribute("d","M106 158 Q120 178 134 158 Z"); $("mouth").setAttribute("fill","#7a2a1f");
   stickA=-120;
-  burst(skipMode?30:55, skipMode?1:1.2); smash(); setTimeout(playSong, 350); if(skipMode){ flood(); }
+  FIESTA.stop(); $("zone").classList.remove("gold"); pin.classList.remove("goldp");
+  burst(skipMode?30:55, skipMode?1:1.2); smash(); if(!skipMode){ FIESTA.sting.grito(); FIESTA.sting.cheer(2); } setTimeout(playSong, skipMode?350:900); if(skipMode){ flood(); }
   $("shout").textContent="¡La rompiste! ¡Ajúa! 🎉"; hintKey="below"; $("hint").textContent=t("below");
   $("skipBtn").hidden=true; $("phud").hidden=true; $("zone").style.display="none"; pin.style.opacity="1";
   if(skipMode){ setTimeout(reveal, 250); } else setTimeout(startGrab, RM?300:1300);
