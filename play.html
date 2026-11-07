@@ -1894,7 +1894,7 @@ const svgURL=s=>"data:image/svg+xml;charset=utf-8,"+encodeURIComponent(s);
 /* ---------- the player's avatar ---------- */
 const OLD_OUTFIT={sombrero:{hat:"sombrero"},sarape:{clothes:"sarape"},charro:{hat:"charro",clothes:"charro"},barba:{face:"santa"},corona:{hat:"crown"},estrella:{hat:"halo"}};
 function avFor(p){ let a=p&&p.avatar; if(typeof a==="string") a=OLD_OUTFIT[a]||{}; return {...AV_DEFAULT,...(a||{})}; }
-function avOpen(cat,opt,p){ const req=(AV_LOCK[cat]||{})[opt]; if(!req) return true; p=p||Board.player(Board.current());
+function avOpen(cat,opt,p){ const req=(AV_LOCK[cat]||{})[opt]; if(!req) return true; if(window.__famPlus) return true; p=p||Board.player(Board.current());
   if(req==="stars") return [1,2,3,4,5].every(n=>p.levels[n]&&p.levels[n].stars>=3); return !!p.levels[req]; }
 function avReq(cat,opt){ const req=(AV_LOCK[cat]||{})[opt]; return req==="stars"?t("reqStars"):t("reqLevel",req); }
 function avSafe(a,p){ const out={...a}; Object.keys(AV_LOCK).forEach(cat=>{ if(!avOpen(cat,out[cat],p)) out[cat]=AV_DEFAULT[cat]; }); return out; }
@@ -2513,7 +2513,7 @@ function renderFamBanner(){ const g=Fam.group(), b=$("famBan"); if(!g){ b.hidden
 const _fam_renderLevels=renderLevels; renderLevels=function(){ _fam_renderLevels(); renderFamBanner(); };
 const _fam_renderBoard=renderBoard; renderBoard=function(){ const g=Fam.group(), seg=$("boardSeg");
   if(!g){ seg.hidden=true; $("famChallenge").hidden=true; _fam_renderBoard(); return; }
-  seg.hidden=false; seg.innerHTML=Fam.all().sort((a,b)=>String(a.gn).localeCompare(String(b.gn))).map(x=>`<button type="button" data-b="fam" data-g="${esc(x.gid)}" aria-pressed="${boardTab==="fam"&&x.gid===g.gid}">🏆 ${esc(x.gn||"Familia")}</button>`).join("")+`<button type="button" data-b="phone" aria-pressed="${boardTab!=="fam"}">📱 ${esc(ft("thisPhone"))}</button>`;
+  seg.hidden=false; seg.innerHTML=Fam.all().sort((a,b)=>String(a.gn).localeCompare(String(b.gn))).map(x=>`<button type="button" data-b="fam" data-g="${esc(x.gid)}" aria-pressed="${boardTab==="fam"&&x.gid===g.gid}">${x.plus?"👑":"🏆"} ${esc(x.gn||"Familia")}</button>`).join("")+`<button type="button" data-b="phone" aria-pressed="${boardTab!=="fam"}">📱 ${esc(ft("thisPhone"))}</button>`;
   seg.querySelectorAll("button").forEach(x=>x.onclick=()=>{ boardTab=x.dataset.b; if(x.dataset.g){ Fam.setCur(x.dataset.g); if(typeof famSync==="function") famSync(true); renderFamBanner(); } renderBoard(); });
   const sub=document.querySelector("#board [data-t=boardSub]");
   if(boardTab!=="fam"){ $("famChallenge").hidden=true; if(sub) sub.textContent=t("boardSub"); _fam_renderBoard(); return; }
@@ -2533,7 +2533,9 @@ const _fam_pick=pick; pick=function(n){ if(Fam.group()) Fam.link(n); _fam_pick(n
 const _fam_applyLang=applyLang; applyLang=function(){ _fam_applyLang(); if(!$("menu").hidden) renderFamBanner(); if(!$("board").hidden) renderBoard(); };
 /* live board: pull the group's scores, push ours after every level */
 let famT=0;
+window.__famPlus=Fam.all().some(x=>x.plus);
 async function famSync(force){ const g=Fam.group(); if(!g) return; if(!force&&Date.now()-famT<8000) return; famT=Date.now();
+  try{ if(!g.plus){ const pl=await rpc("get_plus",{p_gid:g.gid}); if(pl===true){ const d=Fam.load(); if(d.groups[g.gid]){ d.groups[g.gid].plus=true; Fam.save(d); } window.__famPlus=true; } } }catch(e){}
   try{ const bd=await rpc("get_board",{p_gid:g.gid}); if(Array.isArray(bd)){ Fam.merge({gid:g.gid,gn:g.gn,e:bd.map(r=>[r.player,r.score,r.stars,r.top_level,Date.parse(r.updated_at)||0])}); renderFamBanner(); if(!$("board").hidden) renderBoard(); } }catch(e){} }
 async function famPush(){ const cur=Fam.group(); if(!cur) return;
   for(const g of Fam.all()){ const me=g.me||(g.gid===cur.gid?Board.current():""); if(!me) continue; const r=Board.rows().find(x=>x.name===me); if(!r||!r.total) continue;
