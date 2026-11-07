@@ -58,7 +58,7 @@ p{margin:0;color:#b8c1e0;font-weight:600}
 .seg button{font:inherit;font-weight:800;font-size:12px;height:28px;min-width:36px;padding:0 10px;border:0;border-radius:99px;background:none;color:var(--muted);cursor:pointer}
 .seg button[aria-pressed="true"]{background:var(--cream);color:var(--night)}
 label.lbl,.lbl{font-size:12px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
-input[type=text],input[type=tel],input[type=date],input[type=time],textarea,select{font:inherit;font-size:16px;font-weight:700;width:100%;min-height:48px;padding:10px 14px;border-radius:14px;border:1px solid rgba(255,255,255,.16);background:rgba(10,16,40,.45);color:var(--cream);-webkit-user-select:text;user-select:text}
+input[type=text],input[type=tel],input[type=email],input[type=date],input[type=time],textarea,select{font:inherit;font-size:16px;font-weight:700;width:100%;min-height:48px;padding:10px 14px;border-radius:14px;border:1px solid rgba(255,255,255,.16);background:rgba(10,16,40,.45);color:var(--cream);-webkit-user-select:text;user-select:text}
 textarea{min-height:110px;resize:vertical}
 input::placeholder,textarea::placeholder{color:#7f8ab8}
 input:focus,textarea:focus,select:focus{outline:none;border-color:var(--gold);box-shadow:0 0 0 3px rgba(245,198,106,.25)}
@@ -176,7 +176,7 @@ const WORDS={
     hiKick:"You're invited",hi:n=>n?`${n}, write your letter to Santa`:"Write your letter to Santa",
     hiSub:(o,g)=>`${o} is running the Secret Santa for ${g}. Tell your Santa what you'd love. It takes about 3 minutes.`,
     budget:"Gift budget",party:"Gift exchange",due:"Letters due",start:"Start my letter ✍️",
-    you:"First, who's writing?",name:"Your name",namePh:"Like Rosa García",phone:"Your phone number",phoneHelp:o=>`Optional. It helps ${o} match your letter to you.`,phonePh:"(555) 123-4567",needName:"Please type your name.",
+    you:"First, who's writing?",name:"Your name",namePh:"Like Rosa García",phone:"Your phone number",phoneHelp:o=>`Optional. It helps ${o} match your letter to you.`,phonePh:"(555) 123-4567",email:"Email for Santa alerts (optional)",emailHelp:o=>`If your Secret Santa sends you a secret question, we'll email you. ${o} never sees this.`,needName:"Please type your name.",
     sizes:"Your sizes",sizesSub:"So your Santa doesn't have to guess.",shirt:"Shirt size",pants:"Pants size",pantsPh:"32x30, M, 10…",shoe:"Shoe size",shoePh:"9 US, 26 MX…",other:"Other",otherPh:"Type your size",
     wishes:"Your top 3 wishes",wishesSub:"Gifts you'd really love, within the budget. Be specific if you can!",wish:i=>["Wish #1 (your favorite)","Wish #2","Wish #3"][i],wishPh:["A cozy gray hoodie, size L","Café de olla mugs","Anything from Target"],needWish:"Add at least one wish so your Santa has a place to start.",
     style:"Your style",styleSub:"Pick what fits. Skip anything you like.",vb:"Which sounds most like you?",fi:"How do you like your clothes to fit?",co:"Colors you love wearing",coHelp:"Pick as many as you like.",sw:"Shoes you actually wear",
@@ -195,7 +195,7 @@ const WORDS={
     hiKick:"Estás invitado",hi:n=>n?`${n}, escribe tu carta a Santa`:"Escribe tu carta a Santa",
     hiSub:(o,g)=>`${o} organiza el Secret Santa de ${g}. Cuéntale a tu Santa qué te encantaría. Toma unos 3 minutos.`,
     budget:"Presupuesto",party:"Intercambio",due:"Cartas hasta",start:"Empezar mi carta ✍️",
-    you:"Primero, ¿quién escribe?",name:"Tu nombre",namePh:"Por ejemplo Rosa García",phone:"Tu número de teléfono",phoneHelp:o=>`Opcional. Ayuda a que ${o} sepa que la carta es tuya.`,phonePh:"(555) 123-4567",needName:"Escribe tu nombre, por favor.",
+    you:"Primero, ¿quién escribe?",name:"Tu nombre",namePh:"Por ejemplo Rosa García",phone:"Tu número de teléfono",phoneHelp:o=>`Opcional. Ayuda a que ${o} sepa que la carta es tuya.`,phonePh:"(555) 123-4567",email:"Email para avisos de Santa (opcional)",emailHelp:o=>`Si tu Santa Secreto te manda una pregunta secreta, te avisamos por email. ${o} nunca lo ve.`,needName:"Escribe tu nombre, por favor.",
     sizes:"Tus tallas",sizesSub:"Para que tu Santa no tenga que adivinar.",shirt:"Talla de camisa",pants:"Talla de pantalón",pantsPh:"32x30, M, 10…",shoe:"Talla de zapato",shoePh:"26 MX, 9 US…",other:"Otra",otherPh:"Escribe tu talla",
     wishes:"Tus 3 deseos",wishesSub:"Regalos que de verdad te encantarían, dentro del presupuesto. ¡Entre más específico, mejor!",wish:i=>["Deseo #1 (tu favorito)","Deseo #2","Deseo #3"][i],wishPh:["Una sudadera gris calientita, talla G","Tazas para café de olla","Lo que sea de Liverpool"],needWish:"Agrega al menos un deseo para que tu Santa tenga por dónde empezar.",
     style:"Tu estilo",styleSub:"Escoge lo que va contigo. Puedes saltar lo que quieras.",vb:"¿Qué va más contigo?",fi:"¿Cómo te gusta que te quede la ropa?",co:"Colores que te encanta usar",coHelp:"Escoge todos los que quieras.",sw:"Zapatos que sí usas",
@@ -225,7 +225,8 @@ const STEPS=["intro","you","sizes","wishes","style","loves","last","review","don
 function draftKey(){ return "santa-letter-"+(inv?inv.g.gid+"-"+String(inv.n||"").toLowerCase().replace(/[^a-z0-9]+/g,""):"none"); }
 function blank(){ return {name:inv&&inv.n||"",phone:"",shirt:"",shirtO:"",pants:"",shoe:"",g:["","",""],vb:[],fi:[],co:[],sw:[],lv:[],sc:[],cf:[],gc:[],ck:"",tr:"",rd:"",gm:"",sp:"",tm:"",st:"",no:""}; }
 function save(){ if(inv) store.set(draftKey(),{A,step,lang,sealed,delivered}); }
-async function deliver(){ try{ if(inv&&inv.g&&A&&A.name) MINE.join(inv.g.gid,inv.g.gn,first(A.name)); }catch(e){} delivered=null; render(); try{ const ok=await rpc("submit_letter",{p_gid:inv.g.gid,p_code:sealed}); delivered=ok===true; }catch(e){ delivered=false; } save(); if(STEPS[step]==="done") render(); }
+async function deliver(){ try{ if(inv&&inv.g&&A&&A.name) MINE.join(inv.g.gid,inv.g.gn,first(A.name)); }catch(e){} delivered=null; render(); try{ const ok=await rpc("submit_letter",{p_gid:inv.g.gid,p_code:sealed}); delivered=ok===true; }catch(e){ delivered=false; } save(); if(STEPS[step]==="done") render();
+  const em=String(A.email||"").trim(); if(em&&/^[^@\s]+@[^@\s]+\.[^@\s]{2,}$/.test(em)){ try{ await rpc("set_alert_email",{p_gid:inv.g.gid,p_name:A.name.trim(),p_email:em}); }catch(e){} } }
 function setLang(l){ lang=l==="es"?"es":"en"; document.documentElement.lang=lang; document.querySelectorAll("[data-lang]").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.lang===lang))); document.title=L().title; }
 document.querySelectorAll("[data-lang]").forEach(b=>b.onclick=()=>{ setLang(b.dataset.lang); save(); render(); });
 
@@ -268,6 +269,7 @@ function render(){
   if(id==="you") h=`<div class="card in">${head("1 / 6",W.you,"")}
     <div class="field"><label class="lbl" for="f_name">${esc(W.name)}</label><input type="text" id="f_name" data-bind="name" value="${esc(A.name)}" placeholder="${esc(W.namePh)}" autocomplete="name"></div>
     <div class="field"><label class="lbl" for="f_phone">${esc(W.phone)}</label><input type="tel" id="f_phone" data-bind="phone" value="${esc(A.phone)}" placeholder="${esc(W.phonePh)}" autocomplete="tel" inputmode="tel"><span class="help">${esc(W.phoneHelp(first(g.on)||"Santa"))}</span></div>
+    ${typeof rpc!=="undefined"?`<div class="field"><label class="lbl" for="f_email">${esc(W.email)}</label><input type="email" id="f_email" data-bind="email" value="${esc(A.email||"")}" placeholder="tu@email.com" autocomplete="email" inputmode="email"><span class="help">${esc(W.emailHelp(first(g.on)||"Santa"))}</span></div>`:""}
     <p class="err" id="err" hidden></p></div>`;
   if(id==="sizes") h=`<div class="card in">${head("2 / 6",W.sizes,W.sizesSub)}
     <div class="q"><h3>${esc(W.shirt)}</h3>${shirtChips()}<input type="text" data-bind="shirtO" value="${esc(A.shirtO)}" placeholder="${esc(W.other+": "+W.otherPh)}" aria-label="${esc(W.other)}"></div>

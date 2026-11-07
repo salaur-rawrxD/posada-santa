@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="robots" content="noindex">
-<title>Posada Santa · Pregunta secreta</title>
+<title>Posada Santa · Buzón de Santa</title>
 <link rel="canonical" href="https://posadaxmas.com/q">
 <meta name="description" content="Your Secret Santa has a question for you.">
 <meta property="og:type" content="website">
@@ -46,6 +46,10 @@ textarea{font:inherit;font-weight:700;font-size:16px;width:100%;border-radius:14
 .btn{font:inherit;font-weight:900;font-size:17px;min-height:54px;border:0;border-radius:16px;cursor:pointer;color:#1c1430;background:linear-gradient(180deg,#ffd77a,#f5a524);box-shadow:0 4px 0 #b8741a;text-decoration:none;display:flex;align-items:center;justify-content:center;padding:0 18px}
 .btn:disabled{opacity:.6}
 .ans{background:#eaf7e8;border:1.5px solid #9fd398;border-radius:16px;padding:12px 14px;font-weight:800;text-align:left;color:#1f4d1a}
+.qbox{display:grid;gap:10px;text-align:left;padding-top:6px}.qbox .q{text-align:center}.link{font:inherit;font-weight:800;font-size:13.5px;background:none;border:0;color:var(--muted);text-decoration:underline;cursor:pointer;justify-self:center}
+.ok{color:#1f6b2a;font-weight:900;text-align:center}.btn.ghost{background:#f1e6d2;box-shadow:none}.btn.sm{min-height:46px;font-size:15px}
+.mail{background:#f6ecd9;border-radius:16px;padding:14px;display:grid;gap:8px;text-align:left}.mail b{font-weight:900}.mail p{font-size:13px}.mail .row{display:flex;gap:8px}.mail input{flex:1;min-width:0;font:inherit;font-weight:700;font-size:16px;border:1.5px solid #e0d2bd;border-radius:12px;padding:10px 12px;background:#fff;color:var(--ink)}
+.wrap,.card,.qbox,.mail{grid-template-columns:minmax(0,1fr)}.wrap>*,#app>*,.qbox>*,.card>*,.mail>*{min-width:0}.mail .btn{flex:0 0 auto}.q{overflow-wrap:anywhere}
 .fine{font-size:12.5px;color:#9aa6cf;text-align:center;font-weight:700}
 .dots::after{content:"";animation:dots 1.2s steps(4) infinite}@keyframes dots{0%{content:""}25%{content:"."}50%{content:".."}75%{content:"..."}}
 </style>
@@ -68,35 +72,52 @@ const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&
 let L=(()=>{ try{ const s=localStorage.getItem("posada-lang"); if(s==="en"||s==="es") return s; }catch(e){} return (navigator.language||"").startsWith("en")?"en":"es"; })();
 const T=(en,es)=>L==="es"?es:en;
 const nick=s=>{ const w=String(s||"").trim().split(/\s+/); return w.slice(0,/^(t[ií][ao]|abuel[ao]|abuelit[ao]|prim[ao]|mam[aá]|pap[aá]|don|doña|nin[ao]|padrino|madrina|aunt|uncle|grandma|grandpa|cousin)$/i.test(w[0]||"")?2:1).join(" "); };
-const m=location.hash.match(/a=([0-9a-f-]{36})\.([0-9a-f]{20,})/), A=m?{id:m[1],r:m[2]}:null;
+const KEY="eva-santa-2026-wrap";
+function decode(code){ if(!/^x[0-9a-f]+$/.test(code)||code.length%2!==1) return null; const hex=code.slice(1), b=new Uint8Array(hex.length/2);
+  for(let i=0;i<b.length;i++) b[i]=parseInt(hex.substr(i*2,2),16)^KEY.charCodeAt(i%KEY.length); try{ return JSON.parse(new TextDecoder().decode(b)); }catch(e){ return null; } }
+// Mailbox access: from the person's own piñata code (#x…) or from the email alert link (#g=…&m=…)
+const MB=(()=>{ const h=decodeURIComponent(location.hash||"");
+  const gm=h.match(/g=([A-Za-z0-9_-]{4,40})&m=([0-9a-f]{20,})/); if(gm) return {gid:gm[1],mb:gm[2],code:null};
+  const c=(h.toLowerCase().match(/x[0-9a-f]{40,}/)||[])[0]; if(c){ const cc=c.length%2===1?c:c.slice(0,-1), d=decode(cc); if(d&&d.gid&&d.mb) return {gid:d.gid,mb:d.mb,code:cc,l:d.l}; }
+  return null; })();
 const PAID=/[?&]paid=1/.test(location.search);
-let S=null, state="load", sent=false;
+let BOX=null, state="load", drafts={}, sentIds={}, editing={};
 const app=document.getElementById("app");
+function emailCard(){ if(!BOX||BOX.email) return `<p class="fine" style="color:#7a6553">${BOX&&BOX.email?"📧 "+esc(T("Email alerts are on.","Tienes alertas por email.")):""}</p>`;
+  return `<div class="mail"><b>📧 ${esc(T("Get an email if your Santa asks you something","Avísame por email si mi Santa me pregunta algo"))}</b><p>${esc(T("Only Posada Santa sees it. Your organizer never does.","Solo lo ve Posada Santa. Tu organizador(a) nunca lo ve."))}</p>
+    <div class="row"><input type="email" id="em" placeholder="tu@email.com" autocomplete="email" inputmode="email"><button class="btn sm" id="emGo">${esc(T("Save","Guardar"))}</button></div></div>`; }
 function render(){ document.documentElement.lang=L; document.querySelectorAll("[data-l]").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.l===L)));
-  if(A){ // the match answers
-    if(state==="load"){ app.innerHTML=`<div class="card"><div class="big-e">🤫</div><p class="dots">${esc(T("Opening your secret question","Abriendo tu pregunta secreta"))}</p></div>`; return; }
-    if(!S){ app.innerHTML=`<div class="card"><div class="big-e">🎁</div><h1>${esc(T("This link expired","Este link ya no sirve"))}</h1><p>${esc(T("Ask your organizer to send you the question again.","Pídele a tu organizador(a) que te mande la pregunta otra vez."))}</p></div>`; return; }
-    const fn=nick(S.to);
-    if(S.answered&&!sent&&state!=="edit"){ app.innerHTML=`<div class="card"><div class="kick">${esc(T("Your Secret Santa asked","Tu Santa Secreto preguntó"))}</div><div class="q">${esc(S.question)}</div><div class="ans">✓ ${esc(S.answer)}</div><p>${esc(T("Your Santa can already see your answer.","Tu Santa ya puede ver tu respuesta."))}</p><button class="btn" id="edit" style="background:#f1e6d2;box-shadow:none">✏️ ${esc(T("Change my answer","Cambiar mi respuesta"))}</button></div>`; return; }
-    if(sent){ app.innerHTML=`<div class="card"><div class="big-e">🎉</div><h1>${esc(T("Sent to your Santa!","¡Listo, se lo mandamos!"))}</h1><p>${esc(T("Your Secret Santa can see your answer now. Act surprised at the posada 😉","Tu Santa Secreto ya puede ver tu respuesta. Hazte el sorprendido en la posada 😉"))}</p><a class="btn" href="/juegos">🎮 ${esc(T("Play the posada games","Juega los juegos de la posada"))}</a></div>`; return; }
-    app.innerHTML=`<div class="card"><div class="big-e">🤫</div><div class="kick">${esc(T(`${fn}, your Secret Santa asks`,`${fn}, tu Santa Secreto pregunta`))}</div><div class="q">${esc(S.question)}</div>
-      <p>${esc(T("Answer here. They'll see it, but you'll never know who asked, and nobody else will either.","Contesta aquí. Tu Santa lo verá, pero tú no sabrás quién preguntó, y nadie más tampoco."))}</p>
-      <textarea id="ans" maxlength="400" placeholder="${esc(T("Your answer…","Tu respuesta…"))}">${esc(state==="edit"?S.answer||"":"")}</textarea>
-      <button class="btn" id="send">🤫 ${esc(T("Send my answer","Mandar mi respuesta"))}</button></div>`; return; }
+  if(MB){
+    if(state==="load"){ app.innerHTML=`<div class="card"><div class="big-e">📬</div><p class="dots">${esc(T("Opening your Santa mailbox","Abriendo tu buzón de Santa"))}</p></div>`; return; }
+    if(!BOX){ app.innerHTML=`<div class="card"><div class="big-e">📭</div><h1>${esc(T("Mailbox not found","No encontramos tu buzón"))}</h1><p>${esc(T("Open the piñata link your organizer sent you and tap the 📬 there.","Abre el link de piñata que te mandaron y toca el 📬 que sale ahí."))}</p></div>`; return; }
+    const fn=nick(BOX.name), qs=BOX.questions||[], open=qs.filter(q=>!q.answered||editing[q.id]);
+    const back=MB.code?`<a class="btn ghost" href="/pinata#${esc(MB.code)}">🪅 ${esc(T("Back to my piñata","Volver a mi piñata"))}</a>`:"";
+    if(!qs.length){ app.innerHTML=`<div class="card"><div class="big-e">📭</div><div class="kick">${esc(T("Santa mailbox","Buzón de Santa"))}</div><h1>${esc(T(`Nothing yet, ${fn}`,`Todavía nada, ${fn}`))}</h1><p>${esc(T("If your Secret Santa sends you a question, it shows up here. Nobody else can open this mailbox.","Si tu Santa Secreto te manda una pregunta, aparece aquí. Nadie más puede abrir este buzón."))}</p>${emailCard()}${back}</div>`; return; }
+    app.innerHTML=`<div class="card"><div class="big-e">🤫</div><div class="kick">${esc(T(`${fn}'s Santa mailbox`,`Buzón de Santa de ${fn}`))}</div>
+      <h1>${esc(open.length?T(open.length===1?"Your Secret Santa asked you something":"Your Secret Santa asked you some things",open.length===1?"Tu Santa Secreto te preguntó algo":"Tu Santa Secreto te preguntó unas cosas"):T("All answered! 🎉","¡Todo contestado! 🎉"))}</h1>
+      <p>${esc(T("Answer here. Your Santa sees it, but you'll never know who asked, and nobody else will either.","Contesta aquí. Tu Santa lo ve, pero tú no sabrás quién preguntó, y nadie más tampoco."))}</p>
+      ${qs.map(q=>{ const ed=!q.answered||editing[q.id]; return `<div class="qbox"><div class="q">${esc(q.question)}</div>${ed?`<textarea data-ans="${q.id}" maxlength="400" placeholder="${esc(T("Your answer…","Tu respuesta…"))}">${esc(drafts[q.id]??(q.answer||""))}</textarea><button class="btn" data-send="${q.id}">🤫 ${esc(T("Send my answer","Mandar mi respuesta"))}</button>`
+        :`<div class="ans">✓ ${esc(q.answer)}</div><button class="link" data-edit="${q.id}">✏️ ${esc(T("Change my answer","Cambiar mi respuesta"))}</button>`}${sentIds[q.id]?`<p class="ok">🎉 ${esc(T("Sent! Act surprised at the posada 😉","¡Listo! Hazte el sorprendido en la posada 😉"))}</p>`:""}</div>`; }).join("")}
+      ${emailCard()}${back}</div>`; return; }
   if(PAID){ let pend=null; try{ pend=localStorage.getItem("posada-q-pending"); }catch(e){}
     const q=(()=>{ try{ return JSON.parse(localStorage.getItem("posada-q")||"[]").find(x=>x.id===pend); }catch(e){ return null; } })();
     const back=q?`<a class="btn" href="/ideas#${esc(q.code)}">🎁 ${esc(T("Back to gift ideas","Volver a las ideas de regalo"))}</a>`:"";
-    app.innerHTML=`<div class="card"><div class="big-e">${S&&S.paid?"📮":"⏳"}</div><h1>${esc(S&&S.paid?T("Your question is on its way!","¡Tu pregunta va en camino!"):T("Confirming your payment","Confirmando tu pago"))}</h1>
-      ${q?`<div class="q">${esc(q.q)}</div>`:""}<p class="${S&&S.paid?"":"dots"}">${esc(S&&S.paid?T(`Your organizer will pass it to ${nick(q&&q.to)} without seeing it or knowing who asked. Their answer will show up on your gift ideas page.`,`Tu organizador(a) se la va a mandar a ${nick(q&&q.to)} sin verla ni saber quién preguntó. Su respuesta va a salir en tu página de ideas de regalo.`):T("This takes a few seconds","Esto tarda unos segundos"))}</p>${back}</div>`; return; }
+    app.innerHTML=`<div class="card"><div class="big-e">${S&&S.paid?"📬":"⏳"}</div><h1>${esc(S&&S.paid?T("It's in their mailbox!","¡Ya está en su buzón!"):T("Confirming your payment","Confirmando tu pago"))}</h1>
+      ${q?`<div class="q">${esc(q.q)}</div>`:""}<p class="${S&&S.paid?"":"dots"}">${esc(S&&S.paid?T(`Your question went straight to ${nick(q&&q.to)}'s private Santa mailbox, with no name on it. Nobody passes it along, not even your organizer. Their answer will show up on your gift ideas page.`,`Tu pregunta llegó directo al buzón de Santa privado de ${nick(q&&q.to)}, sin tu nombre. Nadie la pasa de mano en mano, ni tu organizador(a). Su respuesta va a salir en tu página de ideas de regalo.`):T("This takes a few seconds","Esto tarda unos segundos"))}</p>${back}</div>`; return; }
   app.innerHTML=`<div class="card"><div class="big-e">🎁</div><h1>Posada Santa</h1><p>${esc(T("Nothing to see here. Open the link from your text message.","No hay nada aquí. Abre el link que te mandaron por mensaje."))}</p><a class="btn" href="/">posadaxmas.com</a></div>`; }
-function wire(){ const sb=document.getElementById("send"); if(sb) sb.onclick=async()=>{ const v=document.getElementById("ans").value.trim(); if(!v){ document.getElementById("ans").focus(); return; } sb.disabled=true;
-    try{ const ok=await rpc("answer_question",{p_id:A.id,p_rtok:A.r,p_answer:v}); if(ok===true){ sent=true; S.answered=true; S.answer=v; render(); wire(); return; } }catch(e){}
-    sb.disabled=false; alert(T("Couldn't send it. Check your connection and try again.","No se pudo mandar. Revisa tu conexión e intenta otra vez.")); };
-  const ed=document.getElementById("edit"); if(ed) ed.onclick=()=>{ state="edit"; render(); wire(); }; }
+let S=null;
+function wire(){
+  document.querySelectorAll("[data-ans]").forEach(t=>t.oninput=()=>{ drafts[t.dataset.ans]=t.value; });
+  document.querySelectorAll("[data-send]").forEach(b=>b.onclick=async()=>{ const id=b.dataset.send, v=(drafts[id]??document.querySelector(`[data-ans="${id}"]`).value).trim(); if(!v){ document.querySelector(`[data-ans="${id}"]`).focus(); return; } b.disabled=true;
+    try{ const ok=await rpc("mailbox_answer",{p_gid:MB.gid,p_mb:MB.mb,p_id:id,p_answer:v}); if(ok===true){ const q=BOX.questions.find(x=>x.id===id); q.answered=true; q.answer=v; delete editing[id]; delete drafts[id]; sentIds[id]=1; render(); wire(); return; } }catch(e){}
+    b.disabled=false; alert(T("Couldn't send it. Check your connection and try again.","No se pudo mandar. Revisa tu conexión e intenta otra vez.")); });
+  document.querySelectorAll("[data-edit]").forEach(b=>b.onclick=()=>{ editing[b.dataset.edit]=1; delete sentIds[b.dataset.edit]; render(); wire(); });
+  const eg=document.getElementById("emGo"); if(eg) eg.onclick=async()=>{ const v=document.getElementById("em").value.trim(); if(!/^[^@\s]+@[^@\s]+\.[^@\s]{2,}$/.test(v)){ document.getElementById("em").focus(); return; } eg.disabled=true;
+    try{ if(await rpc("mailbox_email",{p_gid:MB.gid,p_mb:MB.mb,p_email:v})===true){ BOX.email=true; render(); wire(); return; } }catch(e){} eg.disabled=false; }; }
 document.querySelectorAll("[data-l]").forEach(b=>b.onclick=()=>{ L=b.dataset.l; try{ localStorage.setItem("posada-lang",L); }catch(e){} render(); wire(); });
 document.getElementById("picado").innerHTML=Array.from({length:30},(_,i)=>`<i style="background:${["#ff4fa3","#ffd34d","#2fb3a3","#ff7a2f","#7a5cff","#53b84a","#ef3b3b"][i%7]}"></i>`).join("");
-(async()=>{ render();
-  if(A){ try{ S=await rpc("question_for_match",{p_id:A.id,p_rtok:A.r}); if(S&&S.lang&&!localStorage.getItem("posada-lang")) L=S.lang; }catch(e){ S=null; } state="ready"; render(); wire(); return; }
+(async()=>{ if(MB&&MB.l&&!(()=>{ try{ return localStorage.getItem("posada-lang"); }catch(e){ return null; } })()) L=MB.l==="en"?"en":"es"; render();
+  if(MB){ try{ BOX=await rpc("mailbox_read",{p_gid:MB.gid,p_mb:MB.mb}); }catch(e){ BOX=null; } state="ready"; render(); wire(); return; }
   if(PAID){ let pend=null, q=null; try{ pend=localStorage.getItem("posada-q-pending"); q=JSON.parse(localStorage.getItem("posada-q")||"[]").find(x=>x.id===pend); }catch(e){}
     if(!q){ render(); return; } for(let i=0;i<30;i++){ try{ S=await rpc("question_status",{p_id:q.id,p_tok:q.tok}); }catch(e){} render(); if(S&&S.paid){ try{ localStorage.removeItem("posada-q-pending"); }catch(e){} return; } await new Promise(r=>setTimeout(r,3000)); } } })();
 </script>
