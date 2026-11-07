@@ -19,6 +19,8 @@
 <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Posada Santa">
+<script id="va-init">window.va=window.va||function(){(window.vaq=window.vaq||[]).push(arguments)};window.va("beforeSend",function(e){try{var u=new URL(e.url);u.hash="";["client_reference_id","prefilled_email"].forEach(function(k){u.searchParams.delete(k)});e.url=u.toString()}catch(x){}return e});window.psTrack=function(n,d){try{window.va("event",{name:n,data:d||{}})}catch(x){}};document.addEventListener("click",function(ev){var a=ev.target&&ev.target.closest&&ev.target.closest("a[href]");if(!a)return;var h=a.href||"";if(/amazon\.com\//.test(h))psTrack("amazon_click",{page:location.pathname});else if(/buy\.stripe\.com\/bJebIUe4/.test(h))psTrack("tip_click",{page:location.pathname});else if(/wa\.me\//.test(h))psTrack("whatsapp_send",{page:location.pathname});else if(/^sms:/.test(h))psTrack("sms_send",{page:location.pathname})},true);</script>
+<script id="va-js" defer src="/_vercel/insights/script.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lilita+One&family=Nunito:wght@500;700;800&display=swap">
 <style>
@@ -538,7 +540,7 @@ function doDraw(){ const g=G(), {adults,kids}=drawSplit(), bad=drawProblem(); if
   const pa=makeDraw(adults.map(p=>p.id)), pk=makeDraw(kids.map(p=>p.id)), pairs=pa&&pk?[...pa,...pk]:null, kidSet=new Set(kids.map(p=>p.id)); if(!pairs){ sheet(`<div class="sheethead"><h2>🎲</h2>${closeBtn()}</div><div class="warn">${esc(t("dImpossible"))}</div><button class="cta" data-act="closeSheet">${esc(t("lOk"))}</button>`); return; }
   pairs.forEach(([a])=>{ const p=P(a); if(p&&!p.mb){ const u=new Uint8Array(16); crypto.getRandomValues(u); p.mb=[...u].map(x=>x.toString(16).padStart(2,"0")).join(""); } }); g.mbOk=false;
   const cards={}; pairs.forEach(([a,b])=>{ cards[a]={r:b,code:codeFor(P(a),P(b))}; if(kidSet.has(a)) cards[a].k=1; });
-  g.draw={at:Date.now(),cards,sent:{},redo:{}}; persist(); mbRegister(g); closeSheet(); go("draw"); burst(["🪅","🎁","⭐","✨","🎉"]); toast(t("drew")); }
+  g.draw={at:Date.now(),cards,sent:{},redo:{}}; persist(); mbRegister(g); typeof psTrack==="function"&&psTrack("names_drawn",{size:pairs.length<=10?"2-10":pairs.length<=25?"11-25":"26+",kids:kids.length?"yes":"no"}); closeSheet(); go("draw"); burst(["🪅","🎁","⭐","✨","🎉"]); toast(t("drew")); }
 
 /* ---------- send queue ---------- */
 let Q=null;
@@ -718,7 +720,7 @@ function plusSheet(why){ const c=PLUSCFG(); if(!c) return;
     <ul class="whys"><li class="${why==="kids"?"hl":""}">👧 ${esc(t("plus1"))}</li><li class="${why==="tv"?"hl":""}">📺 ${esc(t("plus2"))}</li><li class="${why==="cap"?"hl":""}">👨‍👩‍👧‍👦 ${esc(t("plus3"))}</li><li>🎭 ${esc(t("plus5"))}</li><li>${esc(t("plus4"))}</li></ul>
     <p class="help" style="text-align:center;font-weight:900;font-size:16px;color:var(--gold)">${esc(t("plusPrice"))}</p>
     <button class="cta" data-act="buyPlus">${esc(t("plusB"))}</button>`); }
-function buyPlus(){ const c=PLUSCFG(), g=G(); if(!c||!g) return; const me=ME(); const u=new URL(c.link); u.searchParams.set("client_reference_id",g.gid); if(me&&me.email) u.searchParams.set("prefilled_email",me.email);
+function buyPlus(){ const c=PLUSCFG(), g=G(); if(!c||!g) return; typeof psTrack==="function"&&psTrack("plus_checkout"); const me=ME(); const u=new URL(c.link); u.searchParams.set("client_reference_id",g.gid); if(me&&me.email) u.searchParams.set("prefilled_email",me.email);
   try{ localStorage.setItem("posada-plus-pending",g.gid); }catch(e){} location.href=u.toString(); }
 async function plusCheck(gid,tries){ const c=PLUSCFG(); if(!c) return; for(let i=0;i<(tries||1);i++){ let on=false; try{ on=await c.check(gid); }catch(e){} if(on){ const g=DB.groups[gid]; if(g&&!g.plus){ g.plus=true; persist(); render(); toast(t("plusOn")); try{ burst(["⭐","🎉","✨","🪅"]); }catch(e){} } return true; } if(i<(tries||1)-1) await new Promise(r=>setTimeout(r,3000)); } return false; }
 function moreV(){ const g=G();
@@ -774,7 +776,7 @@ function readWiz(){ const g=G(), v=id=>($(id)||{}).value;
 const ACT={
   ui:a=>{ if(wiz&&G()&&!G().setup) readWiz(); const menuOpen=!!document.querySelector('#sheetRoot [data-act="newGroup"]'); DB.ui=a.dataset.l; try{ localStorage.setItem("posada-lang",DB.ui); }catch(e){} if(G()&&!G().setup) G().lang=DB.ui; persist(); render(); if(menuOpen) menuSheet(); },
   tab:a=>go(a.dataset.v), tabDraw:()=>go("draw"),
-  begin:()=>{ if(CLOUD()&&!ME()){ pendingAct={act:"begin",data:{}}; loginSheet("start"); return; } const g=Object.values(DB.groups).find(x=>!x.setup)||newGroup(); DB.cur=g.gid; g.lang=ui(); wiz=1; persist(); render(); setTimeout(()=>$("w_g")&&$("w_g").focus(),200); },
+  begin:()=>{ typeof psTrack==="function"&&psTrack("hq_start"); if(CLOUD()&&!ME()){ pendingAct={act:"begin",data:{}}; loginSheet("start"); return; } const g=Object.values(DB.groups).find(x=>!x.setup)||newGroup(); DB.cur=g.gid; g.lang=ui(); wiz=1; persist(); render(); setTimeout(()=>$("w_g")&&$("w_g").focus(),200); },
   toggle:a=>{ a.setAttribute("aria-checked",String(a.getAttribute("aria-checked")!=="true")); },
   bud:a=>{ const g=G(); g.budget=g.budget===a.dataset.b?"":a.dataset.b; $("w_bc").value=""; persist(); document.querySelectorAll("[data-act=bud]").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.b===g.budget))); },
   glang:a=>{ G().lang=a.dataset.l; persist(); document.querySelectorAll("[data-act=glang]").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.l===a.dataset.l))); },
@@ -981,7 +983,7 @@ function tvOrder(D){ const giverOf={}; Object.entries(D.cards).forEach(([gv,c])=
   [1,0].forEach(k=>{ const left=new Set(Object.keys(giverOf).filter(r=>!!D.cards[giverOf[r]].k===!!k)); if(!left.size) return; if(kids) out.push({sep:k?"kids":"adults"});
     while(left.size){ const arr=[...left]; let r=arr[rand(arr.length)]; while(r&&left.has(r)){ left.delete(r); out.push({r,g:giverOf[r],k}); r=giverOf[r]; } } }); return out; }
 function tvOpen(){ const g=G(); if(!g||!g.draw){ toast(t("tvNoDraw")); return; } if(tvGated()){ plusSheet("tv"); return; }
-  closeSheet(); TV={seq:tvOrder(g.draw),i:-1,hp:0,phase:"intro",mute:false,back:null}; let el=$("tv"); if(!el){ el=document.createElement("div"); el.id="tv"; el.className="tv"; el.setAttribute("role","dialog"); el.setAttribute("aria-modal","true"); document.body.appendChild(el); }
+  typeof psTrack==="function"&&psTrack("tv_mode"); closeSheet(); TV={seq:tvOrder(g.draw),i:-1,hp:0,phase:"intro",mute:false,back:null}; let el=$("tv"); if(!el){ el=document.createElement("div"); el.id="tv"; el.className="tv"; el.setAttribute("role","dialog"); el.setAttribute("aria-modal","true"); document.body.appendChild(el); }
   document.body.style.overflow="hidden"; tvRender(); cloudPullSafe(); }
 function cloudPullSafe(){ try{ if(typeof cloudPull==="function") cloudPull(false).then(()=>{ if(TV&&TV.phase==="board") tvRender(); }); }catch(e){} }
 async function tvStart(){ if(!TV) return; tvAudio(); try{ if(document.documentElement.requestFullscreen&&!document.fullscreenElement) await document.documentElement.requestFullscreen(); }catch(e){}
