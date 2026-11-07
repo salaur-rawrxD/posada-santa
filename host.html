@@ -155,6 +155,58 @@ details summary{cursor:pointer;font-weight:800;font-size:13px;color:var(--muted)
 .giver{display:grid;grid-template-columns:42px 1fr auto;gap:12px;align-items:center;padding:10px 12px;border-radius:16px;background:rgba(255,255,255,.04);border:1px solid var(--line)}
 @media (prefers-reduced-motion:no-preference){.shake{animation:shk .5s}@keyframes shk{20%,60%{transform:rotate(-6deg)}40%,80%{transform:rotate(6deg)}}}
 .confetti{position:fixed;inset:0;pointer-events:none;z-index:70;overflow:hidden}.confetti span{position:absolute;top:-40px;font-size:24px}
+
+/* ---------- Plus features: kids' exchange + TV reveal night ---------- */
+.plusfeat{font:inherit;color:inherit;text-align:left;cursor:pointer;display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:14px;width:100%}
+.plusfeat .pf-e{font-size:30px;line-height:1}.plusfeat b{font-size:16px;font-weight:800}.plusfeat small{color:var(--muted);font-weight:600;font-size:13px;line-height:1.35}
+.plusfeat>span:last-child{color:var(--gold);font-size:22px;font-weight:800}
+.pf-badge{display:inline-block;vertical-align:2px;margin-left:6px;font-size:10.5px;font-weight:900;letter-spacing:.04em;color:#1c1430;background:linear-gradient(180deg,#ffd77a,#f5a524);border-radius:99px;padding:2px 7px}
+.tvfeat{background:linear-gradient(135deg,rgba(226,51,127,.32),rgba(34,169,196,.22) 60%,rgba(38,54,112,.9));border-color:rgba(255,255,255,.16)}
+.whys li.hl{border-color:var(--gold);background:rgba(245,165,36,.14)}
+.drawsec{margin:6px 2px -4px;font-size:15px;color:var(--gold)}
+.kidpick{display:flex;flex-wrap:wrap;gap:8px}
+.tv{position:fixed;inset:0;z-index:100;overflow:hidden;background:radial-gradient(90% 70% at 50% 35%,#2b3f86,#121c42 70%,#0b1230);color:var(--cream);display:grid;grid-template-rows:auto 1fr auto;font-family:var(--body);user-select:none;-webkit-user-select:none}
+.tv-top{margin-top:clamp(40px,8vmin,90px);display:flex;align-items:center;justify-content:space-between;gap:10px;padding:max(12px,env(safe-area-inset-top)) max(16px,env(safe-area-inset-right)) 0 max(16px,env(safe-area-inset-left));position:relative;z-index:3}
+.tv-top .tvbtn{font:inherit;font-weight:800;font-size:clamp(13px,1.6vmin,18px);color:var(--cream);background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);border-radius:99px;padding:8px 14px;cursor:pointer}
+.tv-title{font-family:var(--display);font-size:clamp(16px,2.4vmin,26px);color:var(--gold);letter-spacing:.02em;text-align:center;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tv-picado{position:absolute;left:0;right:0;top:0;height:clamp(40px,8vmin,90px);display:flex;justify-content:center;gap:1.2vmin;pointer-events:none;z-index:1;opacity:.9}
+.tv-picado i{flex:0 0 clamp(26px,5vmin,60px);height:100%;clip-path:polygon(0 0,100% 0,100% 82%,88% 100%,75% 82%,62% 100%,50% 82%,38% 100%,25% 82%,12% 100%,0 82%)}
+.tv-main{display:grid;place-items:center;text-align:center;padding:0 4vw;position:relative;z-index:2;min-height:0}
+.tv-stage{display:grid;justify-items:center;gap:clamp(6px,1.6vmin,18px);max-width:100%}
+.tv-k{font-weight:900;font-size:clamp(14px,2.6vmin,28px);letter-spacing:.18em;text-transform:uppercase;color:var(--gold)}
+.tv-big{font-family:var(--display);font-size:clamp(40px,11vmin,140px);line-height:.98;color:#fff;text-shadow:0 .06em 0 rgba(0,0,0,.25),0 0 .5em rgba(245,198,106,.35);word-break:break-word}
+.tv-mid{font-family:var(--display);font-size:clamp(24px,5vmin,60px);line-height:1.05;color:#fff}
+.tv-p{font-weight:700;font-size:clamp(16px,2.8vmin,30px);color:#c6cdea;max-width:30em}
+.tv-chip{display:inline-flex;align-items:center;gap:8px;font-weight:900;font-size:clamp(12px,1.9vmin,20px);padding:6px 14px;border-radius:99px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.16)}
+.tv-chip.kid{background:rgba(226,51,127,.25);border-color:rgba(255,138,184,.6)}
+.tv-cta{font:inherit;font-weight:900;font-size:clamp(17px,3vmin,32px);color:#1c1430;background:linear-gradient(180deg,#ffd77a,#f5a524);border:0;border-radius:99px;padding:.6em 1.5em;cursor:pointer;box-shadow:0 .25em 0 #b8741a,0 14px 40px rgba(245,165,36,.35)}
+.tv-cta:active{transform:translateY(3px);box-shadow:0 .1em 0 #b8741a}
+.tv-cta.alt{background:rgba(255,255,255,.1);color:var(--cream);box-shadow:none;border:1px solid rgba(255,255,255,.2)}
+.tv-row{display:flex;gap:12px;flex-wrap:wrap;justify-content:center}
+.tv-foot{padding:0 16px max(14px,env(safe-area-inset-bottom));display:flex;justify-content:center;gap:10px;align-items:center;position:relative;z-index:3;min-height:36px}
+.tv-foot small{font-weight:800;color:var(--muted);font-size:clamp(12px,1.7vmin,18px)}
+.tv-av{width:clamp(70px,14vmin,170px);height:clamp(70px,14vmin,170px);border-radius:50%;display:grid;place-items:center;font-family:var(--display);font-size:clamp(28px,6vmin,70px);color:#fff;background:var(--c);box-shadow:0 0 0 .08em rgba(255,255,255,.85),0 0 60px var(--c)}
+.tv-pinwrap{position:relative;width:clamp(170px,42vmin,460px);aspect-ratio:200/250;cursor:pointer;-webkit-tap-highlight-color:transparent;background:none;border:0;padding:0}
+.tv-pin{width:100%;height:100%;overflow:visible;transform-origin:50% 0}
+@media (prefers-reduced-motion:no-preference){.tv-pin{animation:tvswing 2.6s ease-in-out infinite alternate}}
+@keyframes tvswing{from{transform:rotate(-9deg)}to{transform:rotate(9deg)}}
+.tv-pin .shk{transform-box:fill-box;transform-origin:50% 50%}
+.tv-pin .shk.hit{animation:tvhit .32s ease-out}
+@keyframes tvhit{0%{transform:scale(1)}25%{transform:scale(.88) rotate(-12deg)}55%{transform:scale(1.06) rotate(9deg)}100%{transform:scale(1)}}
+.tv-pin .crk{opacity:0;transition:opacity .15s}
+.tv-pin[data-hp="1"] .c1,.tv-pin[data-hp="2"] .c1,.tv-pin[data-hp="2"] .c2{opacity:1}
+.tv-hp{display:flex;gap:8px;justify-content:center}.tv-hp i{width:clamp(14px,2.4vmin,26px);height:clamp(14px,2.4vmin,26px);border-radius:50%;background:rgba(255,255,255,.18)}.tv-hp i.on{background:#ffd34d;box-shadow:0 0 14px #ffd34d}
+.tv-boom{position:absolute;left:50%;top:45%;width:0;height:0;pointer-events:none;z-index:4}
+.tv-boom span{position:absolute;left:0;top:0;font-size:clamp(22px,5vmin,56px);animation:tvfly 1.6s cubic-bezier(.15,.7,.3,1) forwards;opacity:0}
+@keyframes tvfly{0%{opacity:1;transform:translate(-50%,-50%) scale(.4)}70%{opacity:1}100%{opacity:0;transform:translate(calc(-50% + var(--dx)),calc(-50% + var(--dy))) rotate(var(--r)) scale(1)}}
+.tv-reveal{animation:tvpop .55s cubic-bezier(.2,1.6,.4,1) both}
+@keyframes tvpop{from{transform:scale(.3);opacity:0}to{transform:none;opacity:1}}
+.tv-wait{animation:tvdots 1s steps(1) infinite}
+.tv-board{list-style:none;margin:0;padding:0;display:grid;gap:clamp(6px,1.2vmin,14px);width:min(92vw,900px)}
+.tv-board li{display:grid;grid-template-columns:auto 1fr auto;gap:16px;align-items:center;padding:clamp(8px,1.6vmin,18px) clamp(14px,2.4vmin,28px);border-radius:clamp(14px,2vmin,24px);background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);font-weight:900;font-size:clamp(18px,3.4vmin,40px)}
+.tv-board li:first-child{background:linear-gradient(90deg,rgba(245,165,36,.35),rgba(245,165,36,.08));border-color:#f5c66a}
+.tv-board li b{font-family:var(--display);color:var(--gold);font-weight:400}
+.tv-board li span:nth-child(2){text-align:left;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 </style>
 </head>
 <body>
@@ -346,11 +398,25 @@ Object.assign(W.es,{menuT:"Tus Secret Santas",acctT:"Tu cuenta",login:"Entrar",l
 Object.assign(W.en,{startT:"Create your organizer account",startP:"It takes 30 seconds: your email and a code. No password.",why1:"Open your posada from any phone or computer",why2:"Family letters land in your account, never lost",why3:"Keep tabs on invites, letters and the draw",onlyYou:"Only you, the organizer, need an account. Your family just opens their link.",gateT:"Save your posada first",gateP:"Before you send invites, create your organizer account so the letters come back to you, even if you switch phones.",startCta:"Create account & start",haveAcct2:"I already have an account · Log in",bannerT:"Your posada is only on this phone",bannerP:"Create your organizer account so you don't lose it and can track every letter.",bannerB:"Create my account",acctPill:"Account"});
 Object.assign(W.es,{startT:"Crea tu cuenta de organizador",startP:"Toma 30 segundos: tu correo y un código. Sin contraseña.",why1:"Abre tu posada desde cualquier teléfono o compu",why2:"Las cartas de tu familia llegan a tu cuenta, nunca se pierden",why3:"Sigue las invitaciones, las cartas y el sorteo",onlyYou:"Solo tú, el organizador, necesitas cuenta. Tu familia solo abre su link.",gateT:"Primero guarda tu posada",gateP:"Antes de mandar invitaciones, crea tu cuenta de organizador para que las cartas te lleguen a ti, aunque cambies de teléfono.",startCta:"Crear cuenta y empezar",haveAcct2:"Ya tengo cuenta · Entrar",bannerT:"Tu posada solo está en este teléfono",bannerP:"Crea tu cuenta de organizador para no perderla y seguir cada carta.",bannerB:"Crear mi cuenta",acctPill:"Cuenta"});
 Object.assign(W.en,{plusK:"Posada Plus",plusT:"Make it a Posada Plus",plusP:"One payment for your whole group. It keeps Posada Santa free for everyone else.",plusPrice:"$4.99 · one time",plusB:"⭐ Get Posada Plus",
-  plus1:"Room for the whole familia: more than 25 people",plus2:"Every costume unlocked for everyone in your group",plus3:"A Familia Plus crown on your family leaderboard",plus4:"Supports a small family-made project 🧡",
-  capT:"Your group is full",capP:n=>`Free groups fit up to ${n} people. Posada Plus lets everyone in.`,plusOn:"⭐ Posada Plus is on. ¡Gracias!",plusWait:"Payment received, turning on Plus…",plusLate:"We're still waiting on the payment confirmation. It can take a minute; reopen the menu to check.",plusRow:"⭐ Posada Plus: every costume unlocked, bigger groups"});
+  plus1:"A kids' exchange: a second draw just for the little ones, with its own budget",plus2:"Reveal night on the TV: every Secret Santa revealed piñata-style, with music and the family leaderboard",plus3:"Room for the whole familia: more than 25 people",plus4:"Supports a small family-made project 🧡",plus5:"Bonus: every costume unlocked in the games",
+  capT:"Your group is full",capP:n=>`Free groups fit up to ${n} people. Posada Plus lets everyone in.`,plusOn:"⭐ Posada Plus is on. ¡Gracias!",plusWait:"Payment received, turning on Plus…",plusLate:"We're still waiting on the payment confirmation. It can take a minute; reopen the menu to check.",plusRow:"⭐ Posada Plus: kids' exchange + TV reveal night",
+  kidsT:"Kids' exchange",kidsP:"A second draw just for the kids, with its own budget. Kids only draw kids, and grown-ups only draw grown-ups.",kidsOnL:"Kids' exchange is on",kidsBud:"Kids' gift budget",kidsWho:"Tap the kids",kidsNone:"Add the kids to your list first, then mark them here.",
+  kidsLocked:"Names are already drawn. Redo the draw to change who's in the kids' exchange.",kidsCardT:"👧 Add a kids' exchange",kidsCardP:"A second draw for the little ones, with its own budget.",kidsEdit:"👧 Edit the kids' exchange",
+  kidsSum:(k,a)=>`👧 ${k} kids · 🎁 ${a} grown-ups`,kNeed2:"The kids' exchange needs at least 2 kids with letters.",aNeed3:"The grown-ups' exchange needs at least 3 people with letters.",secKids:"👧 Kids' exchange",secAdults:"🎁 Grown-ups",kidOne:"In the kids' exchange",kidOneS:"Draws and gets drawn only with other kids",kidsGroup:n=>`${n} (kids 👧)`,
+  tvRow:"📺 Reveal night on the TV",tvCardT:"📺 Reveal night on the TV",tvCardP:"At the party, put HQ on the TV and reveal every Secret Santa one by one, piñata style, with music and the family leaderboard.",tvOpenB:"📺 Start reveal night",
+  tvGifts:n=>`${n} gifts to open`,tvCast:"Mirror this screen to the TV (AirPlay or Cast), or open posadaxmas.com/host on a laptop plugged into the TV.",tvWarn:"This shows who had whom. Save it for the party! 🎉",tvStart:"▶ ¡Empezar!",
+  tvFor:"A gift for",tvTap:"Hit the piñata to break it! 🪅",tvKey:"Tap it, or press the space bar",tvIs:"Their Secret Santa is…",tvNext:"Next ▶",tvBoard:"🏆 Leaderboard",tvBoardT:"🏆 La Posada champions",tvBoardNone:"No scores yet. Everyone grab a phone and play! 🎮",
+  tvEnd:"¡Feliz Navidad! 🎄",tvEndP:n=>`All ${n} gifts revealed`,tvClose:"Close",tvBack:"◀ Back",tvKidsFirst:"First, the kids! 👧",tvAdultsNow:"Now the grown-ups! 🎁",tvCount:(i,n)=>`${i} of ${n}`,tvNoDraw:"Draw names first, then reveal night opens up."});
 Object.assign(W.es,{plusK:"Posada Plus",plusT:"Hazla Posada Plus",plusP:"Un solo pago para todo tu grupo. Así Posada Santa sigue gratis para todos los demás.",plusPrice:"$4.99 · un solo pago",plusB:"⭐ Obtener Posada Plus",
-  plus1:"Cabe toda la familia: más de 25 personas",plus2:"Todos los disfraces desbloqueados para todo tu grupo",plus3:"Una corona de Familia Plus en la tabla de tu familia",plus4:"Apoyas un proyecto hecho en familia 🧡",
-  capT:"Tu grupo está lleno",capP:n=>`Los grupos gratis son de hasta ${n} personas. Con Posada Plus cabe todo mundo.`,plusOn:"⭐ Posada Plus activada. ¡Gracias!",plusWait:"Pago recibido, activando Plus…",plusLate:"Todavía esperamos la confirmación del pago. Puede tardar un minuto; vuelve a abrir el menú para revisar.",plusRow:"⭐ Posada Plus: todos los disfraces y grupos más grandes"});
+  plus1:"Intercambio de niños: un segundo sorteo solo para los chiquitos, con su propio presupuesto",plus2:"Noche de revelación en la tele: cada Santa Secreto se revela a piñatazos, con música y la tabla de la familia",plus3:"Cabe toda la familia: más de 25 personas",plus4:"Apoyas un proyecto hecho en familia 🧡",plus5:"De regalo: todos los disfraces de los juegos",
+  capT:"Tu grupo está lleno",capP:n=>`Los grupos gratis son de hasta ${n} personas. Con Posada Plus cabe todo mundo.`,plusOn:"⭐ Posada Plus activada. ¡Gracias!",plusWait:"Pago recibido, activando Plus…",plusLate:"Todavía esperamos la confirmación del pago. Puede tardar un minuto; vuelve a abrir el menú para revisar.",plusRow:"⭐ Posada Plus: intercambio de niños + noche en la tele",
+  kidsT:"Intercambio de niños",kidsP:"Un segundo sorteo solo para los niños, con su propio presupuesto. Los niños se sacan entre niños y los grandes entre grandes.",kidsOnL:"Intercambio de niños activado",kidsBud:"Presupuesto de los niños",kidsWho:"Toca a los niños",kidsNone:"Primero agrega a los niños a tu lista y luego márcalos aquí.",
+  kidsLocked:"Ya se sortearon los nombres. Vuelve a sortear para cambiar quién va en el intercambio de niños.",kidsCardT:"👧 Agrega un intercambio de niños",kidsCardP:"Un segundo sorteo para los chiquitos, con su propio presupuesto.",kidsEdit:"👧 Editar el intercambio de niños",
+  kidsSum:(k,a)=>`👧 ${k} niños · 🎁 ${a} grandes`,kNeed2:"El intercambio de niños necesita al menos 2 niños con carta.",aNeed3:"El intercambio de los grandes necesita al menos 3 personas con carta.",secKids:"👧 Intercambio de niños",secAdults:"🎁 Los grandes",kidOne:"En el intercambio de niños",kidOneS:"Solo saca y lo sacan otros niños",kidsGroup:n=>`${n} (niños 👧)`,
+  tvRow:"📺 Noche de revelación en la tele",tvCardT:"📺 Noche de revelación en la tele",tvCardP:"En la fiesta, pon HQ en la tele y revela a cada Santa Secreto uno por uno, a piñatazos, con música y la tabla de la familia.",tvOpenB:"📺 Empezar la noche de revelación",
+  tvGifts:n=>`${n} regalos por abrir`,tvCast:"Duplica esta pantalla en la tele (AirPlay o Cast), o abre posadaxmas.com/host en una laptop conectada a la tele.",tvWarn:"Esto revela quién le tocó a quién. ¡Guárdalo para la fiesta! 🎉",tvStart:"▶ ¡Empezar!",
+  tvFor:"Un regalo para",tvTap:"¡Pégale a la piñata para romperla! 🪅",tvKey:"Tócala o presiona la barra espaciadora",tvIs:"Su Santa Secreto es…",tvNext:"Siguiente ▶",tvBoard:"🏆 Tabla",tvBoardT:"🏆 Campeones de La Posada",tvBoardNone:"Todavía no hay puntos. ¡Todos a jugar! 🎮",
+  tvEnd:"¡Feliz Navidad! 🎄",tvEndP:n=>`Se revelaron los ${n} regalos`,tvClose:"Cerrar",tvBack:"◀ Atrás",tvKidsFirst:"¡Primero los niños! 👧",tvAdultsNow:"¡Ahora los grandes! 🎁",tvCount:(i,n)=>`${i} de ${n}`,tvNoDraw:"Primero sortea los nombres y luego se abre la noche de revelación."});
 const PLUSCFG=()=>typeof PLUS!=="undefined"&&PLUS.link?PLUS:null, PLUS_FREE_MAX=25, isPlus=()=>!!(G()&&G().plus);
 const CLOUD=()=>typeof AUTH!=="undefined"?AUTH:null, ME=()=>{ const c=CLOUD(); return c&&c.user(); };
 const ui=()=>DB.ui||((navigator.language||"").startsWith("es")?"es":"en");
@@ -372,21 +438,22 @@ const GAME_SHARE=g=>`${GAME_URL}#sb=${boardCode(g)}&me=${encodeURIComponent(g.or
 /* ---------- messages ---------- */
 function groupCode(g){ const o={gid:g.gid,gn:g.name,on:g.org.name,op:g.org.phone||"",b:g.budget||"",d:g.party||"",pl:g.place||"",dl:g.deadline||"",l:g.lang||"en"}; const e=boardEntries(g).slice(0,8); if(e.length) o.sb=e; return seal(o,"G"); }
 function inviteURL(p){ const g=G(); return `${LETTER_URL}#g=${groupCode(g)}${p?`&n=${encodeURIComponent(p.name)}&l=${p.lang||g.lang}`:""}`; }
-function lines(g,l){ const es=l==="es", a=[];
+function lines(g,l,p){ const es=l==="es", a=[], bud=p&&p.kid&&kidsOn(g)&&g.kids.budget?g.kids.budget:g.budget;
   if(g.deadline) a.push((es?"📮 Cartas antes del ":"📮 Letters due ")+fmtDate(g.deadline,l));
-  if(g.budget) a.push((es?"🎁 Presupuesto: ":"🎁 Gift budget: ")+g.budget);
+  if(bud) a.push((es?"🎁 Presupuesto: ":"🎁 Gift budget: ")+bud);
   if(g.party) a.push((es?"🎄 Intercambio: ":"🎄 Gift exchange: ")+fmtDate(g.party,l)+(g.place?(es?" en ":" at ")+g.place:""));
   return a.join("\n"); }
-function msgInvite(p,reminder){ const g=G(), l=p?p.lang||g.lang:g.lang, o=first(g.org.name), n=p?first(p.name):"", x=lines(g,l), url=inviteURL(p);
+function msgInvite(p,reminder){ const g=G(), l=p?p.lang||g.lang:g.lang, o=first(g.org.name), n=p?first(p.name):"", x=lines(g,l,p), url=inviteURL(p);
   if(l==="es") return reminder
     ? `🎄 ¡Hola ${n}! Un recordatorio de ${o}: todavía falta tu carta a Santa para ${g.name} 🎁\n\nSolo toma 3 minutos:\n${url}\n${x?"\n"+x+"\n":""}\nAl terminar, un toque me la manda. ¡Gracias! 🌟`
     : `🎄✨ ¡Feliz Navidad${n?", "+n:""}! ✨🎄\n\n${o} está organizando el Secret Santa de ${g.name} 🎁 Escribe aquí tu carta a Santa, toma unos 3 minutos:\n\n${url}\n${x?"\n"+x+"\n":""}\nAl terminar, un toque me la manda. ¡Nos vemos! 🌟`;
   return reminder
     ? `🎄 Hi ${n}! Friendly reminder from ${o}: your letter to Santa for ${g.name} is still missing 🎁\n\nIt only takes 3 minutes:\n${url}\n${x?"\n"+x+"\n":""}\nWhen you finish, one tap sends it to me. Thank you! 🌟`
     : `🎄✨ ¡Feliz Navidad${n?", "+n:""}! ✨🎄\n\n${o} is running the Secret Santa for ${g.name} 🎁 Write your letter to Santa here, it takes about 3 minutes:\n\n${url}\n${x?"\n"+x+"\n":""}\nWhen you finish, one tap sends it to me. ¡Nos vemos! 🌟`; }
-function msgPinata(p,code){ const g=G(), l=p.lang||g.lang, n=first(p.name), x=[g.budget&&((l==="es"?"🎁 Presupuesto: ":"🎁 Gift budget: ")+g.budget),g.party&&((l==="es"?"🎄 Intercambio: ":"🎄 Gift exchange: ")+fmtDate(g.party,l)+(g.place?(l==="es"?" en ":" at ")+g.place:""))].filter(Boolean).join("\n");
-  if(l==="es") return `🎄✨ ¡Feliz Navidad, ${n}! ✨🎄\n\n¡Ya se sortearon los nombres de ${g.name}! Tu Secret Santa está dentro de una piñata 🪅 Toca abajo y pégale hasta que se rompa 👇\n\n${REVEAL_URL}#${code}&sb=${boardCode(g)}\n${x?"\n"+x+"\n":""}\n🤫 Shhh… este link es solo para ti. ¡No se vale espiar ni compartir! 🌟\n\n(Si la página te pide tu código, copia todo este mensaje y pégalo ahí.)`;
-  return `🎄✨ ¡Feliz Navidad, ${n}! ✨🎄\n\nNames have been drawn for ${g.name}! Your Secret Santa match is inside a piñata 🪅 Tap below and keep swinging until it breaks 👇\n\n${REVEAL_URL}#${code}&sb=${boardCode(g)}\n${x?"\n"+x+"\n":""}\n🤫 Shhh… this link is only for you. No peeking, no sharing! 🌟\n\n(If the page asks for your code, copy this whole text and paste it in.)`; }
+function msgPinata(p,code){ const g0=G(), l=p.lang||g0.lang, n=first(p.name), kc=!!(g0.draw&&g0.draw.cards[p.id]&&g0.draw.cards[p.id].k), bud=kc&&g0.kids&&g0.kids.budget?g0.kids.budget:g0.budget,
+    g=kc?Object.assign({},g0,{name:(l==="es"?W.es:W.en).kidsGroup(g0.name),budget:bud}):g0, x=[g.budget&&((l==="es"?"🎁 Presupuesto: ":"🎁 Gift budget: ")+g.budget),g.party&&((l==="es"?"🎄 Intercambio: ":"🎄 Gift exchange: ")+fmtDate(g.party,l)+(g.place?(l==="es"?" en ":" at ")+g.place:""))].filter(Boolean).join("\n");
+  if(l==="es") return `🎄✨ ¡Feliz Navidad, ${n}! ✨🎄\n\n¡Ya se sortearon los nombres de ${g.name}! Tu Secret Santa está dentro de una piñata 🪅 Toca abajo y pégale hasta que se rompa 👇\n\n${REVEAL_URL}#${code}&sb=${boardCode(g0)}\n${x?"\n"+x+"\n":""}\n🤫 Shhh… este link es solo para ti. ¡No se vale espiar ni compartir! 🌟\n\n(Si la página te pide tu código, copia todo este mensaje y pégalo ahí.)`;
+  return `🎄✨ ¡Feliz Navidad, ${n}! ✨🎄\n\nNames have been drawn for ${g.name}! Your Secret Santa match is inside a piñata 🪅 Tap below and keep swinging until it breaks 👇\n\n${REVEAL_URL}#${code}&sb=${boardCode(g0)}\n${x?"\n"+x+"\n":""}\n🤫 Shhh… this link is only for you. No peeking, no sharing! 🌟\n\n(If the page asks for your code, copy this whole text and paste it in.)`; }
 
 /* ---------- groups & people ---------- */
 function newGroup(){ const gid=uid(); DB.groups[gid]={gid,name:"",org:{name:"",phone:"",plays:true,id:uid()},lang:ui(),budget:"",party:"",place:"",deadline:"",people:[],pairs:[],draw:null,created:Date.now()}; DB.cur=gid; persist(); return DB.groups[gid]; }
@@ -444,9 +511,13 @@ function makeDraw(ids){ for(let tr=0;tr<40000;tr++){ const r=[...ids]; for(let i
     if(ids.every((g,i)=>g!==r[i]&&!blocked(g,r[i]))) return ids.map((g,i)=>[g,r[i]]); } return null; }
 function codeFor(giver,rec){ const L=rec.letter||{}, o={n:first(giver.name),l:giver.lang||G().lang,r:rec.name,s:L.s||"",p:L.p||"",h:L.h||"",g:L.g||[]}; if(L.x&&Object.keys(L.x).length) o.x=L.x; return pinCode(o); }
 function drawPool(){ const g=G(); return g.people.filter(p=>p.letter||g.includeAll); }
-function doDraw(){ const g=G(), pool=drawPool(); if(pool.length<3){ toast(t("dNeed3")); return; }
-  const pairs=makeDraw(pool.map(p=>p.id)); if(!pairs){ sheet(`<div class="sheethead"><h2>🎲</h2>${closeBtn()}</div><div class="warn">${esc(t("dImpossible"))}</div><button class="cta" data-act="closeSheet">${esc(t("lOk"))}</button>`); return; }
-  const cards={}; pairs.forEach(([a,b])=>{ cards[a]={r:b,code:codeFor(P(a),P(b))}; });
+const kidsOn=g=>!!(g&&g.kids&&g.kids.on);
+function drawSplit(){ const g=G(), pool=drawPool(); if(!kidsOn(g)) return {adults:pool,kids:[]}; return {adults:pool.filter(p=>!p.kid||p.me),kids:pool.filter(p=>p.kid&&!p.me)}; }
+function drawProblem(){ const {adults,kids}=drawSplit(); if(!kids.length) return adults.length<3?t("dNeed3"):"";
+  if(adults.length&&adults.length<3) return t("aNeed3"); if(kids.length<2) return t("kNeed2"); return ""; }
+function doDraw(){ const g=G(), {adults,kids}=drawSplit(), bad=drawProblem(); if(bad){ toast(bad); return; }
+  const pa=makeDraw(adults.map(p=>p.id)), pk=makeDraw(kids.map(p=>p.id)), pairs=pa&&pk?[...pa,...pk]:null, kidSet=new Set(kids.map(p=>p.id)); if(!pairs){ sheet(`<div class="sheethead"><h2>🎲</h2>${closeBtn()}</div><div class="warn">${esc(t("dImpossible"))}</div><button class="cta" data-act="closeSheet">${esc(t("lOk"))}</button>`); return; }
+  const cards={}; pairs.forEach(([a,b])=>{ cards[a]={r:b,code:codeFor(P(a),P(b))}; if(kidSet.has(a)) cards[a].k=1; });
   g.draw={at:Date.now(),cards,sent:{},redo:{}}; persist(); closeSheet(); go("draw"); burst(["🪅","🎁","⭐","✨","🎉"]); toast(t("drew")); }
 
 /* ---------- send queue ---------- */
@@ -543,6 +614,7 @@ function homeV(){ const g=G(), ps=g.people, n=ps.length, inN=ps.filter(p=>p.lett
   ${(()=>{ const F=[["🎁",t("eBudget"),g.budget],["🎄",t("eEx"),g.party&&fmtDate(g.party)+(g.place?" · "+g.place:"")],["📮",t("eDue"),g.deadline&&fmtDate(g.deadline)]], miss=F.filter(f=>!f[2]);
     return `<div class="facts">${F.filter(f=>f[2]).map(f=>fact(...f)).join("")}${miss.length?`<button class="fact empty" data-act="tab" data-v="more">＋ ${esc(miss.map(f=>f[1]).join(", "))}</button>`:""}</div>`; })()}
   ${boardRows(g).length||D?lbCard():`<a class="row-link" href="${esc(GAME_SHARE(g))}" target="_blank" rel="noopener">🎮 ${esc(t("playRow"))}<span aria-hidden="true">›</span></a>`}
+  ${D?`<button class="row-link" data-act="tvOpen" style="width:100%;text-align:left;font:inherit;font-weight:800;cursor:pointer">${esc(t("tvRow"))}${tvGated()?" ⭐":""}<span aria-hidden="true">›</span></button>`:""}
   ${PLUSCFG()&&!isPlus()?`<button class="row-link" data-act="plusOpen" style="width:100%;text-align:left;font:inherit;font-weight:800;cursor:pointer">${esc(t("plusRow"))}<span aria-hidden="true">›</span></button>`:""}
   ${mailCard()}</div>`; }
 function lbCard(){ const g=G(), rs=boardRows(g).slice(0,5), medal=["🥇","🥈","🥉"];
@@ -558,7 +630,7 @@ function peopleV(){ const g=G(), D=g.draw; let ps=g.people;
   return `<div class="stack"><div class="section-t"><h2>${esc(t("pTitle"))} · ${g.people.length}</h2><button class="cta sm" data-act="addOpen">${esc(t("pAdd"))}</button></div>
     <div class="tabs2">${[["all",t("fAll")],["wait",t("fWait")],["in",t("fIn")]].map(([k,l])=>`<button class="pill" data-act="filter" data-f="${k}" style="${filter===k?"background:var(--cream);color:var(--night)":""}">${esc(l)}</button>`).join("")}</div>
     ${!D&&notInv?`<button class="cta" data-act="qInv">✉️ ${esc(t("inviteAll",notInv))}</button>`:""}${!D&&!notInv&&waiting?`<button class="cta alt" data-act="qRem">⏰ ${esc(t("remindAll",waiting))}</button>`:""}
-    ${ps.length?`<div class="plist">${ps.map(p=>{ const [c,l]=status(p); return `<button class="person" data-act="person" data-id="${p.id}"><div class="av" style="--c:${colorOf(p.id)}">${esc(ini(p.name)||"?")}</div><div style="min-width:0"><b>${esc(p.name)}${p.me?` · ${esc(t("you"))}`:""}</b><small>${esc(pretty(p.phone)||t("noPhone"))}</small></div><span class="st ${c}">${esc(l)}</span></button>`; }).join("")}</div>`
+    ${ps.length?`<div class="plist">${ps.map(p=>{ const [c,l]=status(p); return `<button class="person" data-act="person" data-id="${p.id}"><div class="av" style="--c:${colorOf(p.id)}">${esc(ini(p.name)||"?")}</div><div style="min-width:0"><b>${esc(p.name)}${p.me?` · ${esc(t("you"))}`:""}${p.kid&&kidsOn(g)?" 👧":""}</b><small>${esc(pretty(p.phone)||t("noPhone"))}</small></div><span class="st ${c}">${esc(l)}</span></button>`; }).join("")}</div>`
       :`<div class="card soft empty-st"><div class="e">🎅</div><h3>${esc(t("emptyP"))}</h3><p class="help">${esc(t("emptyPs"))}</p><button class="cta sm" data-act="addOpen">${esc(t("pAdd"))}</button></div>`}
 </div>`; }
 
@@ -567,17 +639,22 @@ function drawV(){ const g=G(), D=g.draw;
   const pairCard=`<div class="card soft"><div class="stack tight"><h3>💑 ${esc(t("avoidT"))}</h3><p class="help">${esc(t("avoidP"))}</p></div>
     ${pairs.length?pairs.map(([a,b],i)=>`<div class="pair"><span>${esc(first(a.name))} ✕ ${esc(first(b.name))}</span><button class="close" data-act="delPair" data-i="${i}" aria-label="Remove">✕</button></div>`).join(""):`<p class="fine" style="text-align:left">${esc(t("avoidNone"))}</p>`}
     ${g.people.length>=2?`<div class="two"><select id="pa" aria-label="1"><option value="">—</option>${g.people.map(p=>`<option value="${p.id}">${esc(p.name)}</option>`).join("")}</select><select id="pb" aria-label="2"><option value="">—</option>${g.people.map(p=>`<option value="${p.id}">${esc(p.name)}</option>`).join("")}</select></div><button class="cta alt sm" data-act="addPair" style="width:100%">${esc(t("avoidAdd"))}</button>`:""}</div>`;
-  if(!D){ const n=g.people.length, waiting=g.people.filter(p=>!p.letter).length, pool=drawPool().length;
+  const kidsCard=kidsOn(g)?`<div class="card soft"><div class="row between"><div class="stack tight" style="min-width:0"><h3>👧 ${esc(t("kidsOnL"))}</h3><p class="help">${esc((()=>{ const sp=drawSplit(); return t("kidsSum",g.people.filter(p=>p.kid&&!p.me).length,g.people.filter(p=>!p.kid||p.me).length)+(g.kids.budget?" · 🎁 "+g.kids.budget:""); })())}</p></div></div><button class="cta alt sm" data-act="kidsOpen" style="width:100%">${esc(t("kidsEdit"))}</button></div>`
+    :`<button class="card soft plusfeat" data-act="kidsOpen"><span class="pf-e" aria-hidden="true">👧</span><span class="stack tight" style="min-width:0"><b>${esc(t("kidsCardT").replace(/^👧 /,""))}${tvGated()?' <span class="pf-badge">⭐ Plus</span>':""}</b><small>${esc(t("kidsCardP"))}</small></span><span aria-hidden="true">›</span></button>`;
+  const tvCard=`<button class="card plusfeat tvfeat" data-act="tvOpen"><span class="pf-e" aria-hidden="true">📺</span><span class="stack tight" style="min-width:0"><b>${esc(t("tvCardT").replace(/^📺 /,""))}${tvGated()?' <span class="pf-badge">⭐ Plus</span>':""}</b><small>${esc(t("tvCardP"))}</small></span><span aria-hidden="true">›</span></button>`;
+  if(!D){ const n=g.people.length, waiting=g.people.filter(p=>!p.letter).length, pool=drawPool().length, bad=drawProblem();
     return `<div class="stack"><div class="card in"><div class="stack tight"><span class="kicker">${esc(t("dReady"))}</span><h2>🎲 ${esc(t("tDraw"))}</h2></div>
       ${n<3?`<div class="warn">${esc(t("dNeed3"))}</div>`:waiting?`<div class="warn">${esc(t("dWaiting",waiting))}</div>
         <label class="toggle"><span><b>${esc(t("dInclude"))}</b><small>${esc(t("dIncludeS"))}</small></span><button type="button" class="sw" role="switch" aria-checked="${!!g.includeAll}" data-act="incAll"></button></label>`:`<div class="ok">✓ ${esc(t("of",n,n))} ${esc(t("letters").toLowerCase())}</div>`}
-      <button class="cta" data-act="draw" ${pool<3?"disabled":""}>${esc(t("dBtn"))}</button></div>${pairCard}</div>`; }
-  const ids=Object.keys(D.cards), late=g.people.filter(p=>!D.cards[p.id]);
+      ${kidsOn(g)&&bad&&pool>=3?`<div class="warn">${esc(bad)}</div>`:""}
+      <button class="cta" data-act="draw" ${bad?"disabled":""}>${esc(t("dBtn"))}</button></div>${kidsCard}${pairCard}</div>`; }
+  const ids=Object.keys(D.cards), late=g.people.filter(p=>!D.cards[p.id]), kidIds=ids.filter(k=>D.cards[k].k), adultIds=ids.filter(k=>!D.cards[k].k);
   return `<div class="stack"><div class="card in"><div class="stack tight"><span class="kicker">${esc(t("dDone"))}</span><h2>🪅 ${esc(t("qPin"))} · ${esc(t("of",ids.filter(k=>!(P(k)||{}).me).length-pending(D).length,ids.filter(k=>!(P(k)||{}).me).length))}</h2><p>${esc(t("dDoneP"))}</p></div>
     ${pending(D).length?`<button class="cta" data-act="qPin">${esc(t("dSendAll"))}</button>`:""}</div>
     ${late.length?`<div class="warn">${esc(late.map(p=>first(p.name)).join(", "))}: ${esc(t("dLateP"))}</div>`:""}
-    <div class="drawn">${ids.map(id=>{ const p=P(id); if(!p) return ""; const [c,l]=status(p); return `<div class="giver"><div class="av" style="--c:${colorOf(id)}">${esc(ini(p.name)||"?")}</div><div style="min-width:0"><b style="display:block">${esc(p.name)}</b><span class="st ${c}">${esc(l)}</span></div>
-      ${p.me?`<a class="cta sm" href="${esc(REVEAL_URL+"#"+D.cards[id].code)}" target="_blank" rel="noopener">${esc(t("dOpenMine"))}</a>`:`<button class="cta sm ${D.sent[id]&&!D.redo[id]?"alt":""}" data-act="qOne" data-id="${id}">${esc(D.sent[id]&&!D.redo[id]?t("resend"):t("sendOne"))}</button>`}</div>`; }).join("")}</div>
+    ${tvCard}
+    ${(kidIds.length?[[t("secAdults"),adultIds],[t("secKids"),kidIds]]:[["",ids]]).map(([sec,list])=>`${sec?`<h3 class="drawsec">${esc(sec)}</h3>`:""}<div class="drawn">${list.map(id=>{ const p=P(id); if(!p) return ""; const [c,l]=status(p); return `<div class="giver"><div class="av" style="--c:${colorOf(id)}">${esc(ini(p.name)||"?")}</div><div style="min-width:0"><b style="display:block">${esc(p.name)}</b><span class="st ${c}">${esc(l)}</span></div>
+      ${p.me?`<a class="cta sm" href="${esc(REVEAL_URL+"#"+D.cards[id].code)}" target="_blank" rel="noopener">${esc(t("dOpenMine"))}</a>`:`<button class="cta sm ${D.sent[id]&&!D.redo[id]?"alt":""}" data-act="qOne" data-id="${id}">${esc(D.sent[id]&&!D.redo[id]?t("resend"):t("sendOne"))}</button>`}</div>`; }).join("")}</div>`).join("")}
     <button class="ghost" data-act="redrawQ">🔄 ${esc(t("dRedo"))}</button>${pairCard}</div>`; }
 
 function acctCard(){ const c=CLOUD(); if(!c) return ""; const me=ME();
@@ -611,9 +688,10 @@ async function afterLogin(){ const c=CLOUD(); if(!c) return; await c.sync(); con
   if(pa&&pa.act!=="begin"&&G()&&G().setup){ persist(); render(); toast(t("welcomeBack")); const fn=ACT[pa.act]; if(fn) setTimeout(()=>fn({dataset:pa.data,getAttribute:()=>null}),350); return; }
   if(!G()||!G().setup){ const x=Object.values(DB.groups).filter(g=>g.setup).sort((a,b)=>(b.ut||0)-(a.ut||0))[0]; if(x){ DB.cur=x.gid; wiz=0; view="home"; } } persist(); render(); toast(t("welcomeBack")); }
 function plusSheet(why){ const c=PLUSCFG(); if(!c) return;
-  sheet(`<div class="sheethead"><div class="stack tight"><span class="kicker">⭐ ${esc(t("plusK"))}</span><h2>${esc(why==="cap"?t("capT"):t("plusT"))}</h2></div>${closeBtn()}</div>
-    <p>${esc(why==="cap"?t("capP",PLUS_FREE_MAX):t("plusP"))}</p>
-    <ul class="whys"><li>👨‍👩‍👧‍👦 ${esc(t("plus1"))}</li><li>🎭 ${esc(t("plus2"))}</li><li>👑 ${esc(t("plus3"))}</li><li>${esc(t("plus4"))}</li></ul>
+  const T0={cap:t("capT"),kids:t("kidsCardT"),tv:t("tvCardT")}[why]||t("plusT"), P0=why==="cap"?t("capP",PLUS_FREE_MAX):t("plusP");
+  sheet(`<div class="sheethead"><div class="stack tight"><span class="kicker">⭐ ${esc(t("plusK"))}</span><h2>${esc(T0)}</h2></div>${closeBtn()}</div>
+    <p>${esc(P0)}</p>
+    <ul class="whys"><li class="${why==="kids"?"hl":""}">👧 ${esc(t("plus1"))}</li><li class="${why==="tv"?"hl":""}">📺 ${esc(t("plus2"))}</li><li class="${why==="cap"?"hl":""}">👨‍👩‍👧‍👦 ${esc(t("plus3"))}</li><li>🎭 ${esc(t("plus5"))}</li><li>${esc(t("plus4"))}</li></ul>
     <p class="help" style="text-align:center;font-weight:900;font-size:16px;color:var(--gold)">${esc(t("plusPrice"))}</p>
     <button class="cta" data-act="buyPlus">${esc(t("plusB"))}</button>`); }
 function buyPlus(){ const c=PLUSCFG(), g=G(); if(!c||!g) return; const me=ME(); const u=new URL(c.link); u.searchParams.set("client_reference_id",g.gid); if(me&&me.email) u.searchParams.set("prefilled_email",me.email);
@@ -630,7 +708,7 @@ function moreV(){ const g=G();
     <div class="stack tight"><span class="lbl">${esc(t("langQ"))}</span><div class="seg"><button type="button" data-act="glang" data-l="en" aria-pressed="${g.lang==="en"}">English</button><button type="button" data-act="glang" data-l="es" aria-pressed="${g.lang==="es"}">Español</button></div></div>
     <button class="cta" data-act="saveMore">${esc(t("mSave"))}</button></div>
   ${acctCard()}
-  ${PLUSCFG()?(isPlus()?`<div class="card soft"><h3>⭐ ${esc(t("plusOn"))}</h3></div>`:`<div class="card soft"><h3>⭐ ${esc(t("plusT"))}</h3><p class="help">${esc(t("plus2"))} · ${esc(t("plus1"))}</p><button class="cta sm" data-act="plusOpen" style="width:100%">${esc(t("plusB"))} · $4.99</button></div>`):""}
+  ${PLUSCFG()?(isPlus()?`<div class="card soft"><h3>⭐ ${esc(t("plusOn"))}</h3></div>`:`<div class="card soft"><h3>⭐ ${esc(t("plusT"))}</h3><p class="help">👧 ${esc(t("kidsT"))} · ${esc(t("tvRow"))}</p><button class="cta sm" data-act="plusOpen" style="width:100%">${esc(t("plusB"))} · $4.99</button></div>`):""}
   <details class="card soft adv"><summary><h3>💾 ${esc(t("advT"))}</h3></summary><div class="stack" style="margin-top:12px"><p class="help">${esc(t("mBackupP"))}</p><button class="cta alt" data-act="backupDl">⬇️ ${esc(t("mDl"))}</button><button class="cta alt" data-act="backupCopy">📋 ${esc(t("mCopy"))}</button><button class="ghost" data-act="restoreOpen">${esc(t("mRestore"))}</button></div></details>
   <p style="text-align:center"><button class="ghost" style="color:#ffb3a8" data-act="delGroupQ">${esc(t("mDelete"))}</button></p>
   <p class="fine" style="display:flex;align-items:center;justify-content:center;gap:7px;opacity:.7"><svg viewBox="40 20 120 165" width="14" height="19" aria-hidden="true"><path d="M91 174 Q97 146 95 108 L101 108 Q102 136 109 174 Z" fill="#6B4A33"/><g fill="#2F4A2F"><circle cx="100" cy="72" r="44"/><circle cx="64" cy="88" r="30"/><circle cx="136" cy="88" r="30"/><circle cx="78" cy="52" r="28"/><circle cx="122" cy="52" r="28"/><circle cx="100" cy="100" r="30"/></g><g fill="#E8782A"><circle cx="72" cy="78" r="7.5"/><circle cx="112" cy="60" r="7.5"/><circle cx="136" cy="94" r="7.5"/><circle cx="96" cy="96" r="7.5"/><circle cx="60" cy="106" r="7"/><circle cx="122" cy="114" r="7"/><circle cx="88" cy="42" r="7"/></g></svg> La Veci Productions</p></div>`; }
@@ -647,6 +725,7 @@ function personSheet(id){ const g=G(), p=P(id); if(!p) return; const D=g.draw, [
     <details><summary>✏️ ${esc(t("edit"))}</summary><div class="stack" style="margin-top:10px">
       <div class="field"><label class="lbl" for="e_n">${esc(t("pname"))}</label><input type="text" id="e_n" value="${esc(p.name)}" ${p.me?"disabled":""}></div>
       <div class="field"><label class="lbl" for="e_p">${esc(t("pphone"))}</label><input type="tel" id="e_p" value="${esc(p.phone)}" inputmode="tel" ${p.me?"disabled":""}></div>
+      ${kidsOn(g)&&!p.me?`<label class="toggle"><span><b>👧 ${esc(t("kidOne"))}</b><small>${esc(g.draw?t("kidsLocked"):t("kidOneS"))}</small></span><button type="button" class="sw" role="switch" aria-checked="${!!p.kid}" data-act="kidOne" data-id="${p.id}" ${g.draw?"disabled":""}></button></label>`:""}
       <div class="stack tight"><span class="lbl">${esc(t("msgLang"))}</span><div class="seg"><button type="button" data-act="plang" data-id="${p.id}" data-l="en" aria-pressed="${p.lang!=="es"}">English</button><button type="button" data-act="plang" data-id="${p.id}" data-l="es" aria-pressed="${p.lang==="es"}">Español</button></div></div>
       ${p.me?"":`<button class="cta sm" data-act="pSave" data-id="${p.id}" style="width:100%">${esc(t("save"))}</button>`}
       ${p.letter?`<button class="ghost" data-act="clearLetter" data-id="${p.id}">${esc(t("clearLetter"))}</button>`:""}
@@ -729,6 +808,12 @@ const ACT={
   switch:a=>{ DB.cur=a.dataset.g; view="home"; closeSheet(); persist(); render(); },
   newGroup:()=>{ closeSheet(); newGroup(); wiz=1; render(); },
   delGroupQ:()=>confirmSheet(t("mDeleteQ"),t("mDeleteP"),t("mDeleteY"),"delGroupY"),
+  kidsOpen:()=>{ if(kidsGated()&&!kidsOn(G())){ plusSheet("kids"); return; } kidsSheet(); },
+  kidTog:a=>{ const g=G(); if(g.draw) return; const p=P(a.dataset.id); if(!p) return; p.kid=!p.kid; persist(); kidsSheet(true); render(); },
+  kidsSwitch:a=>{ const g=G(); if(g.draw) return; g.kids=g.kids||{on:false,budget:""}; g.kids.on=a.getAttribute("aria-checked")!=="true"; persist(); kidsSheet(true); render(); },
+  kidsSave:()=>{ const g=G(), b=$("k_b"); g.kids=g.kids||{on:true,budget:""}; if(b) g.kids.budget=b.value.trim(); persist(); closeSheet(); render(); toast(t("saved")); },
+  kidOne:a=>{ const g=G(); if(g.draw) return; const p=P(a.dataset.id); p.kid=!p.kid; persist(); render(); personSheet(p.id); },
+  tvOpen:()=>tvOpen(), tvStart:()=>tvStart(), tvHit:()=>tvHit(), tvNext:()=>tvNext(), tvPrev:()=>tvPrev(), tvBoard:()=>tvShowBoard(), tvClose:()=>tvClose(), tvMute:()=>tvMute(),
   menu:()=>{ menuSheet(); if(G()&&!isPlus()) plusCheck(G().gid,1); }, plusOpen:()=>plusSheet(), buyPlus:()=>buyPlus(), login:a=>loginSheet(a&&a.dataset&&a.dataset.m==="start"?"start":"login"), resendCode:async()=>{ const c=CLOUD(); if(c&&loginEmail){ const r=await c.sendCode(loginEmail); toast(r==="ok"?t("codeT"):r==="rate"?t("tooMany"):t("netFail")); } },
   nudgeX:()=>{ DB.nudgeX=1; persist(); render(); },
   signOut:async()=>{ const c=CLOUD(); if(c){ await c.signOut(); } closeSheet(); render(); toast(t("signedOut")); },
@@ -744,6 +829,165 @@ function wireInputs(){ const f=$("addForm"); if(f) f.onsubmit=e=>{ e.preventDefa
   const an=$("a_n"); if(an) an.onkeydown=e=>{ if(e.key==="Enter"){ e.preventDefault(); $("a_p").focus(); } };
   const bc=$("w_bc"); if(bc) bc.oninput=()=>{ document.querySelectorAll("[data-act=bud]").forEach(b=>b.setAttribute("aria-pressed","false")); G().budget=bc.value.trim(); persist(); }; }
 addEventListener("keydown",e=>{ if(e.key==="Escape"&&$("sheetRoot").innerHTML) closeSheet(); });
+
+/* ---------- Posada Plus: kids' exchange ---------- */
+const kidsGated=()=>!!(PLUSCFG()&&!isPlus());
+function kidsSheet(keep){ const g=G(), K=g.kids||{on:false,budget:""}, D=g.draw, ps=g.people.filter(p=>!p.me), bv=keep&&$("k_b")?$("k_b").value:(K.budget||"");
+  sheet(`<div class="sheethead"><div class="stack tight"><span class="kicker">⭐ Posada Plus</span><h2>👧 ${esc(t("kidsT"))}</h2></div>${closeBtn()}</div>
+    <p>${esc(t("kidsP"))}</p>
+    ${D?`<div class="warn">${esc(t("kidsLocked"))}</div>`:""}
+    <label class="toggle"><span><b>${esc(t("kidsOnL"))}</b></span><button type="button" class="sw" role="switch" aria-checked="${!!K.on}" data-act="kidsSwitch" ${D?"disabled":""}></button></label>
+    ${K.on?`<div class="field"><label class="lbl" for="k_b">${esc(t("kidsBud"))}</label><input type="text" id="k_b" value="${esc(bv)}" placeholder="$20"></div>
+    <div class="stack tight"><span class="lbl">${esc(t("kidsWho"))} · ${ps.filter(p=>p.kid).length}</span>
+      ${ps.length?`<div class="kidpick">${ps.map(p=>`<button type="button" class="chip" data-act="kidTog" data-id="${p.id}" aria-pressed="${!!p.kid}" ${D?"disabled":""}>${p.kid?"👧 ":""}${esc(p.name)}</button>`).join("")}</div>`:`<p class="help">${esc(t("kidsNone"))}</p>`}</div>`:""}
+    <button class="cta" data-act="kidsSave">${esc(t("save"))}</button>`); }
+
+/* ---------- Posada Plus: reveal night on the TV ---------- */
+/* Fiesta music for the mini games: the same Latin Christmas band as La Posada (mariachi, cumbia, son jarocho),
+   with a tempo knob and a "hype" knob, plus stingers (fanfare, grito, crowd). Self-contained: FIESTA.init(getCtx, getOut). */
+const FIESTA=(()=>{ let getCtx=()=>null, getOut=()=>null, BUS=null, SFX=null, NB=null, on=false, timer=null, nb=0, bt=0, RATE=1, HYPE=0;
+const A=()=>{ const a=getCtx(); if(!a) return null; if(!BUS){ const o=getOut()||a.destination; BUS=a.createGain(); BUS.gain.value=.3; BUS.connect(o); SFX=a.createGain(); SFX.gain.value=.55; SFX.connect(o);
+    NB=a.createBuffer(1,a.sampleRate,a.sampleRate); const d=NB.getChannelData(0); for(let i=0;i<d.length;i++) d[i]=Math.random()*2-1; } return a; };
+function noise(t,dur,peak,type,freq,f1,dest){ const a=A(); if(!a) return; const s=a.createBufferSource(); s.buffer=NB; const f=a.createBiquadFilter(); f.type=type||"lowpass"; f.frequency.setValueAtTime(freq||1200,t); if(f1) f.frequency.exponentialRampToValueAtTime(f1,t+dur);
+  const g=a.createGain(); g.gain.setValueAtTime(.0001,t); g.gain.exponentialRampToValueAtTime(peak,t+Math.min(.02,dur*.3)); g.gain.exponentialRampToValueAtTime(.0001,t+dur); s.connect(f).connect(g).connect(dest||BUS); s.start(t,Math.random()*.5); s.stop(t+dur+.05); }
+/* =========================================================
+   Latin Christmas music: three arrangements that rotate
+   1) Ranchera navideña  — the original villancico, mariachi style (trumpets, guitarrón, vihuela, maracas)
+   2) Cumbia del cascabel — Jingle Bells chorus (public domain) as a cumbia (accordion, güiro, bombo, bass)
+   3) Son de la piñata   — an original son jarocho in 6/8 (harp, jarana, requinto, zapateado)
+   ========================================================= */
+const NOTEN=n=>{ const m=/^([A-G])(s|b)?(\d)$/.exec(n); if(!m) return 0; return (+m[3]+1)*12+{C:0,D:2,E:4,F:5,G:7,A:9,B:11}[m[1]]+(m[2]==="s"?1:m[2]==="b"?-1:0); };
+const HZ=m=>440*Math.pow(2,(m-69)/12);
+const CHD={C:[60,64,67],F:[60,65,69],G:[59,62,67],D:[62,66,69],A:[61,64,69],Em:[59,64,67],Bm:[59,62,66]};
+const BASS={C:[36,43],F:[41,48],G:[43,38],D:[38,45],A:[45,40],Em:[40,47],Bm:[47,42]};
+const bars=s=>s.trim().split("|").map(b=>b.trim().split(/\s+/));
+const SONGS=[
+  {id:"ranchera",beats:4,eighth:.23,style:"mariachi",
+   bars:bars("G4 B4 D5 B4|C5 E5 G5 E5|D5 Fs5 A5 Fs5|G5 - D5 -|B4 B4 C5 D5|E5 E5 D5 C5|A4 B4 C5 A4|G4 - - -|G5 Fs5 E5 B4|C5 D5 E5 C5|D5 E5 Fs5 D5|G5 - G5 -|E5 G5 E5 C5|D5 B4 G4 B4|A4 C5 Fs5 A5|G5 - - -"),
+   ch:"G C D G G C D G Em C D G C G D G".split(" ")},
+  {id:"cumbia",beats:4,eighth:.175,style:"cumbia",
+   bars:bars("E5 - E5 -|E5 - - -|E5 - E5 -|E5 - - -|E5 - G5 -|C5 - - D5|E5 - - -|- - - -|F5 - F5 -|F5 - - F5|F5 - E5 -|E5 - E5 E5|E5 - D5 -|D5 - E5 -|D5 - - -|G5 - - -"),
+   ch:"C C C C C C C C F F C C G G G G".split(" ")},
+  {id:"son",beats:6,eighth:.15,style:"son",
+   bars:bars("A4 - D5 Fs5 - E5|D5 - A4 B4 - A4|G4 - B4 D5 - Cs5|B4 - - A4 - -|A4 - D5 Fs5 - A5|G5 - Fs5 E5 - D5|E5 - G5 Fs5 - E5|D5 - - - - -|Fs5 - Fs5 G5 - A5|B5 - A5 Fs5 - D5|G5 - G5 Fs5 - E5|A5 - - - - -|Fs5 - A5 G5 - E5|D5 - Fs5 E5 - Cs5|D5 - E5 Fs5 - E5|D5 - - - - -"),
+   ch:"D D G A D G A D D G G A D A A D".split(" ")}
+];
+let song=SONGS[1], songIdx=1;
+function setSong(i){ songIdx=((i%SONGS.length)+SONGS.length)%SONGS.length; song=SONGS[songIdx]; }
+// little instrument helpers, all routed into the music bus
+function v(type,f,t,dur,peak,lp,att,det){ const a=A(); if(!a) return; const o=a.createOscillator(),g=a.createGain(); o.type=type; o.frequency.setValueAtTime(f,t); if(det) o.detune.setValueAtTime(det,t);
+  let out=g; if(lp){ const fl=a.createBiquadFilter(); fl.type="lowpass"; fl.frequency.value=lp; o.connect(fl).connect(g); } else o.connect(g);
+  g.gain.setValueAtTime(.0001,t); g.gain.exponentialRampToValueAtTime(peak,t+(att||.006)); g.gain.exponentialRampToValueAtTime(.0001,t+dur); g.connect(BUS); o.start(t); o.stop(t+dur+.05); }
+function trumpet(f,t,dur){ v("sawtooth",f,t,dur,.05,2300,.025,-7); v("sawtooth",f,t,dur,.05,2300,.025,7); v("square",f*2,t,dur*.8,.012,3000,.03); }
+function marimba(f,t,dur){ v("triangle",f,t,Math.min(.5,dur),.2); v("sine",f*4,t,.08,.04); }
+function accordion(f,t,dur){ v("square",f,t,dur,.035,1700,.02,-9); v("square",f,t,dur,.035,1700,.02,9); v("triangle",f/2,t,dur,.05); }
+function pluck(f,t,peak){ v("sawtooth",f,t,.22,peak||.05,1800,.003); }
+function harp(f,t){ v("triangle",f,t,.35,.09); v("sine",f*2,t,.18,.03); }
+function strum(chord,t,oct,peak){ chord.forEach((m,j)=>pluck(HZ(m+(oct||0)),t+j*.012,peak||.045)); }
+function bassN(m,t,dur,peak){ v("triangle",HZ(m),t,dur,peak||.32); v("sine",HZ(m),t,dur,(peak||.32)*.5); }
+function shaker(t,peak){ noise(t,.06,peak,"highpass",6000); }
+function guiro(t,long){ noise(t,long?.14:.05,long?.09:.06,"bandpass",3200); }
+function bombo(t){ v("sine",90,t,.25,.35); v("sine",55,t,.3,.25); }
+function stomp(t){ noise(t,.08,.14,"lowpass",400); v("sine",70,t,.12,.18); }
+function bells(t){ for(let i=0;i<4;i++) v("triangle",2800+Math.random()*1500,t+i*.035,.18,.03); }
+function playBar(sg,b,t){
+  const bar=sg.bars[b%sg.bars.length], ch=sg.ch[b%sg.ch.length], E=sg.eighth, chord=CHD[ch], bs=BASS[ch];
+  // melody
+  bar.forEach((n,i)=>{ if(n==="-"||n==="R") return; let len=1; for(let k=i+1;k<bar.length&&bar[k]==="-";k++) len++; const f=HZ(NOTEN(n)), tt=t+i*E, d=Math.min(.9,len*E*.92);
+    if(sg.style==="mariachi"){ trumpet(f,tt,d); marimba(f/2,tt,d); }
+    else if(sg.style==="cumbia") accordion(f,tt,d);
+    else { pluck(f,tt,.09); v("triangle",f,tt,d,.12); } });
+  if(sg.style==="mariachi"){ bassN(bs[0],t,E*1.7); bassN(bs[1],t+2*E,E*1.7);                       // guitarrón on the beats
+    [1,3].forEach(k=>strum(chord,t+k*E)); [0,1,2,3].forEach(k=>shaker(t+k*E,k%2?.05:.03)); if(b%4===3) bells(t+2*E); }
+  else if(sg.style==="cumbia"){ bassN(bs[0],t,E*1.5,.34); bassN(bs[1],t+2*E,E*.9,.28); bassN(bs[0]+12,t+3*E,E*.8,.2);   // bass: root, fifth, octave
+    bombo(t); [1,3].forEach(k=>chord.forEach(m=>v("square",HZ(m),t+k*E,E*.6,.016,1500)));                                 // accordion chops
+    [0,1,2,3].forEach(k=>guiro(t+k*E,k%2===1)); if(b%8===7) bells(t+3*E); }
+  else { bassN(bs[0],t,E*2.6,.3); bassN(bs[1],t+3*E,E*2.6,.26);                                         // son jarocho 6/8
+    [0,2,3,5].forEach(k=>strum(chord,t+k*E,12,.035)); [0,3].forEach(k=>stomp(t+k*E));                    // jarana + zapateado
+    chord.concat([chord[0]+12,chord[1]+12]).forEach((m,i)=>harp(HZ(m+12),t+i*E*.5)); }                  // harp runs
+}
+
+// extra layers when the game heats up
+function hype(sg,b,t){ const E=sg.eighth, n=sg.beats;
+  if(HYPE>=1){ for(let k=0;k<n*2;k++) noise(t+k*E/2,.04,k%2?.03:.05,"highpass",7000); [1,3].forEach(k=>{ if(k<n) noise(t+k*E,.09,.12,"bandpass",1500); }); }
+  if(HYPE>=2){ for(let k=0;k<n;k++){ v("sine",90,t+k*E,.2,.3); } bells(t); if(b%2) bells(t+E*(n-1)); v("sawtooth",HZ(CHD[sg.ch[b%sg.ch.length]][2]+12),t,E*n*.9,.018,2600,.05); } }
+function start(i){ const a=A(); if(!a) return; if(on) stop(); if(i!=null) setSong(i); on=true; nb=0; bt=a.currentTime+.12;
+  timer=setInterval(()=>{ const ac=getCtx(); if(!ac||!on) return; while(bt<ac.currentTime+.5){ const sg=Object.assign({},song,{eighth:song.eighth/RATE}); playBar(sg,nb,bt); hype(sg,nb,bt); bt+=sg.beats*sg.eighth; nb++; } },90); }
+function stop(){ on=false; clearInterval(timer); }
+// stingers go to their own bus so they cut through the band
+function sv(type,f,t,dur,peak,slide,lp){ const a=A(); if(!a) return; const o=a.createOscillator(), g=a.createGain(); o.type=type; o.frequency.setValueAtTime(f,t); if(slide) o.frequency.exponentialRampToValueAtTime(slide,t+dur);
+  let n=o; if(lp){ const fl=a.createBiquadFilter(); fl.type="lowpass"; fl.frequency.value=lp; o.connect(fl); n=fl; } n.connect(g); g.gain.setValueAtTime(.0001,t); g.gain.exponentialRampToValueAtTime(peak,t+.012); g.gain.exponentialRampToValueAtTime(.0001,t+dur); g.connect(SFX); o.start(t); o.stop(t+dur+.05); }
+const T=()=>{ const a=A(); return a?a.currentTime:0; };
+const sting={
+  fanfare(){ const t=T(); [[67,0,.12],[72,.12,.12],[76,.24,.12],[79,.36,.5]].forEach(([m,o,d])=>{ sv("sawtooth",HZ(m),t+o,d,.09,0,2600); sv("sawtooth",HZ(m-4),t+o,d,.06,0,2400); }); noise(t+.36,.5,.12,"highpass",6000,0,SFX); },
+  big(){ const t=T(); [[67,0],[67,.09],[67,.18],[72,.3],[76,.42],[79,.54],[84,.7]].forEach(([m,o],i)=>{ const d=i===6?.7:.08; sv("sawtooth",HZ(m),t+o,d,.1,0,2800); sv("sawtooth",HZ(m-5),t+o,d,.07,0,2400); }); for(let i=0;i<6;i++) sv("triangle",2600+Math.random()*1500,t+.7+i*.05,.2,.04); },
+  grito(){ const t=T(); // ¡ajúa! a rising yelp, a held "ú", a falling "a"
+    sv("sawtooth",380,t,.16,.07,720,1800); sv("sawtooth",720,t+.15,.34,.08,980,2200); sv("sawtooth",980,t+.48,.32,.07,420,1900); noise(t,.12,.05,"bandpass",2500,0,SFX); },
+  cheer(n){ const t=T(), k=n||1; noise(t,.9*k,.16*k,"bandpass",1200,2400,SFX); noise(t+.05,.8*k,.1*k,"bandpass",600,1100,SFX); for(let i=0;i<4*k;i++) noise(t+Math.random()*.6,.05,.06,"highpass",3500,0,SFX); },
+  awww(){ const t=T(); noise(t,.8,.12,"bandpass",900,350,SFX); },
+  wah(){ const t=T(); [[466,.0],[440,.3],[415,.6],[392,.9]].forEach(([f,o],i)=>sv("sawtooth",f,t+o,i===3?.8:.28,.07,i===3?370:0,1200)); },
+  tick(hi){ const t=T(); sv("square",hi?1320:880,t,.05,.06); sv("sine",hi?2640:1760,t,.03,.03); },
+  ladder(n){ const t=T(), sc=[0,2,4,7,9,12,14,16,19,21,24]; const m=72+sc[Math.min(sc.length-1,n)]; sv("triangle",HZ(m),t,.14,.09); sv("sine",HZ(m+12),t+.02,.1,.04); },
+  key(){ const t=T(); [0,4,7,12].forEach((s,i)=>sv("square",HZ(79+s),t+i*.05,.1,.05)); }
+};
+return {init(c,o){ getCtx=c; getOut=o||(()=>null); }, start, stop, setRate(r){ RATE=r; }, setHype(h){ HYPE=h; }, get on(){ return on; }, sting, setSong};
+})();
+
+let TV=null, TVAC=null, TVLOCK=null;
+const tvAudio=()=>{ try{ if(!TVAC) TVAC=new (window.AudioContext||window.webkitAudioContext)(); if(TVAC.state==="suspended") TVAC.resume(); }catch(e){} return TVAC; };
+FIESTA.init(tvAudio);
+const tvGated=()=>!!(PLUSCFG()&&!isPlus());
+const tvSting=(n,...a)=>{ if(TV&&TV.mute) return; try{ tvAudio(); FIESTA.sting[n](...a); }catch(e){} };
+function tvOrder(D){ const giverOf={}; Object.entries(D.cards).forEach(([gv,c])=>{ giverOf[c.r]=gv; }); const out=[], kids=Object.keys(D.cards).some(k=>D.cards[k].k);
+  [1,0].forEach(k=>{ const left=new Set(Object.keys(giverOf).filter(r=>!!D.cards[giverOf[r]].k===!!k)); if(!left.size) return; if(kids) out.push({sep:k?"kids":"adults"});
+    while(left.size){ const arr=[...left]; let r=arr[rand(arr.length)]; while(r&&left.has(r)){ left.delete(r); out.push({r,g:giverOf[r],k}); r=giverOf[r]; } } }); return out; }
+function tvOpen(){ const g=G(); if(!g||!g.draw){ toast(t("tvNoDraw")); return; } if(tvGated()){ plusSheet("tv"); return; }
+  closeSheet(); TV={seq:tvOrder(g.draw),i:-1,hp:0,phase:"intro",mute:false,back:null}; let el=$("tv"); if(!el){ el=document.createElement("div"); el.id="tv"; el.className="tv"; el.setAttribute("role","dialog"); el.setAttribute("aria-modal","true"); document.body.appendChild(el); }
+  document.body.style.overflow="hidden"; tvRender(); cloudPullSafe(); }
+function cloudPullSafe(){ try{ if(typeof cloudPull==="function") cloudPull(false).then(()=>{ if(TV&&TV.phase==="board") tvRender(); }); }catch(e){} }
+async function tvStart(){ if(!TV) return; tvAudio(); try{ if(document.documentElement.requestFullscreen&&!document.fullscreenElement) await document.documentElement.requestFullscreen(); }catch(e){}
+  try{ if(navigator.wakeLock) TVLOCK=await navigator.wakeLock.request("screen"); }catch(e){}
+  if(!TV.mute){ try{ FIESTA.setHype(0); FIESTA.setRate(1); FIESTA.start(); }catch(e){} } tvNext(); }
+function tvClose(){ try{ FIESTA.stop(); }catch(e){} try{ if(document.fullscreenElement) document.exitFullscreen(); }catch(e){} try{ TVLOCK&&TVLOCK.release(); }catch(e){} TVLOCK=null; TV=null; const el=$("tv"); if(el) el.remove(); document.body.style.overflow=""; }
+function tvMute(){ if(!TV) return; TV.mute=!TV.mute; try{ TV.mute?FIESTA.stop():(TV.phase!=="intro"&&FIESTA.start()); }catch(e){} tvRender(); }
+function tvNext(){ if(!TV) return; if(TV.phase==="board"&&TV.back){ TV.phase=TV.back; TV.back=null; tvRender(); return; }
+  TV.i++; TV.hp=0; if(TV.i>=TV.seq.length){ TV.phase="end"; tvSting("cheer",1.4); try{ FIESTA.setHype(1); }catch(e){} tvRender(); setTimeout(()=>tvBoom(["🎉","⭐","🎁","🎄","✨","🪅","🍬"]),100); return; }
+  const s=TV.seq[TV.i]; TV.phase=s.sep?"sep":"hit"; if(s.sep) tvSting("fanfare"); try{ FIESTA.setHype(0); }catch(e){} tvRender(); }
+function tvPrev(){ if(!TV||TV.i<=0) return; TV.i-=1; const s=TV.seq[TV.i]; TV.hp=0; TV.phase=s.sep?"sep":"open"; tvRender(); }
+function tvShowBoard(){ if(!TV) return; if(TV.phase==="board"){ tvNext(); return; } TV.back=TV.phase; TV.phase="board"; tvRender(); cloudPullSafe(); }
+function tvHit(){ if(!TV||TV.phase!=="hit") return; TV.hp++; tvAudio();
+  const pin=document.querySelector("#tv .tv-pin"), sh=document.querySelector("#tv .shk");
+  if(TV.hp<3){ if(pin) pin.dataset.hp=String(TV.hp); if(sh){ sh.classList.remove("hit"); void sh.getBBox; requestAnimationFrame(()=>sh.classList.add("hit")); } document.querySelectorAll("#tv .tv-hp i").forEach((x,i)=>x.classList.toggle("on",i<TV.hp)); tvSting("ladder",TV.hp*3); tvSting("tick",TV.hp>1); try{ FIESTA.setHype(TV.hp/3); }catch(e){} return; }
+  TV.phase="open"; tvSting("big"); setTimeout(()=>tvSting("fanfare"),180); setTimeout(()=>tvSting("grito"),650); setTimeout(()=>tvSting("cheer",1.2),900); try{ FIESTA.setHype(1); }catch(e){}
+  tvRender(); tvBoom(); }
+function tvBoom(set){ const host=$("tv"); if(!host) return; const b=document.createElement("div"); b.className="tv-boom"; const E=set||["🍬","🍭","🍫","🍊","🥜","⭐","🎁","🍬","🍭","✨"];
+  for(let i=0;i<34;i++){ const s=document.createElement("span"), a=Math.random()*Math.PI*2, d=26+Math.random()*44; s.textContent=E[i%E.length]; s.style.setProperty("--dx",(Math.cos(a)*d)+"vmax"); s.style.setProperty("--dy",(Math.sin(a)*d*.8+18)+"vmax"); s.style.setProperty("--r",(Math.random()*720-360)+"deg"); s.style.animationDelay=(Math.random()*.15)+"s"; b.appendChild(s); }
+  host.appendChild(b); setTimeout(()=>b.remove(),2000); }
+const TVPIN=`<svg class="tv-pin" viewBox="-100 -50 200 250" data-hp="0" aria-hidden="true"><path d="M0 -50 V42" stroke="#e9d8b4" stroke-width="3"/>
+  <g transform="translate(0,105)"><g class="shk">${[0,1,2,3,4,5,6].map(i=>`<g transform="rotate(${i*360/7})"><path d="M-17 -44 L0 -98 L17 -44Z" fill="${["#ff4fa3","#ffd34d","#2fb3a3","#ff7a2f","#7a5cff","#53b84a","#ef3b3b"][i]}"/><path d="M-3 -96 L0 -112 L3 -96Z" fill="#fff8ec"/><path d="M0 -98 q-6 14 -2 26 M0 -98 q6 14 2 26" stroke="${["#ffd34d","#ff4fa3","#ff7a2f","#2fb3a3","#ffd34d","#ff4fa3","#7a5cff"][i]}" stroke-width="3" fill="none"/></g>`).join("")}
+  <circle r="52" fill="#ff4fa3"/><circle r="52" fill="none" stroke="#fff8ec" stroke-width="3" stroke-dasharray="6 7"/><circle r="38" fill="#ffd34d"/><circle r="24" fill="#2fb3a3"/><circle r="10" fill="#fff8ec"/>
+  <g class="crk c1" stroke="#1c1430" stroke-width="3.5" fill="none" stroke-linecap="round"><path d="M-40 -20 L-22 -6 L-30 8 L-12 18"/></g><g class="crk c2" stroke="#1c1430" stroke-width="3.5" fill="none" stroke-linecap="round"><path d="M34 -30 L18 -12 L30 2 L14 22 L22 36"/></g></g></g></svg>`;
+function tvRender(){ const el=$("tv"); if(!el||!TV) return; const g=G(), es=ui()==="es", n=TV.seq.filter(s=>!s.sep).length, done=TV.seq.slice(0,TV.i+1).filter(s=>!s.sep).length, s=TV.seq[TV.i]||{};
+  const flags=["#ff4fa3","#ffd34d","#2fb3a3","#ff7a2f","#7a5cff","#53b84a","#ef3b3b"]; let main="", foot="";
+  if(TV.phase==="intro"){ main=`<div class="tv-stage"><span class="tv-k">${esc(t("tvCardT"))}</span><div class="tv-big">${esc(g.name||"Posada")}</div><p class="tv-p">${esc(t("tvGifts",n))}</p>
+      <div class="tv-row"><button class="tv-cta" data-act="tvStart">${esc(t("tvStart"))}</button><button class="tv-cta alt" data-act="tvBoard">${esc(t("tvBoard"))}</button></div><p class="tv-p" style="font-size:clamp(13px,2vmin,22px);opacity:.85">🤫 ${esc(t("tvWarn"))}<br>📺 ${esc(t("tvCast"))}</p></div>`; }
+  else if(TV.phase==="sep"){ main=`<div class="tv-stage tv-reveal"><div class="tv-big">${esc(s.sep==="kids"?t("tvKidsFirst"):t("tvAdultsNow"))}</div><button class="tv-cta" data-act="tvNext">${esc(t("tvNext"))}</button></div>`; }
+  else if(TV.phase==="hit"||TV.phase==="open"){ const R=P(s.r)||{name:"?",id:s.r}, Gv=P(s.g)||{name:"?",id:s.g};
+    main=`<div class="tv-stage">${s.k?`<span class="tv-chip kid">${esc(t("secKids"))}</span>`:""}<span class="tv-k">${esc(t("tvFor"))}</span><div class="tv-mid">🎁 ${esc(R.name)}</div>
+      ${TV.phase==="hit"?`<button class="tv-pinwrap" data-act="tvHit" aria-label="${esc(t("tvTap"))}">${TVPIN}</button><div class="tv-hp">${[0,1,2].map(i=>`<i class="${i<TV.hp?"on":""}"></i>`).join("")}</div><p class="tv-p">${esc(t("tvTap"))}</p>`
+      :`<p class="tv-p" style="margin-top:2vmin">${esc(t("tvIs"))}</p><div class="tv-reveal" style="display:grid;justify-items:center;gap:1.4vmin"><div class="tv-av" style="--c:${colorOf(Gv.id)}">${esc(ini(Gv.name)||"?")}</div><div class="tv-big">${esc(Gv.name)}!</div></div>
+        <div class="tv-row" style="margin-top:1vmin"><button class="tv-cta" data-act="tvNext">${esc(TV.i>=TV.seq.length-1?"🎉 "+t("tvEnd").replace(/ 🎄$/,""):t("tvNext"))}</button></div>`}</div>`;
+    foot=`<small>${esc(t("tvCount",done,n))}</small>`; }
+  else if(TV.phase==="board"){ const rs=boardRows(g).slice(0,8), medal=["🥇","🥈","🥉"];
+    main=`<div class="tv-stage"><div class="tv-mid">${esc(t("tvBoardT"))}</div>${rs.length?`<ol class="tv-board">${rs.map((r,i)=>`<li><span>${medal[i]||i+1}</span><span>${esc(r.n)}</span><b>${Number(r.s).toLocaleString(es?"es-MX":undefined)}</b></li>`).join("")}</ol>`:`<p class="tv-p">${esc(t("tvBoardNone"))}</p>`}
+      <button class="tv-cta" data-act="tvNext">${esc(TV.back==="intro"?t("tvBack"):t("tvNext"))}</button></div>`; }
+  else if(TV.phase==="end"){ main=`<div class="tv-stage tv-reveal"><div class="tv-big">${esc(t("tvEnd"))}</div><p class="tv-p">${esc(t("tvEndP",n))}</p><div class="tv-row"><button class="tv-cta" data-act="tvBoard">${esc(t("tvBoard"))}</button><button class="tv-cta alt" data-act="tvClose">${esc(t("tvClose"))}</button></div></div>`; }
+  el.innerHTML=`<div class="tv-picado" aria-hidden="true">${Array.from({length:24},(_,i)=>`<i style="background:${flags[i%flags.length]}"></i>`).join("")}</div>
+    <div class="tv-top"><button class="tvbtn" data-act="tvClose" aria-label="${esc(t("tvClose"))}">✕ ${esc(t("tvClose"))}</button><span class="tv-title"></span><span class="row" style="gap:8px">${TV.phase!=="board"&&TV.phase!=="intro"?`<button class="tvbtn" data-act="tvBoard">🏆</button>`:""}<button class="tvbtn" data-act="tvMute" aria-label="Sound">${TV.mute?"🔇":"🔊"}</button></span></div>
+    <div class="tv-main">${main}</div><div class="tv-foot">${foot}</div>`; }
+addEventListener("keydown",e=>{ if(!TV) return; if(e.key==="Escape"){ if(!document.fullscreenElement) tvClose(); return; }
+  if(e.key===" "||e.key==="Enter"||e.key==="ArrowRight"||e.key==="MediaPlayPause"){ e.preventDefault(); if(TV.phase==="hit") tvHit(); else if(TV.phase==="intro") tvStart(); else if(TV.phase!=="end") tvNext(); }
+  else if(e.key==="ArrowLeft"){ e.preventDefault(); tvPrev(); } });
 
 /* ---------- cloud: letters arrive by themselves, the leaderboard is live ---------- */
 function ensureKey(g){ if(!g.key){ const a=new Uint8Array(18); crypto.getRandomValues(a); g.key=[...a].map(b=>b.toString(16).padStart(2,"0")).join(""); persist(); } return g.key; }
