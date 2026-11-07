@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Juegos · Posada Santa</title>
+<link rel="canonical" href="https://posadaxmas.com/juegos">
+<meta name="description" content="El Trineo, ¡Tamalazo!, La Piñata y La Posada: four free posada games for the whole family.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Posada Santa">
+<meta property="og:url" content="https://posadaxmas.com/juegos">
+<meta property="og:title" content="Juegos · Posada Santa">
+<meta property="og:description" content="El Trineo, ¡Tamalazo!, La Piñata y La Posada: four free posada games for the whole family.">
+<meta property="og:image" content="https://posadaxmas.com/assets/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Posada Santa">
+<meta name="theme-color" content="#16224a">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lilita+One&family=Nunito:wght@600;800;900&display=swap">
+<style>
+:root{--night:#16224a;--night2:#22336b;--deep:#101a3c;--cream:#fff8ec;--muted:#aab4d6;--gold:#f5c66a;--marigold:#f5a524;--line:rgba(255,255,255,.12);
+  --display:"Lilita One","Arial Rounded MT Bold",system-ui,sans-serif;--body:"Nunito",system-ui,-apple-system,"Segoe UI",sans-serif;color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;background:radial-gradient(120% 70% at 50% 0%,var(--night2),var(--night) 60%,var(--deep)) fixed,var(--night);color:var(--cream);font-family:var(--body);font-size:16px;line-height:1.45}
+a{color:inherit}
+.picado{display:flex;justify-content:center;gap:6px;padding-top:6px;overflow:hidden;height:50px;position:relative}
+.picado::before{content:"";position:absolute;left:0;right:0;top:6px;height:2px;background:#2e5a3e}
+.picado i{flex:0 0 30px;height:40px;clip-path:polygon(0 0,100% 0,100% 82%,88% 100%,75% 82%,62% 100%,50% 82%,38% 100%,25% 82%,12% 100%,0 82%)}
+.wrap{max-width:980px;margin:0 auto;padding:0 16px 48px}
+.top{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:8px 0 4px}
+.back{display:inline-flex;align-items:center;gap:6px;height:40px;padding:0 14px;border-radius:99px;border:1px solid var(--line);background:rgba(255,255,255,.06);font-weight:900;font-size:14px;text-decoration:none}
+.seg{display:flex;padding:3px;border-radius:99px;background:rgba(255,255,255,.07);border:1px solid var(--line)}
+.seg button{font:inherit;font-weight:900;font-size:13px;height:32px;padding:0 12px;border:0;border-radius:99px;background:none;color:var(--muted);cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--cream);color:var(--night)}
+h1{font-family:var(--display);font-weight:400;font-size:clamp(34px,8vw,54px);line-height:1.05;margin:18px 0 6px;text-align:center}
+.sub{text-align:center;color:var(--muted);font-weight:700;margin:0 0 22px}
+.fam[hidden]{display:none}.fam{display:flex;align-items:center;gap:12px;margin:0 auto 18px;max-width:640px;padding:12px 16px;border-radius:18px;text-decoration:none;background:linear-gradient(135deg,rgba(245,165,36,.22),rgba(226,51,127,.14));border:1px solid rgba(245,198,106,.5)}
+.fam .e{font-size:28px}.fam b{display:block;font-size:15px}.fam small{color:#e3d6c4;font-weight:700;font-size:13px}.fam .go{margin-left:auto;font-weight:900;font-size:13px;color:#1c1430;background:linear-gradient(180deg,#ffc95e,#f5a524);border-radius:12px;padding:8px 12px;white-space:nowrap}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+@media (min-width:860px){.grid{grid-template-columns:repeat(4,minmax(0,1fr))}}
+.tile{position:relative;display:flex;flex-direction:column;border-radius:24px;overflow:hidden;text-decoration:none;border:1px solid rgba(255,255,255,.14);box-shadow:0 18px 40px rgba(0,0,0,.28);transition:transform .14s,box-shadow .14s;min-height:250px}
+.tile:hover,.tile:focus-visible{transform:translateY(-3px);box-shadow:0 24px 48px rgba(0,0,0,.36);outline:none}
+.tile:active{transform:scale(.98)}
+.art{position:relative;height:128px;display:grid;place-items:center;font-size:66px;line-height:1}
+.art::after{content:"";position:absolute;inset:auto 0 0 0;height:34px;background:linear-gradient(180deg,transparent,rgba(16,26,60,.55))}
+.art .tag{position:absolute;top:10px;left:10px;font-size:10.5px;font-weight:900;letter-spacing:.08em;text-transform:uppercase;padding:4px 8px;border-radius:99px;background:rgba(16,26,60,.55);color:var(--cream);z-index:1}
+.body{flex:1;display:flex;flex-direction:column;gap:6px;padding:12px 14px 14px;background:rgba(16,26,60,.86)}
+.body h2{font-family:var(--display);font-weight:400;font-size:22px;margin:0;line-height:1.1}
+.body p{margin:0;color:var(--muted);font-size:13.5px;font-weight:700;flex:1}
+.rec{font-size:12.5px;font-weight:900;color:var(--gold);min-height:18px}
+.play{display:flex;align-items:center;justify-content:center;height:42px;border-radius:14px;font-weight:900;font-size:15px;color:#1c1430;background:linear-gradient(180deg,#ffc95e,#f5a524);margin-top:4px}
+.t1 .art{background:linear-gradient(160deg,#3b6fd1,#1d3b7a)}.t2 .art{background:linear-gradient(160deg,#e2337f,#8a1f4f)}
+.t3 .art{background:linear-gradient(160deg,#f5a524,#c3541e)}.t4 .art{background:linear-gradient(160deg,#2f8f4e,#155232)}
+.t4{grid-column:1/-1}@media (min-width:860px){.t4{grid-column:auto}}
+.t4 .art{height:110px}
+.foot{text-align:center;margin-top:26px;display:flex;justify-content:center;gap:10px;flex-wrap:wrap}
+.foot a{font-weight:800;font-size:14px;color:var(--muted);text-decoration:none;padding:8px 12px;border-radius:99px;border:1px solid var(--line)}
+@media (max-width:380px){.art{font-size:56px;height:110px}.body h2{font-size:20px}}
+@media (prefers-reduced-motion:reduce){.tile{transition:none}}
+</style>
+</head>
+<body>
+<div class="picado" id="picado" aria-hidden="true"></div>
+<main class="wrap">
+  <div class="top"><a class="back" href="/" data-t="home">← Inicio</a><div class="seg" role="group" aria-label="Language / Idioma"><button data-l="en">EN</button><button data-l="es">ES</button></div></div>
+  <h1 data-t="h1">¿A qué jugamos?</h1>
+  <p class="sub" data-t="sub">Cuatro juegos de la posada. Gratis, sin descargar nada.</p>
+  <a class="fam" id="fam" href="/play#board" hidden><span class="e">🏆</span><span><b id="famT"></b><small id="famS"></small></span><span class="go" data-t="famGo">Ver tabla</span></a>
+  <div class="grid">
+    <a class="tile t1" href="/trineo"><div class="art"><span class="tag" data-t="tag1">Carreras</span>🛷</div><div class="body"><h2>El Trineo</h2><p data-t="d1">Baja a la posada esquivando mariachis, burros y la chancla de la tía.</p><span class="rec" id="r1"></span><span class="play" data-t="go">Jugar →</span></div></a>
+    <a class="tile t2" href="/tamalazo"><div class="art"><span class="tag" data-t="tag2">Puntería</span>🫔</div><div class="body"><h2>¡Tamalazo!</h2><p data-t="d2">Carga la resortera y gánale los terrenos a tus tíos y tías.</p><span class="rec" id="r2"></span><span class="play" data-t="go">Jugar →</span></div></a>
+    <a class="tile t3" href="/pinata#play"><div class="art"><span class="tag" data-t="tag3">Ritmo</span>🪅</div><div class="body"><h2>La Piñata</h2><p data-t="d3">Calcula el golpe, aguanta el jalón de la cuerda y agarra los dulces.</p><span class="rec" id="r3"></span><span class="play" data-t="go">Jugar →</span></div></a>
+    <a class="tile t4" href="/play"><div class="art"><span class="tag" data-t="tag4">Aventura · Tabla familiar</span>🏠</div><div class="body"><h2>La Posada</h2><p data-t="d4">Cinco niveles, cinco jefes y una tabla en vivo con tu familia.</p><span class="rec" id="r4"></span><span class="play" data-t="go">Jugar →</span></div></a>
+  </div>
+  <div class="foot"><a href="/" data-t="home2">🏠 Inicio</a><a href="/host" data-t="org">🎄 Organizar Secret Santa</a></div>
+</main>
+<script>
+const EN={home:"← Home",h1:"What are we playing?",sub:"Four posada games. Free, nothing to download.",famGo:"See board",tag1:"Racing",tag2:"Aim",tag3:"Timing",tag4:"Adventure · Family board",
+  d1:"Race down to the posada past mariachis, burros and Tía's flying chancla.",d2:"Load the resortera and win the family land back from your tíos.",d3:"Time your swings, survive the rope yank, grab the candy.",d4:"Five levels, five bosses and a live leaderboard with your family.",
+  go:"Play →",home2:"🏠 Home",org:"🎄 Organize a Secret Santa",rec:n=>`Your record: ${n}`,stars:(s,n)=>`⭐ ${s} · ${n} of 5 plots`,lv:n=>`Your total: ${n} pts`,fam:g=>`${g}`,famS:(r,n)=>r?`You're #${r} of ${n} on the family board`:"Your family's board is waiting"};
+const ES={home:"← Inicio",h1:"¿A qué jugamos?",sub:"Cuatro juegos de la posada. Gratis, sin descargar nada.",famGo:"Ver tabla",tag1:"Carreras",tag2:"Puntería",tag3:"Ritmo",tag4:"Aventura · Tabla familiar",
+  d1:"Baja a la posada esquivando mariachis, burros y la chancla de la tía.",d2:"Carga la resortera y gánale los terrenos a tus tíos y tías.",d3:"Calcula el golpe, aguanta el jalón de la cuerda y agarra los dulces.",d4:"Cinco niveles, cinco jefes y una tabla en vivo con tu familia.",
+  go:"Jugar →",home2:"🏠 Inicio",org:"🎄 Organizar Secret Santa",rec:n=>`Tu récord: ${n}`,stars:(s,n)=>`⭐ ${s} · ${n} de 5 terrenos`,lv:n=>`Tu total: ${n} pts`,fam:g=>`${g}`,famS:(r,n)=>r?`Vas #${r} de ${n} en la tabla de la familia`:"La tabla de tu familia te espera"};
+const J=k=>{ try{ return JSON.parse(localStorage.getItem(k)||"null"); }catch(e){ return null; } }, N=k=>{ try{ return +localStorage.getItem(k)||0; }catch(e){ return 0; } };
+(function(){ const p=document.getElementById("picado"), c=["#d7372f","#2f8f4e","#f5a524","#e2337f","#f4efe4","#22a9c4"]; for(let i=0;i<30;i++){ const f=document.createElement("i"); f.style.background=c[i%6]; p.appendChild(f); } })();
+function render(L){ const D=L==="es"?ES:EN, fmt=n=>Number(n).toLocaleString(L==="es"?"es-MX":"en-US");
+  document.documentElement.lang=L; document.querySelectorAll("[data-t]").forEach(el=>{ const v=D[el.dataset.t]; if(typeof v==="string") el.textContent=v; });
+  document.querySelectorAll("[data-l]").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.l===L)));
+  const tr=N("trineo-best"); document.getElementById("r1").textContent=tr?D.rec(fmt(tr)):"";
+  const tm=J("tamalazo-progress"); let tms="", st=0, n=0; if(tm&&tm.stars){ st=Object.values(tm.stars).reduce((a,b)=>a+b,0); n=Object.values(tm.stars).filter(Boolean).length; } if(n) tms=D.stars(st,n); document.getElementById("r2").textContent=tms;
+  const pb=N("pinata-best"); document.getElementById("r3").textContent=pb?D.rec(fmt(pb)):"";
+  const fb=J("posada-family-v1"); let tot=0; if(fb&&fb.current&&fb.players&&fb.players[fb.current]) tot=Object.values(fb.players[fb.current].levels||{}).reduce((a,v)=>a+(v.best||0),0); document.getElementById("r4").textContent=tot?D.lv(fmt(tot)):"";
+  const gs=J("posada-groups-v1"); const g=gs&&gs.cur&&gs.groups&&gs.groups[gs.cur]; const fam=document.getElementById("fam");
+  if(g){ const rows=Object.values(g.e||{}).filter(r=>r.s>0).sort((a,b)=>b.s-a.s), nk=x=>String(x||"").toLowerCase().trim(), i=g.me?rows.findIndex(r=>nk(r.n)===nk(g.me)):-1;
+    document.getElementById("famT").textContent="🎄 "+(g.gn||""); document.getElementById("famS").textContent=D.famS(i>=0?i+1:0,rows.length); fam.href="/play#fam="+encodeURIComponent(gs.cur)+"&board"; fam.hidden=false; } else fam.hidden=true;
+  try{ localStorage.setItem("posada-lang",L); }catch(e){} }
+let lang=(()=>{ try{ const s=localStorage.getItem("posada-lang"); if(s==="en"||s==="es") return s; }catch(e){} return /^es\b/i.test(navigator.language||"")?"es":"en"; })();
+document.querySelectorAll("[data-l]").forEach(b=>b.onclick=()=>{ lang=b.dataset.l; render(lang); }); render(lang);
+</script>
+</body>
+</html>

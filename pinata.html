@@ -916,4 +916,14 @@ requestAnimationFrame(frame);
 window.addEventListener("hashchange", ()=>{ const d=findCode(location.hash); if(d&&!started){ data=d; startGame(); } });
 </script>
 
+<script>
+/* a "back to all games" pill, shown whenever you're not mid-play (site only) */
+function gamesPill(show){ if(/claude|anthropic/.test(location.hostname)) return; const a=document.createElement("a"); a.href="/juegos"; a.className="gpill"; a.setAttribute("aria-label","Juegos / Games");
+  const st=document.createElement("style"); st.textContent=".gpill{position:fixed;z-index:2147483000;top:calc(10px + env(safe-area-inset-top,0px));left:calc(10px + env(safe-area-inset-left,0px));display:inline-flex;align-items:center;gap:6px;height:38px;padding:0 14px 0 11px;border-radius:99px;font:900 14px Nunito,system-ui,sans-serif;color:#1c1430;text-decoration:none;background:linear-gradient(180deg,#ffc95e,#f5a524);box-shadow:0 8px 20px rgba(0,0,0,.35)}.gpill[hidden]{display:none}body.gp-on .overlay{padding-top:calc(58px + env(safe-area-inset-top,0px))!important}.gpill:active{transform:scale(.96)}";
+  document.head.appendChild(st); document.body.appendChild(a);
+  const tick=()=>{ let on=false; try{ on=!!show(); }catch(e){} a.hidden=!on; document.body.classList.toggle("gp-on",on); const es=(document.documentElement.lang||"").startsWith("es"); const tx="← 🎮 "+(es?"Juegos":"Games"); if(a.textContent!==tx) a.textContent=tx; };
+  tick(); setInterval(tick,250); }
+gamesPill(()=>ARCADE||!$("result").hidden||!$("bad").hidden);
+</script>
+
 </html>

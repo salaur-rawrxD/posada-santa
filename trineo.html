@@ -175,11 +175,20 @@ async function copyText(s){ try{ await navigator.clipboard.writeText(s); return 
   document.querySelectorAll(".gamesrow").forEach(b=>b.innerHTML=html); })();
 /* breadcrumbs on the pause and game-over cards: home, leaderboard, organizer */
 function renderCrumbs(){ const inClaude=!ON_SITE, es=LANG==="es";
-  const C=[ !inClaude&&["🏠",es?"Inicio":"Home","/"],
+  const C=[ !inClaude&&["🎮",es?"Todos los juegos":"All games","/juegos"], !inClaude&&["🏠",es?"Inicio":"Home","/"],
     ["🏆",es?"Tabla familiar":"Leaderboard",inClaude?"https://claude.ai/artifact/W2yhsdrnRyCpRqrUPPbdu3#board":"/play#board"],
     ["🎄",es?"Organizar Secret Santa":"Organizer",inClaude?"https://claude.ai/artifact/Tp8Yit2cs1dM1UrXe8bipC":"/host"] ].filter(Boolean);
   document.querySelectorAll("[data-crumbs]").forEach(n=>{ n.innerHTML=`<span class="crumbs-k">${es?"Ir a":"Go to"}</span>`+C.map(([e,l,u])=>`<a href="${u}">${e} ${l}</a>`).join(""); }); }
 renderCrumbs(); document.querySelectorAll("[data-lang]").forEach(b=>b.addEventListener("click",()=>setTimeout(renderCrumbs,0)));
+
+/* a "back to all games" pill, shown whenever you're not mid-play (site only) */
+function gamesPill(show){ if(/claude|anthropic/.test(location.hostname)) return; const a=document.createElement("a"); a.href="/juegos"; a.className="gpill"; a.setAttribute("aria-label","Juegos / Games");
+  const st=document.createElement("style"); st.textContent=".gpill{position:fixed;z-index:2147483000;top:calc(10px + env(safe-area-inset-top,0px));left:calc(10px + env(safe-area-inset-left,0px));display:inline-flex;align-items:center;gap:6px;height:38px;padding:0 14px 0 11px;border-radius:99px;font:900 14px Nunito,system-ui,sans-serif;color:#1c1430;text-decoration:none;background:linear-gradient(180deg,#ffc95e,#f5a524);box-shadow:0 8px 20px rgba(0,0,0,.35)}.gpill[hidden]{display:none}.gpill:active{transform:scale(.96)}";
+  document.head.appendChild(st); document.body.appendChild(a);
+  const tick=()=>{ let on=false; try{ on=!!show(); }catch(e){} a.hidden=!on; const es=(document.documentElement.lang||"").startsWith("es"); const tx="← 🎮 "+(es?"Juegos":"Games"); if(a.textContent!==tx) a.textContent=tx; };
+  tick(); setInterval(tick,250); }
+if(ON_SITE) addEventListener("DOMContentLoaded",()=>gamesPill(()=>typeof state==="undefined"||state!=="play"));
+if(ON_SITE&&document.readyState!=="loading") setTimeout(()=>{ if(!document.querySelector(".gpill")) gamesPill(()=>typeof state==="undefined"||state!=="play"); },0);
 
 
 /* =================== El Trineo =================== */
