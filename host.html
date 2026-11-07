@@ -207,6 +207,12 @@ details summary{cursor:pointer;font-weight:800;font-size:13px;color:var(--muted)
 .tv-board li:first-child{background:linear-gradient(90deg,rgba(245,165,36,.35),rgba(245,165,36,.08));border-color:#f5c66a}
 .tv-board li b{font-family:var(--display);color:var(--gold);font-weight:400}
 .tv-board li span:nth-child(2){text-align:left;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sendpair{display:grid;grid-template-columns:auto auto;gap:6px;justify-items:stretch}.sendpair .again{grid-column:1/-1;text-align:center;font-size:11px;font-weight:800;color:var(--muted);margin-bottom:-2px}
+.sbtn{display:inline-flex;align-items:center;justify-content:center;gap:5px;min-height:40px;padding:0 11px;border-radius:12px;font-weight:900;font-size:13px;text-decoration:none;white-space:nowrap}
+.sbtn.wa{background:linear-gradient(180deg,#3ad46a,#20b356);color:#06280f}.sbtn.im{background:linear-gradient(180deg,#4aa8ff,#1d84f0);color:#fff}
+.sbtn.done{background:rgba(255,255,255,.07);color:var(--cream);border:1px solid rgba(255,255,255,.14)}
+.qsend{display:grid;gap:10px}.qsend .cta{min-height:58px;font-size:18px}.qsend .cta+.cta{min-height:48px;font-size:15px}
+.giver{grid-template-columns:42px minmax(0,1fr) auto!important}
 </style>
 </head>
 <body>
@@ -275,7 +281,8 @@ const intl=p=>{ let d=digits(p); if(d.length===10) d="1"+d; return d; };
 const pretty=p=>{ const d=digits(p); if(d.length===10) return `(${d.slice(0,3)}) ${d.slice(3,6)}-${d.slice(6)}`; if(d.length===11&&d[0]==="1") return `(${d.slice(1,4)}) ${d.slice(4,7)}-${d.slice(7)}`; return p||""; };
 const isApple=/iPhone|iPad|Mac/i.test(navigator.userAgent);
 const waLink=(phone,text)=>`https://wa.me/${phone?intl(phone):""}?text=${encodeURIComponent(text)}`;
-const imLink=(phone,text)=>`sms:${phone?"+"+intl(phone):""}${isApple?"&":"?"}body=${encodeURIComponent(text)}`;
+const WA_ICON=`<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" style="flex:0 0 auto"><path fill="currentColor" d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2Zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8s-.4-.1-.6.1-.7.8-.8 1-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.2-.4.2-.4.7-1.3.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.7 11.8 11.8 0 0 0 4.5 4c1.7.7 2.3.8 3.2.6a2.7 2.7 0 0 0 1.8-1.2 2.2 2.2 0 0 0 .1-1.3c0-.1-.2-.2-.5-.3Z"/></svg>`;
+const imLink=(phone,text)=>`sms:${phone?"+"+intl(phone):""}?&body=${encodeURIComponent(text)}`;
 const uid=()=>Math.random().toString(36).slice(2,8)+Date.now().toString(36).slice(-4);
 const COLORS=["#f5c66a","#ff8fa3","#8fe3a4","#8fd3f5","#c9a7ff","#ffb36b","#f5e08f","#9ff0e0"];
 const colorOf=id=>{ let h=0; for(const c of String(id)) h=(h*31+c.charCodeAt(0))>>>0; return COLORS[h%COLORS.length]; };
@@ -399,7 +406,7 @@ Object.assign(W.en,{startT:"Create your organizer account",startP:"It takes 30 s
 Object.assign(W.es,{startT:"Crea tu cuenta de organizador",startP:"Toma 30 segundos: tu correo y un código. Sin contraseña.",why1:"Abre tu posada desde cualquier teléfono o compu",why2:"Las cartas de tu familia llegan a tu cuenta, nunca se pierden",why3:"Sigue las invitaciones, las cartas y el sorteo",onlyYou:"Solo tú, el organizador, necesitas cuenta. Tu familia solo abre su link.",gateT:"Primero guarda tu posada",gateP:"Antes de mandar invitaciones, crea tu cuenta de organizador para que las cartas te lleguen a ti, aunque cambies de teléfono.",startCta:"Crear cuenta y empezar",haveAcct2:"Ya tengo cuenta · Entrar",bannerT:"Tu posada solo está en este teléfono",bannerP:"Crea tu cuenta de organizador para no perderla y seguir cada carta.",bannerB:"Crear mi cuenta",acctPill:"Cuenta"});
 Object.assign(W.en,{plusK:"Posada Plus",plusT:"Make it a Posada Plus",plusP:"One payment for your whole group. It keeps Posada Santa free for everyone else.",plusPrice:"$4.99 · one time",plusB:"⭐ Get Posada Plus",
   plus1:"A kids' exchange: a second draw just for the little ones, with its own budget",plus2:"Reveal night on the TV: every Secret Santa revealed piñata-style, with music and the family leaderboard",plus3:"Room for the whole familia: more than 25 people",plus4:"Supports a small family-made project 🧡",plus5:"Bonus: every costume unlocked in the games",
-  capT:"Your group is full",capP:n=>`Free groups fit up to ${n} people. Posada Plus lets everyone in.`,plusOn:"⭐ Posada Plus is on. ¡Gracias!",plusWait:"Payment received, turning on Plus…",plusLate:"We're still waiting on the payment confirmation. It can take a minute; reopen the menu to check.",plusRow:"⭐ Posada Plus: kids' exchange + TV reveal night",
+  capT:"Your group is full",capP:n=>`Free groups fit up to ${n} people. Posada Plus lets everyone in.`,plusOn:"⭐ Posada Plus is on. ¡Gracias!",plusWait:"Payment received, turning on Plus…",plusLate:"We're still waiting on the payment confirmation. It can take a minute; reopen the menu to check.",plusRow:"⭐ Posada Plus: kids' exchange + TV reveal night",pinAgain:"Send again",smsBtn:"SMS",sentTo:n=>`✓ Sent to ${n}`,qAuto:"After you send it, come back here and the next person will be ready.",chanPick:"Send with",
   kidsT:"Kids' exchange",kidsP:"A second draw just for the kids, with its own budget. Kids only draw kids, and grown-ups only draw grown-ups.",kidsOnL:"Kids' exchange is on",kidsBud:"Kids' gift budget",kidsWho:"Tap the kids",kidsNone:"Add the kids to your list first, then mark them here.",
   kidsLocked:"Names are already drawn. Redo the draw to change who's in the kids' exchange.",kidsCardT:"👧 Add a kids' exchange",kidsCardP:"A second draw for the little ones, with its own budget.",kidsEdit:"👧 Edit the kids' exchange",
   kidsSum:(k,a)=>`👧 ${k} kids · 🎁 ${a} grown-ups`,kNeed2:"The kids' exchange needs at least 2 kids with letters.",aNeed3:"The grown-ups' exchange needs at least 3 people with letters.",secKids:"👧 Kids' exchange",secAdults:"🎁 Grown-ups",kidOne:"In the kids' exchange",kidOneS:"Draws and gets drawn only with other kids",kidsGroup:n=>`${n} (kids 👧)`,
@@ -409,7 +416,7 @@ Object.assign(W.en,{plusK:"Posada Plus",plusT:"Make it a Posada Plus",plusP:"One
   tvEnd:"¡Feliz Navidad! 🎄",tvEndP:n=>`All ${n} gifts revealed`,tvClose:"Close",tvBack:"◀ Back",tvKidsFirst:"First, the kids! 👧",tvAdultsNow:"Now the grown-ups! 🎁",tvCount:(i,n)=>`${i} of ${n}`,tvNoDraw:"Draw names first, then reveal night opens up."});
 Object.assign(W.es,{plusK:"Posada Plus",plusT:"Hazla Posada Plus",plusP:"Un solo pago para todo tu grupo. Así Posada Santa sigue gratis para todos los demás.",plusPrice:"$4.99 · un solo pago",plusB:"⭐ Obtener Posada Plus",
   plus1:"Intercambio de niños: un segundo sorteo solo para los chiquitos, con su propio presupuesto",plus2:"Noche de revelación en la tele: cada Santa Secreto se revela a piñatazos, con música y la tabla de la familia",plus3:"Cabe toda la familia: más de 25 personas",plus4:"Apoyas un proyecto hecho en familia 🧡",plus5:"De regalo: todos los disfraces de los juegos",
-  capT:"Tu grupo está lleno",capP:n=>`Los grupos gratis son de hasta ${n} personas. Con Posada Plus cabe todo mundo.`,plusOn:"⭐ Posada Plus activada. ¡Gracias!",plusWait:"Pago recibido, activando Plus…",plusLate:"Todavía esperamos la confirmación del pago. Puede tardar un minuto; vuelve a abrir el menú para revisar.",plusRow:"⭐ Posada Plus: intercambio de niños + noche en la tele",
+  capT:"Tu grupo está lleno",capP:n=>`Los grupos gratis son de hasta ${n} personas. Con Posada Plus cabe todo mundo.`,plusOn:"⭐ Posada Plus activada. ¡Gracias!",plusWait:"Pago recibido, activando Plus…",plusLate:"Todavía esperamos la confirmación del pago. Puede tardar un minuto; vuelve a abrir el menú para revisar.",plusRow:"⭐ Posada Plus: intercambio de niños + noche en la tele",pinAgain:"Mandar otra vez",smsBtn:"SMS",sentTo:n=>`✓ Enviado a ${n}`,qAuto:"Después de mandarlo, regresa aquí y el siguiente ya estará listo.",chanPick:"Mandar por",
   kidsT:"Intercambio de niños",kidsP:"Un segundo sorteo solo para los niños, con su propio presupuesto. Los niños se sacan entre niños y los grandes entre grandes.",kidsOnL:"Intercambio de niños activado",kidsBud:"Presupuesto de los niños",kidsWho:"Toca a los niños",kidsNone:"Primero agrega a los niños a tu lista y luego márcalos aquí.",
   kidsLocked:"Ya se sortearon los nombres. Vuelve a sortear para cambiar quién va en el intercambio de niños.",kidsCardT:"👧 Agrega un intercambio de niños",kidsCardP:"Un segundo sorteo para los chiquitos, con su propio presupuesto.",kidsEdit:"👧 Editar el intercambio de niños",
   kidsSum:(k,a)=>`👧 ${k} niños · 🎁 ${a} grandes`,kNeed2:"El intercambio de niños necesita al menos 2 niños con carta.",aNeed3:"El intercambio de los grandes necesita al menos 3 personas con carta.",secKids:"👧 Intercambio de niños",secAdults:"🎁 Los grandes",kidOne:"En el intercambio de niños",kidOneS:"Solo saca y lo sacan otros niños",kidsGroup:n=>`${n} (niños 👧)`,
@@ -530,7 +537,8 @@ function renderQueue(){ if(!Q) return; const title={inv:t("qInv"),rem:t("qRem"),
   const p=P(Q.ids[Q.i]); if(!p){ Q.i++; renderQueue(); return; } const m=qMessage(p);
   sheet(`<div class="sheethead"><div class="stack tight"><span class="qcount">${esc(title)} · ${esc(t("qOf",Q.i+1,Q.ids.length))}</span>
       <div class="big-name"><div class="av" style="--c:${colorOf(p.id)}">${esc(ini(p.name)||"?")}</div><div><h2>${esc(p.name)}</h2><small class="help">${esc(p.phone?pretty(p.phone):t("qNoPhone"))}</small></div></div></div>${closeBtn()}</div>
-    <div class="send3"><a class="cta wa" data-act="qSend" href="${esc(waLink(p.phone,m))}" target="_blank" rel="noopener">${esc(t("waBtn"))}</a><a class="cta im" data-act="qSend" href="${esc(imLink(p.phone,m))}">${esc(t("imBtn"))}</a><button class="cta alt" data-act="qCopy">${esc(t("cpBtn"))}</button></div>
+    ${(()=>{ const wa=`<a class="cta wa" data-act="qSend" data-ch="wa" href="${esc(waLink(p.phone,m))}" target="_blank" rel="noopener">${WA_ICON}${esc(t("waBtn"))}</a>`, im=`<a class="cta im" data-act="qSend" data-ch="sms" href="${esc(imLink(p.phone,m))}">💬 ${esc(t("imBtn"))}</a>`;
+      return `<div class="qsend">${DB.chan==="sms"?im+wa:wa+im}</div><p class="fine" style="margin-top:-4px">${esc(t("qAuto"))}</p><button class="ghost" data-act="qCopy" style="justify-self:center">📋 ${esc(t("cpBtn"))}</button>`; })()}
     <details><summary>${esc(t("msgPrev"))}</summary><div class="preview">${esc(m)}</div></details>
     <div class="row"><button class="cta alt" data-act="qSkip" style="flex:1">${esc(t("qSkip"))}</button><button class="cta" id="qNext" data-act="qNext" style="flex:2" ${Q.tapped?"":"disabled"}>${esc(Q.tapped?t("qNext"):t("qNext"))}</button></div>`); }
 
@@ -654,7 +662,7 @@ function drawV(){ const g=G(), D=g.draw;
     ${late.length?`<div class="warn">${esc(late.map(p=>first(p.name)).join(", "))}: ${esc(t("dLateP"))}</div>`:""}
     ${tvCard}
     ${(kidIds.length?[[t("secAdults"),adultIds],[t("secKids"),kidIds]]:[["",ids]]).map(([sec,list])=>`${sec?`<h3 class="drawsec">${esc(sec)}</h3>`:""}<div class="drawn">${list.map(id=>{ const p=P(id); if(!p) return ""; const [c,l]=status(p); return `<div class="giver"><div class="av" style="--c:${colorOf(id)}">${esc(ini(p.name)||"?")}</div><div style="min-width:0"><b style="display:block">${esc(p.name)}</b><span class="st ${c}">${esc(l)}</span></div>
-      ${p.me?`<a class="cta sm" href="${esc(REVEAL_URL+"#"+D.cards[id].code)}" target="_blank" rel="noopener">${esc(t("dOpenMine"))}</a>`:`<button class="cta sm ${D.sent[id]&&!D.redo[id]?"alt":""}" data-act="qOne" data-id="${id}">${esc(D.sent[id]&&!D.redo[id]?t("resend"):t("sendOne"))}</button>`}</div>`; }).join("")}</div>`).join("")}
+      ${p.me?`<a class="cta sm" href="${esc(REVEAL_URL+"#"+D.cards[id].code)}" target="_blank" rel="noopener">${esc(t("dOpenMine"))}</a>`:(()=>{ const done=D.sent[id]&&!D.redo[id], m=msgPinata(p,D.cards[id].code); return `<span class="sendpair">${done?`<small class="again">${esc(t("pinAgain"))}</small>`:""}<a class="sbtn wa ${done?"done":""}" data-act="pinDirect" data-id="${id}" href="${esc(waLink(p.phone,m))}" target="_blank" rel="noopener">${WA_ICON}${esc(t("waBtn"))}</a><a class="sbtn im ${done?"done":""}" data-act="pinDirect" data-id="${id}" href="${esc(imLink(p.phone,m))}">💬 ${esc(t("smsBtn"))}</a></span>`; })()}</div>`; }).join("")}</div>`).join("")}
     <button class="ghost" data-act="redrawQ">🔄 ${esc(t("dRedo"))}</button>${pairCard}</div>`; }
 
 function acctCard(){ const c=CLOUD(); if(!c) return ""; const me=ME();
@@ -769,7 +777,8 @@ const ACT={
   qRem:()=>startQueue("rem",G().people.filter(p=>!p.letter&&!p.me).map(p=>p.id)),
   qPin:()=>startQueue("pin",pending(G().draw)),
   qOne:a=>startQueue("pin",[a.dataset.id]),
-  qSend:a=>{ if(!Q) return; const p=P(Q.ids[Q.i]); markSent(p); Q.tapped=true; setTimeout(()=>{ const b=$("qNext"); if(b){ b.disabled=false; b.textContent=t("qNext"); } },200); return "follow"; },
+  pinDirect:a=>{ const p=P(a.dataset.id), g=G(); if(!p||!g.draw) return; g.draw.sent[p.id]=Date.now(); delete g.draw.redo[p.id]; DB.chan=a.classList.contains("im")?"sms":"wa"; persist(); setTimeout(()=>{ render(); toast(t("sentTo",first(p.name))); },400); return "follow"; },
+  qSend:a=>{ if(!Q) return; const p=P(Q.ids[Q.i]); markSent(p); Q.tapped=true; Q.away=Date.now(); DB.chan=a.dataset.ch||DB.chan; persist(); setTimeout(()=>{ const b=$("qNext"); if(b){ b.disabled=false; b.textContent=t("qNext"); } },200); return "follow"; },
   qCopy:async()=>{ if(!Q) return; const p=P(Q.ids[Q.i]); if(await copy(qMessage(p))){ markSent(p); Q.tapped=true; const b=$("qNext"); if(b) b.disabled=false; } },
   qNext:()=>{ if(!Q) return; Q.i++; Q.tapped=false; renderQueue(); }, qSkip:()=>{ if(!Q) return; Q.i++; Q.tapped=false; renderQueue(); },
   closeSheet:()=>closeSheet(), scrim:(a,e)=>{ if(e.target===a) closeSheet(); },
@@ -820,15 +829,17 @@ const ACT={
   delGroupY:()=>{ const c=CLOUD(); if(c) c.remove(DB.cur); delete DB.groups[DB.cur]; DB.cur=(Object.values(DB.groups).find(x=>x.setup)||{}).gid||null; persist(); closeSheet(); view="home"; render(); },
 };
 function refreshAfterAdd(){ if(window.__capHit){ window.__capHit=false; setTimeout(()=>plusSheet("cap"),250); } if($("sheetRoot").innerHTML){ addSheet(); } render(); }
-const NEEDACCT=new Set(["qInv","qRem","qPin","qOne","groupLink","draw"]);
+const NEEDACCT=new Set(["qInv","qRem","qPin","qOne","groupLink","draw","pinDirect"]);
 document.addEventListener("click",e=>{ const a=e.target.closest("[data-act]"); if(!a) return; const fn=ACT[a.dataset.act]; if(!fn) return;
-  if(CLOUD()&&!ME()&&NEEDACCT.has(a.dataset.act)&&G()&&G().setup){ pendingAct={act:a.dataset.act,data:{...a.dataset}}; loginSheet("gate"); return; }
+  if(CLOUD()&&!ME()&&NEEDACCT.has(a.dataset.act)&&G()&&G().setup){ e.preventDefault(); pendingAct={act:a.dataset.act,data:{...a.dataset}}; loginSheet("gate"); return; }
   fn(a,e); });
 function wireInputs(){ const f=$("addForm"); if(f) f.onsubmit=e=>{ e.preventDefault(); const n=$("a_n"), p=$("a_p"); const r=addPerson(n.value,p.value); if(r===false) toast(t("dupe",1)); else if(r){ persist(); toast(t("added",1)); }
   n.value=""; p.value=""; if($("sheetRoot").innerHTML){ addSheet(); render(); } else { render(); } setTimeout(()=>$("a_n")&&$("a_n").focus(),50); };
   const an=$("a_n"); if(an) an.onkeydown=e=>{ if(e.key==="Enter"){ e.preventDefault(); $("a_p").focus(); } };
   const bc=$("w_bc"); if(bc) bc.oninput=()=>{ document.querySelectorAll("[data-act=bud]").forEach(b=>b.setAttribute("aria-pressed","false")); G().budget=bc.value.trim(); persist(); }; }
 addEventListener("keydown",e=>{ if(e.key==="Escape"&&$("sheetRoot").innerHTML) closeSheet(); });
+function qBack(){ if(!Q||!Q.away||Date.now()-Q.away<1200) return; const p=P(Q.ids[Q.i]); Q.away=0; if(p) toast(t("sentTo",first(p.name))); setTimeout(()=>{ if(Q){ Q.i++; Q.tapped=false; renderQueue(); } },450); }
+document.addEventListener("visibilitychange",()=>{ if(document.visibilityState==="visible") qBack(); }); addEventListener("focus",qBack);
 
 /* ---------- Posada Plus: kids' exchange ---------- */
 const kidsGated=()=>!!(PLUSCFG()&&!isPlus());
