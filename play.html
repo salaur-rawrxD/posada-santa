@@ -1951,7 +1951,11 @@ overlays.push("avatar","unlock");
 const _openAv=open; open=function(id){ _openAv(id); if(id==="avatar") renderAvatar(); };
 $("outfitBtn").onclick=null; $("outfitBtn").replaceWith($("outfitBtn").cloneNode(true)); $("outfitBtn").addEventListener("click",openAvatar);
 $("avSurprise").addEventListener("click",surprise);
-$("avSave").addEventListener("click",()=>{ Board.setAvatar(avSafe(avDraft)); buildAvatar(); setTimeout(()=>{ paintIcons(); },60); open("menu"); });
+$("avSave").addEventListener("click",()=>{ Board.setAvatar(avSafe(avDraft)); buildAvatar(); setTimeout(()=>{ paintIcons(); },60); if(window.__avRet){ location.href=window.__avRet; return; } open("menu"); });
+/* #avatar opens the character maker straight away (from the games page or a mini game); &ret=/path comes back after saving */
+(function(){ const h=String(window.__H0||location.hash||""); if(!/[#&]avatar\b/.test(h)) return; const r=h.match(/[#&]ret=(\/[A-Za-z0-9_\/#=-]*)/); if(r) window.__avRet=r[1];
+  setTimeout(()=>{ if(Board.current()) openAvatar(); else { window.__wantAv=true; open("who"); } },450);
+  const _pk=pick; pick=function(n){ _pk(n); if(window.__wantAv){ window.__wantAv=false; setTimeout(openAvatar,80); } }; })();
 $("avBack").addEventListener("click",()=>open("menu"));
 $("unWear").addEventListener("click",()=>{ const p=Board.player(Board.current()); const a=avFor(p); (pendingUnlock||[]).forEach(i=>a[i.cat]=i.opt); Board.setAvatar(avSafe(a,p)); markSeen(); buildAvatar(); setTimeout(paintIcons,60); open("results"); });
 $("unLater").addEventListener("click",()=>open("results"));

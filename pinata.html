@@ -917,6 +917,130 @@ window.addEventListener("hashchange", ()=>{ const d=findCode(location.hash); if(
 </script>
 
 <script>
+/* shared character: the same look in every posada game (drawn as SVG, 240x300) */
+const SKINS=["#f6d1b0","#f0b98a","#d9a27a","#c98a5c","#a86e44","#7a4b2c"];
+const HAIRC=["#2a1d14","#4a2c1d","#7a4a2a","#c58b3a","#e3c16f","#9a9aa8"];
+const AV_OPTS={
+  body:["boy","girl"],
+  skin:[0,1,2,3,4,5],
+  hair:["short","curly","spiky","long","pigtails","bun"],
+  hairC:[0,1,2,3,4,5],
+  face:["none","bigote","charro","goatee","beard","sideburns","santa"],
+  hat:["none","santa","beanie","cap","flowers","antlers","sombrero","charro","crown","halo"],
+  glasses:["none","round","square","sun","star","heart"],
+  clothes:["sweater","ugly","hoodie","dress","guayabera","pajamas","sarape","charro"]
+};
+const AV_LOCK={hat:{sombrero:1,charro:3,crown:5,halo:"stars"},clothes:{sarape:2,charro:3},face:{santa:4}};
+const AV_NAMES={
+  en:{body:"Body",skin:"Skin",hair:"Hair",hairC:"Hair color",face:"Facial hair",hat:"Hat",glasses:"Glasses",clothes:"Clothes",
+    boy:"Boy",girl:"Girl",short:"Short",curly:"Curly",spiky:"Spiky",long:"Long",pigtails:"Pigtails",bun:"Chongo",
+    none:"None",bigote:"Bigote",charro:"Charro",goatee:"Goatee",beard:"Beard",sideburns:"Patillas",santa:"Santa",
+    beanie:"Beanie",cap:"Cap",flowers:"Flower crown",antlers:"Reindeer",sombrero:"Sombrero",crown:"Gold crown",halo:"Star halo",
+    round:"Round",square:"Square",sun:"Shades",star:"Stars",heart:"Hearts",
+    sweater:"Sweater",ugly:"Ugly sweater",hoodie:"Hoodie",dress:"Dress",guayabera:"Guayabera",pajamas:"Pajamas",sarape:"Sarape"},
+  es:{body:"Cuerpo",skin:"Piel",hair:"Pelo",hairC:"Color",face:"Barba",hat:"Sombrero",glasses:"Lentes",clothes:"Ropa",
+    boy:"Niño",girl:"Niña",short:"Corto",curly:"Chino",spiky:"Parado",long:"Largo",pigtails:"Coletas",bun:"Chongo",
+    none:"Nada",bigote:"Bigote",charro:"Charro",goatee:"Chivita",beard:"Barba",sideburns:"Patillas",santa:"Santa",
+    beanie:"Gorro",cap:"Gorra",flowers:"Corona de flores",antlers:"Reno",sombrero:"Sombrero",crown:"Corona",halo:"Estrella",
+    round:"Redondos",square:"Cuadrados",sun:"De sol",star:"Estrellas",heart:"Corazones",
+    sweater:"Suéter",ugly:"Suéter feo",hoodie:"Sudadera",dress:"Vestido",guayabera:"Guayabera",pajamas:"Pijama",sarape:"Sarape"}};
+const avName=k=>(AV_NAMES[typeof LANG!=="undefined"?LANG:"en"]||AV_NAMES.en)[k]||k;
+const AV_DEFAULT={body:"boy",skin:1,hair:"short",hairC:1,face:"none",hat:"santa",glasses:"none",clothes:"sweater"};
+const BELLY={sweater:{c:"#d7372f",s:["#f5a524","#e2337f","#22a9c4"]},ugly:{c:"#2f8f4e",s:["#fff8ec","#d7372f","#fff8ec"]},hoodie:{c:"#4a5fae",s:["#3d4f94","#5a6fbe","#3d4f94"]},
+  dress:{c:"#e2337f",s:["#fff8ec","#f5c542","#fff8ec"]},guayabera:{c:"#f4efe4",s:["#e3dccd","#e3dccd","#e3dccd"]},pajamas:{c:"#b33a3a",s:["#8a2a2a","#d65454","#8a2a2a"]},
+  sarape:{c:"#d7372f",s:["#f5a524","#2f8f4e","#22a9c4"]},charro:{c:"#1f1820",s:["#f5c542","#1f1820","#f5c542"]}};
+
+function avatarSVG(av,frame,letter){
+  av={...AV_DEFAULT,...(av||{})}; const sk=SKINS[av.skin]||SKINS[1], hc=HAIRC[av.hairC]||HAIRC[1], girl=av.body==="girl";
+  const lL=frame==="a"?"translate(-5 -6)":frame==="air"?"translate(-4 -8) rotate(-12 103 260)":"";
+  const lR=frame==="b"?"translate(5 -6)":frame==="air"?"translate(4 -4) rotate(10 137 260)":"";
+  const dress=av.clothes==="dress", pants={sweater:"#2b3a7a",ugly:"#2b3a7a",hoodie:"#2a2a35",dress:"#2b3a7a",guayabera:"#3a4a7a",pajamas:"#b33a3a",sarape:"#2b3a7a",charro:"#1f1820"}[av.clothes]||"#2b3a7a";
+  let o=`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 300"><defs><radialGradient id="hg"><stop offset="0" stop-color="#ffe9a8" stop-opacity=".9"/><stop offset="1" stop-color="#ffe9a8" stop-opacity="0"/></radialGradient></defs>`;
+  o+=`<g transform="${lL}"><rect x="92" y="244" width="22" height="34" rx="8" fill="${pants}"/><rect x="86" y="268" width="32" height="16" rx="8" fill="#3a2418"/></g>`;
+  o+=`<g transform="${lR}"><rect x="126" y="244" width="22" height="34" rx="8" fill="${pants}"/><rect x="122" y="268" width="32" height="16" rx="8" fill="#3a2418"/></g>`;
+  if(av.clothes==="hoodie") o+=`<ellipse cx="120" cy="176" rx="66" ry="30" fill="#3d4f94"/>`;
+  if(av.hair==="long") o+=`<path d="M34 100 C28 40 80 22 120 24 C160 22 212 40 206 100 L214 226 C192 238 176 222 172 204 L68 204 C64 222 48 238 26 226 Z" fill="${hc}"/>`;
+  if(av.hair==="pigtails") o+=`<circle cx="28" cy="128" r="26" fill="${hc}"/><circle cx="212" cy="128" r="26" fill="${hc}"/><rect x="40" y="112" width="10" height="16" rx="4" fill="#e2337f"/><rect x="190" y="112" width="10" height="16" rx="4" fill="#e2337f"/>`;
+  // clothes
+  const C=av.clothes;
+  if(C==="dress"){ o+=`<path d="M84 172 Q120 162 156 172 L178 262 Q120 274 62 262 Z" fill="#e2337f"/><ellipse cx="120" cy="176" rx="24" ry="8" fill="#fff8ec"/><rect x="84" y="204" width="72" height="7" fill="#f5c542"/>`+[70,90,110,130,150,170].map(x=>`<circle cx="${x}" cy="262" r="3" fill="#fff8ec"/>`).join(""); }
+  else {
+    const base={sweater:"#d7372f",ugly:"#2f8f4e",hoodie:"#4a5fae",guayabera:"#f4efe4",pajamas:"#b33a3a",sarape:"#d7372f",charro:"#f4efe4"}[C];
+    o+=`<rect x="78" y="168" width="84" height="86" rx="26" fill="${base}"/>`;
+    if(C==="sweater"||C==="sarape") o+=`<path d="M84 176 Q120 196 156 176 L156 192 Q120 212 84 192 Z" fill="#f5a524"/><path d="M84 182 Q120 202 156 182" stroke="#e2337f" stroke-width="4" fill="none"/><path d="M84 189 Q120 209 156 189" stroke="#22a9c4" stroke-width="3" fill="none"/>`;
+    if(C==="sweater") o+=`<rect x="88" y="196" width="14" height="44" rx="4" fill="#f5a524"/><rect x="88" y="206" width="14" height="4" fill="#e2337f"/><rect x="88" y="218" width="14" height="4" fill="#22a9c4"/><rect x="88" y="230" width="14" height="4" fill="#53b84a"/>`;
+    if(C==="ugly") o+=`<rect x="78" y="204" width="84" height="16" fill="#fff8ec"/><path d="M80 212 l8 -6 l8 6 l8 -6 l8 6 l8 -6 l8 6 l8 -6 l8 6 l8 -6 l8 6" stroke="#d7372f" stroke-width="3" fill="none"/><rect x="84" y="170" width="72" height="9" rx="4" fill="#d7372f"/>`+[[96,190],[120,186],[144,190],[100,234],[140,234]].map(([x,y])=>`<circle cx="${x}" cy="${y}" r="3" fill="#fff8ec"/>`).join("");
+    if(C==="hoodie") o+=`<rect x="96" y="222" width="48" height="22" rx="8" fill="#3d4f94"/><path d="M108 178 v22 M132 178 v22" stroke="#fff8ec" stroke-width="2.5"/>`;
+    if(C==="guayabera") o+=`<path d="M100 180 v68 M140 180 v68" stroke="#d9d2c4" stroke-width="3"/>`+[186,200,214,228].map(y=>`<circle cx="120" cy="${y}" r="2.5" fill="#b8ad98"/>`).join("")+`<rect x="84" y="206" width="12" height="12" rx="2" fill="none" stroke="#d9d2c4" stroke-width="2"/><rect x="144" y="206" width="12" height="12" rx="2" fill="none" stroke="#d9d2c4" stroke-width="2"/>`;
+    if(C==="pajamas") o+=[96,112,128,144].map(x=>`<path d="M${x} 172 v80" stroke="#8a2a2a" stroke-width="3"/>`).join("")+[190,210,230].map(y=>`<path d="M80 ${y} h80" stroke="#d65454" stroke-width="3"/>`).join("")+`<path d="M104 172 L120 186 L136 172" stroke="#fff8ec" stroke-width="5" fill="none"/>`;
+    if(C==="sarape") o+=`<g><clipPath id="sp"><path d="M84 184 L156 184 L162 248 L78 248 Z"/></clipPath><g clip-path="url(#sp)">`+["#d7372f","#f5a524","#2f8f4e","#e2337f","#22a9c4","#f5a524","#d7372f"].map((c,i)=>`<rect x="70" y="${184+i*9}" width="100" height="9" fill="${c}"/>`).join("")+`</g>`+[84,93,102,111,120,129,138,147,156].map(x=>`<path d="M${x} 248 v8" stroke="#fff8ec" stroke-width="1.5"/>`).join("")+`</g>`;
+    if(C==="charro") o+=`<rect x="78" y="168" width="30" height="86" rx="14" fill="#1f1820"/><rect x="132" y="168" width="30" height="86" rx="14" fill="#1f1820"/>`+[186,204,222].map(y=>`<circle cx="96" cy="${y}" r="3" fill="#f5c542"/><circle cx="144" cy="${y}" r="3" fill="#f5c542"/>`).join("")+`<path d="M120 178 L102 168 L102 188 Z M120 178 L138 168 L138 188 Z" fill="#d7372f"/>`;
+  }
+  // hands and the letter
+  o+=`<ellipse cx="80" cy="230" rx="11" ry="10" fill="${sk}"/>`;
+  if(letter) o+=`<g transform="rotate(-10 162 215)"><rect x="140" y="200" width="44" height="30" rx="3" fill="#fff8ec" stroke="#e6dac4" stroke-width="2"/><path d="M142 204 l20 13 l20 -16" stroke="#d6c7ad" stroke-width="2" fill="none"/></g><circle cx="162" cy="217" r="5" fill="#d7372f"/>`;
+  o+=`<ellipse cx="156" cy="226" rx="11" ry="10" fill="${sk}"/>`;
+  // head and hair
+  o+=`<rect x="38" y="56" width="164" height="128" rx="50" fill="${sk}"/>`;
+  const H=av.hair;
+  if(H==="curly") o+=[[52,74],[72,56],[96,46],[120,42],[144,46],[168,56],[188,74],[44,98],[196,98]].map(([x,y])=>`<circle cx="${x}" cy="${y}" r="20" fill="${hc}"/>`).join("")+`<path d="M44 104 C60 86 80 84 96 90 C110 80 130 80 144 90 C160 84 180 86 196 104 L196 80 L44 80 Z" fill="${hc}"/>`;
+  else if(H==="spiky") o+=`<path d="M40 110 L38 70 L58 82 L62 40 L84 70 L98 24 L114 64 L132 22 L144 64 L166 34 L170 74 L194 52 L202 110 C186 92 160 88 140 92 C124 84 104 84 92 92 C72 88 52 94 40 110 Z" fill="${hc}"/>`;
+  else o+=`<path d="M38 112 C30 56 70 30 120 32 C170 30 210 56 202 112 C192 92 172 84 152 88 C138 76 104 76 90 88 C70 84 50 92 38 112 Z" fill="${hc}"/>`;
+  if(H==="bun") o+=`<circle cx="120" cy="26" r="24" fill="${hc}"/><rect x="104" y="44" width="32" height="7" rx="3" fill="#e2337f"/>`;
+  if(H==="long"||H==="pigtails") o+=`<path d="M120 34 C112 56 104 70 88 88" stroke="${hc==="#2a1d14"?"#3a2a20":"rgba(0,0,0,.15)"}" stroke-width="3" fill="none"/>`;
+  // face
+  const open=frame==="ouch", yell=frame==="air";
+  o+=`<circle cx="92" cy="128" r="11" fill="#1b1410"/><circle cx="148" cy="128" r="11" fill="#1b1410"/><circle cx="96" cy="124" r="3.5" fill="#fff"/><circle cx="152" cy="124" r="3.5" fill="#fff"/>`;
+  if(girl) o+=`<path d="M80 118 l-6 -5 M84 115 l-3 -7 M160 118 l6 -5 M156 115 l3 -7" stroke="#1b1410" stroke-width="3" stroke-linecap="round"/>`;
+  o+=`<ellipse cx="72" cy="152" rx="11" ry="7" fill="#e2337f" opacity="${girl?.5:.35}"/><ellipse cx="168" cy="152" rx="11" ry="7" fill="#e2337f" opacity="${girl?.5:.35}"/><ellipse cx="120" cy="148" rx="5" ry="3.5" fill="rgba(0,0,0,.15)"/>`;
+  o+=open?`<ellipse cx="120" cy="164" rx="7" ry="8" fill="#7a2a1f"/>`:yell?`<path d="M108 158 Q120 174 132 158 Z" fill="#7a2a1f"/>`:`<path d="M110 160 Q120 168 130 160" stroke="#1b1410" stroke-width="3" fill="none" stroke-linecap="round"/>`;
+  // facial hair
+  const F=av.face, fh=F==="santa"?"#fbfbff":hc;
+  if(F==="beard"||F==="santa") o+=`<path d="M42 128 C46 ${F==="santa"?214:196} 90 ${F==="santa"?222:206} 120 ${F==="santa"?222:206} C150 ${F==="santa"?222:206} 194 ${F==="santa"?214:196} 198 128 C188 160 160 174 120 174 C80 174 52 160 42 128 Z" fill="${fh}"/>`;
+  if(F==="sideburns") o+=`<rect x="40" y="98" width="14" height="46" rx="6" fill="${fh}"/><rect x="186" y="98" width="14" height="46" rx="6" fill="${fh}"/>`;
+  if(F==="goatee") o+=`<ellipse cx="120" cy="180" rx="10" ry="8" fill="${fh}"/>`;
+  if(F==="charro") o+=`<path d="M90 160 Q102 144 120 152 Q138 144 150 160 Q156 172 148 174 Q140 160 120 160 Q100 160 92 174 Q84 172 90 160 Z" fill="${fh}"/>`;
+  else if(F!=="none") o+=`<path d="M96 156 Q120 144 144 156 Q134 166 120 159 Q106 166 96 156 Z" fill="${fh}"/>`;
+  // glasses
+  const G=av.glasses;
+  if(G==="round") o+=`<circle cx="92" cy="128" r="17" fill="rgba(255,255,255,.12)" stroke="#2a1d14" stroke-width="4"/><circle cx="148" cy="128" r="17" fill="rgba(255,255,255,.12)" stroke="#2a1d14" stroke-width="4"/><path d="M109 128 h22" stroke="#2a1d14" stroke-width="4"/>`;
+  if(G==="square") o+=`<rect x="72" y="112" width="40" height="30" rx="5" fill="rgba(255,255,255,.12)" stroke="#2a1d14" stroke-width="4"/><rect x="128" y="112" width="40" height="30" rx="5" fill="rgba(255,255,255,.12)" stroke="#2a1d14" stroke-width="4"/><path d="M112 126 h16" stroke="#2a1d14" stroke-width="4"/>`;
+  if(G==="sun") o+=`<rect x="70" y="112" width="44" height="30" rx="12" fill="#1b1410"/><rect x="126" y="112" width="44" height="30" rx="12" fill="#1b1410"/><path d="M114 122 h12" stroke="#1b1410" stroke-width="5"/><path d="M78 118 l10 0 M134 118 l10 0" stroke="rgba(255,255,255,.5)" stroke-width="3" stroke-linecap="round"/>`;
+  const starP=(cx,cy,R=21,r0=9)=>{ let p=""; for(let i=0;i<10;i++){ const r=i%2?r0:R, a=-Math.PI/2+i*Math.PI/5; p+=(i?"L":"M")+(cx+Math.cos(a)*r).toFixed(1)+" "+(cy+Math.sin(a)*r).toFixed(1); } return p+"Z"; };
+  if(G==="star") o+=`<path d="${starP(92,128)}" fill="rgba(245,197,66,.35)" stroke="#f5c542" stroke-width="4" stroke-linejoin="round"/><path d="${starP(148,128)}" fill="rgba(245,197,66,.35)" stroke="#f5c542" stroke-width="4" stroke-linejoin="round"/><path d="M112 126 h16" stroke="#f5c542" stroke-width="4"/>`;
+  const heartP=(cx,cy)=>`M${cx} ${cy+16} C${cx-26} ${cy} ${cx-18} ${cy-20} ${cx} ${cy-8} C${cx+18} ${cy-20} ${cx+26} ${cy} ${cx} ${cy+16} Z`;
+  if(G==="heart") o+=`<path d="${heartP(92,128)}" fill="rgba(226,51,127,.45)" stroke="#e2337f" stroke-width="4"/><path d="${heartP(148,128)}" fill="rgba(226,51,127,.45)" stroke="#e2337f" stroke-width="4"/><path d="M112 124 h16" stroke="#e2337f" stroke-width="4"/>`;
+  // hats
+  const T2=av.hat;
+  if(T2==="santa") o+=`<path d="M46 88 C56 50 92 12 146 4 C184 -2 210 14 220 42 L204 50 C196 34 184 28 172 32 C182 50 192 68 196 88 Z" fill="#d7372f"/><path d="M60 88 C70 58 98 26 136 12 C110 34 90 60 84 88 Z" fill="#a8241f" opacity=".55"/><rect x="34" y="78" width="172" height="24" rx="12" fill="#fff8ec"/><circle cx="214" cy="50" r="15" fill="#fff8ec"/>`;
+  if(T2==="beanie") o+=`<path d="M40 94 C40 38 80 18 120 18 C160 18 200 38 200 94 Z" fill="#22a9c4"/><path d="M46 62 H194 M42 78 H198" stroke="#fff8ec" stroke-width="6"/><rect x="34" y="82" width="172" height="22" rx="10" fill="#1b8aa3"/><circle cx="120" cy="14" r="15" fill="#fff8ec"/>`;
+  if(T2==="cap") o+=`<path d="M44 94 C44 38 82 24 120 24 C158 24 196 38 196 94 Z" fill="#d7372f"/><path d="M30 94 C80 80 160 80 210 94 C200 108 40 108 30 94 Z" fill="#a8241f"/><circle cx="120" cy="24" r="6" fill="#a8241f"/><path d="M120 28 V92" stroke="#a8241f" stroke-width="3"/>`;
+  if(T2==="flowers") o+=`<path d="M40 82 Q120 58 200 82" stroke="#2f8f4e" stroke-width="7" fill="none"/>`+[[46,82,"#e2337f"],[74,72,"#f5a524"],[102,66,"#d7372f"],[138,66,"#f5a524"],[166,72,"#e2337f"],[194,82,"#d7372f"]].map(([x,y,c])=>`<g>${[0,1,2,3,4].map(i=>{ const a=i/5*6.283; return `<circle cx="${(x+Math.cos(a)*8).toFixed(1)}" cy="${(y+Math.sin(a)*8).toFixed(1)}" r="7" fill="${c}"/>`; }).join("")}<circle cx="${x}" cy="${y}" r="5" fill="#f5c542"/></g>`).join("");
+  if(T2==="antlers") o+=`<path d="M52 84 Q120 46 188 84" stroke="#3a2418" stroke-width="7" fill="none"/><path d="M70 66 L56 22 M60 38 L38 26 M58 30 L66 10 M170 66 L184 22 M180 38 L202 26 M182 30 L174 10" stroke="#8a5a3a" stroke-width="8" stroke-linecap="round"/><circle cx="120" cy="64" r="8" fill="#d7372f"/>`;
+  if(T2==="sombrero"||T2==="charro"){ const ch=T2==="charro", c=ch?"#2a1d14":"#e0b15a";
+    o+=`<ellipse cx="120" cy="76" rx="${ch?126:116}" ry="${ch?22:20}" fill="${c}" stroke="${ch?"#f5c542":"#b88a32"}" stroke-width="4"/><path d="M76 76 Q120 -14 164 76 Z" fill="${c}"/><rect x="82" y="58" width="76" height="10" fill="${ch?"#f5c542":"#d7372f"}"/>`;
+    if(!ch) o+=[88,102,116,130,144].map(x=>`<rect x="${x}" y="60" width="6" height="6" fill="#2f8f4e"/>`).join(""); else o+=`<ellipse cx="120" cy="76" rx="108" ry="17" fill="none" stroke="#f5c542" stroke-width="2"/>`; }
+  if(T2==="crown") o+=`<path d="M62 74 L62 24 L90 52 L120 12 L150 52 L178 24 L178 74 Z" fill="#f5c542" stroke="#c9952a" stroke-width="4"/><circle cx="90" cy="64" r="7" fill="#d7372f"/><circle cx="120" cy="62" r="7" fill="#22a9c4"/><circle cx="150" cy="64" r="7" fill="#2f8f4e"/>`;
+  if(T2==="halo") o+=`<circle cx="120" cy="10" r="44" fill="url(#hg)"/><path d="${starP(120,16,28,12)}" fill="#ffd34d" stroke="#fff4cc" stroke-width="3"/>`;
+  return o+`</svg>`;
+}
+const svgURL=s=>"data:image/svg+xml;charset=utf-8,"+encodeURIComponent(s);
+const AV_OLD={sombrero:{hat:"sombrero"},sarape:{clothes:"sarape"},charro:{hat:"charro",clothes:"charro"},barba:{face:"santa"},corona:{hat:"crown"},estrella:{hat:"halo"}};
+function myChar(){ try{ const d=JSON.parse(localStorage.getItem("posada-family-v1")||"null"); const n=d&&d.current, p=n&&d.players&&d.players[n]; if(!p) return null; let a=p.avatar; if(typeof a==="string") a=AV_OLD[a]||{}; return {name:n,av:{...AV_DEFAULT,...(a||{})},made:!!p.avatar}; }catch(e){ return null; } }
+
+/* the piñata kid is your character (same look as La Posada), still blindfolded */
+(function(){ const c=typeof myChar==="function"?myChar():null; if(!c||!c.made) return; const kid=document.getElementById("kid"); if(!kid) return;
+  const keep=new Set(["stick","eyes","blindfold","mouth"]); [...kid.children].forEach(n=>{ if(!keep.has(n.id)) n.setAttribute("display","none"); });
+  let inner=avatarSVG(c.av,"stand",false).replace(/^<svg[^>]*>/,"").replace(/<\/svg>\s*$/,"");
+  inner=inner.replace(/<circle cx="(92|148|96|152)" cy="12[48]" r="(11|3\.5)"[^>]*\/>/g,"").replace(/<path d="M110 160 Q120 168 130 160"[^>]*\/>/,"");
+  const NS="http://www.w3.org/2000/svg", g=document.createElementNS(NS,"g"); g.innerHTML=inner; kid.insertBefore(g,kid.firstChild);
+  const st=document.getElementById("stick"); if(st) kid.insertBefore(st,g);
+  const hand=document.createElementNS(NS,"ellipse"); hand.setAttribute("cx","150"); hand.setAttribute("cy","220"); hand.setAttribute("rx","12"); hand.setAttribute("ry","11"); hand.setAttribute("fill",SKINS[c.av.skin]||SKINS[1]); g.after(hand);
+  const bf=document.getElementById("blindfold"), ey=document.getElementById("eyes"), mo=document.getElementById("mouth"); [ey,bf,mo].forEach(n=>n&&kid.appendChild(n)); })();
+
+</script>
+
+<script>
 /* a "back to all games" pill, shown whenever you're not mid-play (site only) */
 function gamesPill(show){ if(/claude|anthropic/.test(location.hostname)) return; const a=document.createElement("a"); a.href="/juegos"; a.className="gpill"; a.setAttribute("aria-label","Juegos / Games");
   const st=document.createElement("style"); st.textContent=".gpill{position:fixed;z-index:2147483000;top:calc(10px + env(safe-area-inset-top,0px));left:calc(10px + env(safe-area-inset-left,0px));display:inline-flex;align-items:center;gap:6px;height:38px;padding:0 14px 0 11px;border-radius:99px;font:900 14px Nunito,system-ui,sans-serif;color:#1c1430;text-decoration:none;background:linear-gradient(180deg,#ffc95e,#f5a524);box-shadow:0 8px 20px rgba(0,0,0,.35)}.gpill[hidden]{display:none}body.gp-on .overlay{padding-top:calc(58px + env(safe-area-inset-top,0px))!important}.gpill:active{transform:scale(.96)}";
