@@ -204,7 +204,7 @@ const AUTH=(()=>{ const AK="posada-auth-v1"; let S=null; try{ S=JSON.parse(local
   document.addEventListener("visibilitychange",()=>{ if(document.visibilityState==="hidden") flush(); });
   return {user:()=>S&&S.user,sendCode,verify,queue,sync,flush,remove,signOut};
 })();
-const PLUS={link:"",check:async gid=>{ const r=await rpc("get_plus",{p_gid:gid}); return r===true; }};
+const PLUS={link:"https://buy.stripe.com/4gM3co9Olcd8b47dA9ejK00",check:async gid=>{ const r=await rpc("get_plus",{p_gid:gid}); return r===true; }};
 
 
 const LETTER_URL=ORIGIN+"/letter";
