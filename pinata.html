@@ -881,7 +881,7 @@ function breakPinata(){
   if(skipMode){ setTimeout(reveal, 250); } else setTimeout(startGrab, RM?300:1300);
 }
 // Amazon Associates tag (fill in once the account is approved); links work without it too
-const AMZ_TAG="";
+const AMZ_TAG="posadasanta-20";
 function shopURL(q){ return "https://www.amazon.com/s?k="+encodeURIComponent(q.slice(0,120))+(AMZ_TAG?"&tag="+encodeURIComponent(AMZ_TAG):""); }
 function fillResult(){
   $("rName").textContent=(data.r||"")+"!";
