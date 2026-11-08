@@ -47,6 +47,7 @@ jobs:
               assert "SB_KEY=" not in html, "Website Supabase key must not ship"
               assert "posthog.js" not in html
               assert cfg["instant_games"]["orientation"] == "PORTRAIT"
+              assert cfg["instant_games"]["override_web_orientation"] == "LANDSCAPE"
           print("ZIP sanity checks passed")
           PY
       - name: Save bundle as GitHub Actions artifact
