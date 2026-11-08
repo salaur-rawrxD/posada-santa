@@ -33,3 +33,40 @@ This migration is **committed but not applied**. The current live website and Fa
 ## Known limits
 
 Anonymous sessions can be lost if browser storage is cleared. The same human on another device becomes a different guest. No cross-device account linking, anti-cheat, Realtime presence, cleanup job, or game integration exists yet.
+
+## Separate Vercel preview project (recommended)
+
+The existing Vercel `posada-santa` project serves the production website from the repository root. **Do not change its Root Directory or build settings.**
+
+Create a second Vercel project from the same GitHub repository, under the **EVA Systems Projects** team, with:
+
+| Setting | Value |
+| --- | --- |
+| Project Name | `posada-santa-rooms-preview` |
+| Repository | `salaur-rawrxD/posada-santa` |
+| Root Directory | `platform` |
+| Framework | Vite |
+| Install Command | `npm install` |
+| Build Command | `npm run build:room` |
+| Output Directory | `dist-room` |
+| Environment variable | `VITE_SUPABASE_URL` = the project's public Supabase URL |
+| Environment variable | `VITE_SUPABASE_ANON_KEY` = the project's browser-safe publishable or anon key |
+
+Do **not** set a Supabase service role secret in any `VITE_*` variable. The credentials are embedded in browser JavaScript.
+
+The room preview source is on `feature/social-gaming-platform-foundation`, not `main`. Once the new project exists, deploy **that exact feature branch**, not the main branch. Initial imports of `main` are expected to fail until this feature is merged. The preview URL will end with `/room.html`, and invite links generated there will point back to that same preview deployment.
+
+For a working preview, make the preview project's initial production branch the feature branch, **or** create the project and explicitly deploy the feature branch through Vercel afterward. Keep the preview project separate from `posada-santa`. Do not connect production domains to it.
+
+If Vercel deploy protection is enabled, invited family members may be asked to authenticate with Vercel. For two-device testing, use the approved access controls rather than disabling protection globally.
+
+## Browser smoke test after deployment
+
+1. On Phone A open `https://<preview-deployment>/room.html` and create a room with a nickname.
+2. Share the invitation by WhatsApp or copy the link; confirm it includes `/room.html#code=XXXXXXXX`.
+3. Open the invitation on Phone B in a normal browser. Enter a different nickname and join. Confirm both players appear within ~5 seconds.
+4. As host, select La Posada; verify the other device sees the selection. Start and finish the room. Refresh both phones.
+5. Confirm an unrelated third anonymous user **cannot** query the room UUID without joining.
+6. Repeat with an expired or malformed invite, and confirm the app declines it.
+
+Current lobby code uses polling rather than Supabase Realtime. It does not yet launch a game inside the room or submit actual game scores.
