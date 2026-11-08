@@ -17,7 +17,7 @@
   var pathname = window.location.pathname;
   var safeUrl = window.location.origin + pathname; // No query or hash: they can contain private invites or keys.
   var safeProperties = {
-    distinct_id: true, $device_id: true, $session_id: true,
+    token: true, distinct_id: true, $device_id: true, $session_id: true,
     $lib: true, $lib_version: true, $insert_id: true, $time: true,
     $browser: true, $os: true, $referring_domain: true,
     $pageview_id: true, $pageview_duration: true,
