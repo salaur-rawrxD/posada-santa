@@ -42,6 +42,12 @@ def make_html(source: str) -> str:
 <style>
 a[href^="/"],a[href^="https://wa.me"],a[href^="sms:"]{display:none!important}
 #famBan,#famChallenge,#famTell,#famShare,.famcard,[data-pcrumbs]{display:none!important}
+/* Keep name entry reachable when the iOS keyboard reduces the viewport. */
+@media (max-width:640px){
+  .overlay:has(input:focus){align-items:start;padding-top:12px;padding-bottom:12px}
+  .overlay:has(input:focus) .card{max-height:calc(100dvh - 24px);overflow-y:auto;overscroll-behavior:contain}
+  .overlay input{font-size:16px}
+}
 </style>
 <script src="https://connect.facebook.net/en_US/fbinstant.7.1.js"></script>
 <script>
@@ -76,7 +82,7 @@ def main():
         raise AssertionError("Sensitive or website-only configuration remains")
     cfg = {"instant_games": {
         "platform_version": "RICH_GAMEPLAY",
-        "orientation": "PORTRAIT",
+        "orientation": "PORTRAIT",\n        "override_web_orientation": "LANDSCAPE",
         "navigation_menu_version": "NAV_FLOATING"
     }}
     OUTPUT.parent.mkdir(parents=True, exist_ok=True)
