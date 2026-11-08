@@ -76,7 +76,7 @@ def main():
         raise AssertionError("Sensitive or website-only configuration remains")
     cfg = {"instant_games": {
         "platform_version": "RICH_GAMEPLAY",
-        "orientation": "LANDSCAPE",
+        "orientation": "PORTRAIT",
         "navigation_menu_version": "NAV_FLOATING"
     }}
     OUTPUT.parent.mkdir(parents=True, exist_ok=True)
