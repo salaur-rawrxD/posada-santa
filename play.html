@@ -2546,7 +2546,8 @@ let boardTab="fam";
 const fmtN=n=>Number(n||0).toLocaleString(LANG==="es"?"es-MX":undefined);
 function myRank(){ const rs=Fam.rows(), i=rs.findIndex(r=>r.me); return {rs,i}; }
 function shareText(){ const g=Fam.group(), {rs,i}=myRank(), url=GAME_LINK+"#sb="+Fam.code()+"&fc=1"; const score=i>=0?rs[i].s:0;
-  const initial=i>=0&&rs.length>1?ft("chMsg",g.gn,i+1,fmtN(score),url):ft("chMsg1",g.gn,fmtN(score),url);
+  const challengeUrl=window.PosadaDuel?window.PosadaDuel.link(url):url;
+  const initial=i>=0&&rs.length>1?ft("chMsg",g.gn,i+1,fmtN(score),challengeUrl):ft("chMsg1",g.gn,fmtN(score),challengeUrl);
   const select=$("fsMember"), chosen=select&&select.value;
   if(!chosen)return initial;
   const row=rs.find(r=>r.n===chosen&&!r.me);
@@ -2647,5 +2648,6 @@ function famCard(where, game, mode, before, light){ if(!where||/claude|anthropic
   return el; }
 famCard(document.querySelector("#results .card"),"posada","play",document.querySelector("#results [data-pcrumbs]"));
 </script>
+<script defer src="/family-duel.js"></script>
 
 </html>
