@@ -115,9 +115,13 @@
       var all=load();
       if(!all[d.id]||!validate(all[d.id]))return;
       all[d.id].status="accepted";all[d.id].acceptedBy=small(cur);all[d.id].acceptedAt=Date.now();save(all);
-      event("family_challenge_accepted");
+      if(d.status!=="accepted")event("family_challenge_accepted");
       if(typeof open==="function")open("menu");
       drawInvite();
+      if(typeof startLevel==="function" && typeof unlocked==="function"){
+        var nextLevel=[5,4,3,2,1].find(function(n){return unlocked(n);}) || 1;
+        startLevel(nextLevel);
+      }
     });
     var dismiss=document.createElement("button");dismiss.type="button";dismiss.className="duel-dismiss";
     dismiss.textContent=es()?"Ahora no":"Not now";
