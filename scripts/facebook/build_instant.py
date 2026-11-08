@@ -36,7 +36,9 @@ def make_html(source: str) -> str:
     html = re.sub(r'const SB_URL="[^"]+", SB_KEY="[^"]+";', "", html)
     # Hide unrelated website-specific controls; gameplay and local character
     # selection remain intact. Avoid leaking visitors to nonbundled routes.
-    html = html.replace('</head>', '''
+    # play.html currently has no literal </head>/<body> tags. Inject before
+    # the first stylesheet to ensure the SDK actually loads in the bundle.
+    boot = '''
 <style>
 a[href^="/"],a[href^="https://wa.me"],a[href^="sms:"]{display:none!important}
 #famBan,#famChallenge,#famTell,#famShare,.famcard,[data-pcrumbs]{display:none!important}
@@ -55,7 +57,10 @@ a[href^="/"],a[href^="https://wa.me"],a[href^="sms:"]{display:none!important}
   });
 })();
 </script>
-</head>''')
+'''
+    if "<style>" not in html:
+        raise RuntimeError("Could not find main game stylesheet")
+    html = html.replace("<style>", boot + "<style>", 1)
     # Remove URL-only metadata that refers to assets absent from this ZIP.
     html = re.sub(r'<meta\s+property="og:image"[^>]*>\s*', "", html)
     # Remove external website navigation if a link is dynamically reconstructed.
