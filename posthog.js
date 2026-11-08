@@ -24,7 +24,7 @@
     $prev_pageview_maxscroll: true, $prev_pageview_lastcontent: true,
     $prev_pageview_maxcontent: true,
     $current_url: true, $pathname: true, $host: true, page: true,
-    element_type: true, click_category: true, target_page: true
+    element_type: true, click_category: true, target_page: true, click_action: true
   };
   window.posthog.init(PROJECT_TOKEN, {
     api_host: API_HOST,
@@ -86,6 +86,28 @@
       click_category: category
     };
     if (targetPage) properties.target_page = targetPage;
+    // Map only reviewed static UI identifiers. Never forward arbitrary IDs,
+    // labels, button text, href parameters or dynamically generated values.
+    var safeActions = {
+      home_pinata_cta: "home_pinata_cta", home_cta_host: "home_cta_host",
+      home_cta_games: "home_cta_games", home_cta_end: "home_cta_end",
+      hpBtn: "home_pinata_hit", hpAgain: "home_pinata_again",
+      backBtn: "letter_back", nextBtn: "letter_next",
+      pasteGo: "letter_paste_go", startBtn: "letter_start",
+      cpBtn: "letter_copy", editBtn: "letter_edit",
+      anotherBtn: "letter_another", qNext: "organizer_next",
+      lgo: "organizer_logout", w_play: "organizer_play",
+      m_play: "organizer_mobile_play", snd: "pinata_send",
+      skipBtn: "pinata_skip", shotBtn: "pinata_screenshot",
+      rematch: "pinata_rematch", again: "pinata_again",
+      go: "pinata_go", justPlay: "pinata_just_play",
+      arcAgain: "pinata_arc_again", shotSave: "pinata_save",
+      shotClose: "pinata_close"
+    };
+    var actionId = element.getAttribute("data-ev") || element.id;
+    if (Object.prototype.hasOwnProperty.call(safeActions, actionId)) {
+      properties.click_action = safeActions[actionId];
+    }
     window.posthog.capture("ui_click", properties);
   }, true);
 
