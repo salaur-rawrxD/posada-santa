@@ -8,7 +8,7 @@
   var PROJECT_TOKEN = "phc_mspcYg97PRRSVGZ6ihsgviSrrZXUXHdamaYi2i68yDw7";
   var API_HOST = "https://us.i.posthog.com";
 
-  if (!PROJECT_TOKEN || PROJECT_TOKEN === "REPLACE_WITH_POSTHOG_PROJECT_TOKEN") return;
+  if (!PROJECT_TOKEN || PROJECT_TOKEN === "phc_mspcYg97PRRSVGZ6ihsgviSrrZXUXHdamaYi2i68yDw7") return;
   if (!/^https:\/\/(us|eu|us-assets|eu-assets)\.i\.posthog\.com$/.test(API_HOST)) return;
 
   // Recommended PostHog browser snippet, adapted from PostHog's JS SDK docs.
