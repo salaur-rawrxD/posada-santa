@@ -22,6 +22,8 @@ test('invite URLs are fragment-only, do not leak player names, and round trip', 
   const url = createRoomInviteUrl('ABCD2345', 'https://posadaxmas.com/juegos?name=Private');
   assert.equal(url, 'https://posadaxmas.com/room#code=ABCD2345');
   assert.equal(parseRoomInviteUrl(url), 'ABCD2345');
+  assert.equal(createRoomInviteUrl('ABCD2345', 'https://example.vercel.app', '/room.html'), 'https://example.vercel.app/room.html#code=ABCD2345');
+  assert.equal(parseRoomInviteUrl('https://example.vercel.app/room.html#code=ABCD2345'), 'ABCD2345');
   assert.equal(parseRoomInviteUrl('https://posadaxmas.com/other#code=ABCD2345'), null);
   assert.equal(parseRoomInviteUrl('not a URL'), null);
   assert.throws(() => createRoomInviteUrl('BAD', 'https://posadaxmas.com'), /Invalid room code/);
