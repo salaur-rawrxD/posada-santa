@@ -1,0 +1,16 @@
+{
+  "name": "@posada/platform-core",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Shared game catalog and room contracts for the Posada Santa social gaming platform",
+  "scripts": {
+    "test": "node --experimental-strip-types --test test/*.test.ts",
+    "typecheck": "tsc --noEmit",
+    "build": "vite build"
+  },
+  "devDependencies": {
+    "typescript": "^5.8.3",
+    "vite": "^6.3.0"
+  }
+}
