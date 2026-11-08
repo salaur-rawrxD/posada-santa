@@ -25,13 +25,23 @@ The output ZIP is `dist/la-posada-facebook.zip`, containing `index.html` and `fb
 
 ## Optional: stage a build in Meta Web Hosting
 
-1. In [Meta's Developer Dashboard](https://developers.facebook.com/apps/3530558340439821/), look for **Instant Games → Web Hosting**. If this product/tab is missing, confirm that the Meta app was created for Instant Games and that the account has access to Web Hosting. You may need to wait for approval.
-2. Under Web Hosting, find **Get Asset Upload Access Token**. This is **not** the App ID and **not** the App Secret.
-3. In this GitHub repository, open **Settings → Secrets and variables → Actions → New repository secret**. Name it **`FACEBOOK_ASSET_UPLOAD_TOKEN`** and paste the token there. Never commit it to GitHub and do not paste it in chat.
-4. In GitHub **Actions → Facebook Instant Games — Build / Stage → Run workflow**, set `upload_to_meta` to **true**. The workflow stages the ZIP via the `/{app_id}/assets` Graph API endpoint.
-5. Check the staged build under the Meta **Web Hosting** tab and test with authorized testers. **Uploading does not publish your game**. Final publishing and app review are handled separately in Meta's dashboard.
+The **Get app access token for uploads** button in the current Meta dashboard can open [Meta's App Access Token documentation](https://developers.facebook.com/documentation/facebook-login/guides/access-tokens#apptokens) rather than display a token. The GitHub workflow now supports requesting the app token **only during a manual upload run**, using the App ID and App Secret.
 
-If Meta returns a permissions or unsupported endpoint error, do not retry with your App Secret or a personal access token. The upload is blocked until Meta enables Web Hosting and supplies the correct asset-upload token.
+1. In [Meta's App Dashboard](https://developers.facebook.com/apps/3530558340439821/), open **App settings → Basic** and locate **App Secret**. Reveal it only in the dashboard; never paste it into chat or a GitHub code file. Do not enable Native/Desktop to do this.
+2. Open this repository's **Settings → Secrets and variables → Actions → New repository secret**.
+3. Create the secret named **`FACEBOOK_APP_SECRET`** with your Meta App Secret as its value.
+4. Open **Actions → Facebook Instant Games — Build / Stage → Run workflow**, select branch `main`, and enable **upload_to_meta**. The workflow securely requests a temporary app access token from `https://graph.facebook.com/oauth/access_token`, then tries the `/{app_id}/assets` upload.
+5. Check **Instant Games → Web hosting** for the staged build. **Uploading does not publish** the game or complete App Review.
+
+Alternatively, if Meta provides an actual purpose-specific upload token, store it under `FACEBOOK_ASSET_UPLOAD_TOKEN`. When present, this token takes precedence over automatic app-token generation.
+
+**Permissions note:** Meta distinguishes normal app access tokens from asset-upload authorization in older documentation. If Meta rejects a general app token with a permissions error, the workflow will stop, and we must resolve the app's Instant Games hosting permissions or get the correct token from Meta. Do not substitute a personal token or publish any secrets.
+
+## Security
+
+- Both secrets are **GitHub Actions repository secrets**, never placed in the client ZIP.
+- **Do not share** an App Secret, generated access token, or token response in chat or screenshots.
+- Only a manually dispatched workflow with `upload_to_meta=true` makes network calls to Meta for an upload; automatic commits only rebuild the downloadable ZIP.
 
 ## Limitations of this first staging edition
 
