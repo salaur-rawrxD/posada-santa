@@ -17,14 +17,14 @@ export function generateRoomCode(random: Pick<Crypto, 'getRandomValues'> = crypt
   return Array.from(bytes, (byte) => ALPHABET[byte & 31]).join('');
 }
 
-export function createRoomInviteUrl(code: string, siteUrl: string): string {
+export function createRoomInviteUrl(code: string, siteUrl: string, roomPath: '/room' | '/room.html' = '/room'): string {
   const normalized = normalizeRoomCode(code);
   if (!normalized) throw new Error('Invalid room code');
   const url = new URL(siteUrl);
   if (url.protocol !== 'https:' && !(url.protocol === 'http:' && ['localhost', '127.0.0.1'].includes(url.hostname))) {
     throw new Error('Room invites require HTTPS (except localhost)');
   }
-  url.pathname = '/room';
+  url.pathname = roomPath;
   url.search = '';
   url.hash = new URLSearchParams({ code: normalized }).toString();
   return url.toString();
@@ -33,7 +33,7 @@ export function createRoomInviteUrl(code: string, siteUrl: string): string {
 export function parseRoomInviteUrl(value: string): string | null {
   try {
     const url = new URL(value);
-    if (url.pathname !== '/room' && url.pathname !== '/room/') return null;
+    if (!['/room', '/room/', '/room.html'].includes(url.pathname)) return null;
     return normalizeRoomCode(new URLSearchParams(url.hash.slice(1)).get('code') || '');
   } catch {
     return null;
