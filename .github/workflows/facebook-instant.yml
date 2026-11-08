@@ -46,7 +46,7 @@ jobs:
               assert "FBInstant.initializeAsync()" in html
               assert "SB_KEY=" not in html, "Website Supabase key must not ship"
               assert "posthog.js" not in html
-              assert cfg["instant_games"]["orientation"] == "LANDSCAPE"
+              assert cfg["instant_games"]["orientation"] == "PORTRAIT"
           print("ZIP sanity checks passed")
           PY
       - name: Save bundle as GitHub Actions artifact
