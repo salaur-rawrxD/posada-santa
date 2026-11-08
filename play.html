@@ -2506,6 +2506,7 @@ const GAME_LINK=ORIGIN+"/play";
 /* incoming: sb (board snapshot) and me (who's holding the phone) */
 (function(){ const raw=String(window.__H0||location.hash||""); const m=raw.match(/[#&]sb=(S[A-Za-z0-9_-]{8,})/); const meM=raw.match(/[#&]me=([^&]+)/);
   const o=m&&Fam.unseal(m[1]); if(o) Fam.merge(o);
+  if(o&&/[#&]fc=1(?:&|$)/.test(raw)){ window.__familyChallengePending=true; if(typeof window.psTrack==="function")window.psTrack("family_challenge_opened"); }
   const fm=raw.match(/[#&]fam=([A-Za-z0-9_-]{4,40})/); if(!o&&fm) Fam.setCur(fm[1]);
   if(!o){ const gg=Fam.group(); if(gg&&gg.me) window.__famMe=gg.me; }
   let me=""; try{ me=meM?decodeURIComponent(meM[1]).trim().replace(/\s+/g," ").slice(0,18):""; }catch(e){}
@@ -2535,20 +2536,34 @@ a.cta{text-decoration:none;display:flex;align-items:center;justify-content:cente
   const tell=document.createElement("button"); tell.type="button"; tell.className="cta alt"; tell.id="famTell"; tell.hidden=true; $("replayBtn").parentNode.insertBefore(tell,$("replayBtn")); tell.addEventListener("click",()=>openShare());
   const sh=document.createElement("div"); sh.className="overlay"; sh.id="famShare"; sh.hidden=true;
   sh.innerHTML=`<div class="card in"><div class="card-top"><span class="kicker">🏆 <span id="fsGroup"></span></span></div><div class="stack tight"><h2 id="fsTitle"></h2><p id="fsSub"></p></div>
+    <label for="fsMember" id="fsMemberLabel" style="display:block;font-weight:800;margin-bottom:6px">Challenge</label><select id="fsMember" style="width:100%;min-height:44px;margin-bottom:14px;border-radius:12px;padding:8px;font:inherit;background:#fff8ec;color:#16224a"></select>
     <div class="sharegrid"><a class="cta wa" id="fsWa" target="_blank" rel="noopener"></a><a class="cta im" id="fsIm"></a><button class="cta alt" id="fsCp" type="button"></button></div>
     <button class="ghost" id="fsClose" type="button"></button></div>`;
   document.body.appendChild(sh); $("fsClose").addEventListener("click",()=>{ sh.hidden=true; });
-  $("fsCp").addEventListener("click",async()=>{ try{ await navigator.clipboard.writeText(shareText()); $("fsCp").textContent=ft("copied"); }catch(e){} });
+  $("fsCp").addEventListener("click",async()=>{ try{ await navigator.clipboard.writeText(shareText()); $("fsCp").textContent=ft("copied"); if(typeof psTrack==="function")psTrack("family_challenge_shared"); }catch(e){} });
 })();
 let boardTab="fam";
 const fmtN=n=>Number(n||0).toLocaleString(LANG==="es"?"es-MX":undefined);
 function myRank(){ const rs=Fam.rows(), i=rs.findIndex(r=>r.me); return {rs,i}; }
-function shareText(){ const g=Fam.group(), {rs,i}=myRank(), url=GAME_LINK+"#sb="+Fam.code(); const s=i>=0?rs[i].s:0;
-  return i>=0&&rs.length>1?ft("chMsg",g.gn,i+1,fmtN(s),url):ft("chMsg1",g.gn,fmtN(s),url); }
+function shareText(){ const g=Fam.group(), {rs,i}=myRank(), url=GAME_LINK+"#sb="+Fam.code()+"&fc=1"; const score=i>=0?rs[i].s:0;
+  const initial=i>=0&&rs.length>1?ft("chMsg",g.gn,i+1,fmtN(score),url):ft("chMsg1",g.gn,fmtN(score),url);
+  const select=$("fsMember"), chosen=select&&select.value;
+  if(!chosen)return initial;
+  const row=rs.find(r=>r.n===chosen&&!r.me);
+  if(!row)return initial;
+  return (LANG==="es"?"🎯 ¡"+row.n+", te reto!":"🎯 "+row.n+", I challenge you!")+"\n"+initial;
+}
 function openShare(){ const g=Fam.group(); if(!g) return; const txt=shareText(), apple=/iPhone|iPad|Mac/i.test(navigator.userAgent);
   $("fsGroup").textContent=g.gn; $("fsTitle").textContent=ft("shareT"); $("fsSub").textContent=ft("shareP");
+  $("fsMemberLabel").textContent=LANG==="es"?"¿A quién quieres retar?":"Who do you want to challenge?";
+  const sel=$("fsMember");sel.replaceChildren();
+  const all=document.createElement("option");all.value="";all.textContent=LANG==="es"?"Toda mi familia":"Everyone in my family";sel.appendChild(all);
+  Fam.rows().filter(r=>!r.me).forEach(r=>{const option=document.createElement("option");option.value=r.n;option.textContent=r.n;sel.appendChild(option);});
+  sel.onchange=()=>{const message=shareText();$("fsWa").href="https://wa.me/?text="+encodeURIComponent(message);$("fsIm").href="sms:"+(apple?"&":"?")+"body="+encodeURIComponent(message);};
+
   $("fsWa").textContent=ft("wa"); $("fsWa").href="https://wa.me/?text="+encodeURIComponent(txt);
   $("fsIm").textContent=ft("im"); $("fsIm").href="sms:"+(apple?"&":"?")+"body="+encodeURIComponent(txt);
+  ["fsWa","fsIm"].forEach(id=>{ $(id).onclick=()=>{ if(typeof psTrack==="function")psTrack("family_challenge_shared"); }; });
   $("fsCp").textContent=ft("cp"); $("fsClose").textContent=ft("close"); $("famShare").hidden=false; }
 function renderFamBanner(){ const g=Fam.group(), b=$("famBan"); if(!g){ b.hidden=true; return; } const {rs,i}=myRank(), lead=rs[0];
   let main, sub, go;
@@ -2571,6 +2586,7 @@ const _fam_renderBoard=renderBoard; renderBoard=function(){ const g=Fam.group(),
     li.innerHTML=`<span class="rk">${medal[i]||i+1}</span><span class="nm"><b>${esc(r.n)}</b><small>${r.lv||0}/5 ${esc(t("lvls").toLowerCase())} · ${r.st||0}★</small></span><span class="pts">${fmtN(r.s)}</span>`; box.appendChild(li); });
   const c=$("famChallenge"); c.textContent=ft("challenge"); c.hidden=!rs.some(r=>r.me); };
 const _fam_levelDone=levelDone; levelDone=function(){ const before=myRank(); _fam_levelDone(); const g=Fam.group(), tell=$("famTell");
+  if(window.__familyChallengePending){ window.__familyChallengePending=false; if(typeof psTrack==="function")psTrack("family_challenge_completed"); }
   if(!g||!Board.current()){ tell.hidden=true; return; } Fam.link(Board.current());
   const after=myRank(); let passed=null;
   if(after.i>=0){ const prevS=before.i>=0?before.rs[before.i].s:0, nowS=after.rs[after.i].s; passed=before.rs.filter(r=>!r.me&&r.s>=prevS&&r.s<nowS).sort((a,b)=>b.s-a.s)[0]||null; }
