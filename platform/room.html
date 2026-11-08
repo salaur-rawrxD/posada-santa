@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#16224a">
+  <title>Game Room · Posada Santa</title>
+  <meta name="description" content="Create a private game room, invite friends, and play together.">
+  <link rel="stylesheet" href="/src/room/room.css">
+  <script type="module" src="/src/room/main.ts"></script>
+</head>
+<body>
+  <main class="shell">
+    <header class="top"><a class="back" href="/juegos">← Posada Santa</a><div class="lang"><button type="button" data-lang="es" aria-pressed="true">ES</button><button type="button" data-lang="en" aria-pressed="false">EN</button></div></header>
+    <p class="eyebrow" data-i18n="eyebrow">JUEGA EN FAMILIA</p>
+    <h1 data-i18n="title">Tu sala de juegos 🎮</h1>
+    <p class="lead" data-i18n="lead">Crea una sala, comparte un enlace y reúne a tus amigos. Sin cuenta obligatoria.</p>
+    <p id="status" class="status" role="status" aria-live="polite"></p>
+
+    <section id="entry" class="grid">
+      <form id="createForm" class="panel">
+        <h2 data-i18n="createTitle">Crear una sala</h2>
+        <label for="createName" data-i18n="name">Tu apodo</label>
+        <input id="createName" autocomplete="nickname" maxlength="18" required placeholder="Tu nombre">
+        <button class="primary" type="submit" data-i18n="create">Crear sala</button>
+      </form>
+      <form id="joinForm" class="panel">
+        <h2 data-i18n="joinTitle">Unirse a una sala</h2>
+        <label for="joinCode" data-i18n="code">Código de invitación</label>
+        <input id="joinCode" maxlength="12" autocapitalize="characters" spellcheck="false" placeholder="ABCD2345" required>
+        <label for="joinName" data-i18n="name">Tu apodo</label>
+        <input id="joinName" autocomplete="nickname" maxlength="18" required placeholder="Tu nombre">
+        <button class="primary" type="submit" data-i18n="join">Entrar a la sala</button>
+      </form>
+    </section>
+
+    <section id="lobby" class="panel" hidden>
+      <div class="roomtop"><div><p class="eyebrow" data-i18n="room">SALA PRIVADA</p><h2 id="roomCode"></h2></div><span id="roomStatus" class="pill"></span></div>
+      <p class="hint" data-i18n="shareHint">Comparte el enlace con tu familia. Máximo 12 jugadores.</p>
+      <div class="actions"><button type="button" id="shareBtn" class="primary" data-i18n="share">Compartir invitación</button><button type="button" id="copyBtn" class="secondary" data-i18n="copy">Copiar enlace</button></div>
+      <h3 data-i18n="players">Jugadores</h3>
+      <ul id="players" class="players"></ul>
+      <div id="hostControls" hidden>
+        <h3 data-i18n="chooseGame">Elige un juego</h3>
+        <label for="gameSelect" class="sr-only" data-i18n="chooseGame">Elige un juego</label>
+        <select id="gameSelect"></select>
+        <div class="actions"><button id="selectBtn" type="button" class="secondary" data-i18n="selectGame">Elegir juego</button><button id="startBtn" type="button" class="primary" data-i18n="start">Iniciar ronda</button><button id="finishBtn" type="button" class="secondary" data-i18n="finish">Terminar ronda</button></div>
+      </div>
+      <div id="selectedGame" class="selected"></div>
+      <h3 data-i18n="scoreboard">Marcador de la sala</h3>
+      <ol id="scores" class="scores"></ol>
+      <p class="hint" data-i18n="scoreNote">Vista previa: los juegos todavía no envían puntuaciones a esta sala. Las puntuaciones futuras serán no verificadas.</p>
+      <button id="leaveBtn" type="button" class="leave" data-i18n="leave">Salir de la sala</button>
+    </section>
+    <footer data-i18n="privacy">Los enlaces de sala son invitaciones, no contraseñas. Usa apodos, no información privada.</footer>
+  </main>
+</body>
+</html>
