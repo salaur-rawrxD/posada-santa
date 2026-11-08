@@ -20,6 +20,9 @@
     distinct_id: true, $device_id: true, $session_id: true,
     $lib: true, $lib_version: true, $insert_id: true, $time: true,
     $browser: true, $os: true, $referring_domain: true,
+    $prev_pageview_duration: true, $prev_pageview_lastscroll: true,
+    $prev_pageview_maxscroll: true, $prev_pageview_lastcontent: true,
+    $prev_pageview_maxcontent: true,
     $current_url: true, $pathname: true, $host: true, page: true,
     element_type: true, click_category: true, target_page: true
   };
