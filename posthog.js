@@ -20,14 +20,15 @@
     distinct_id: true, $device_id: true, $session_id: true,
     $lib: true, $lib_version: true, $insert_id: true, $time: true,
     $browser: true, $os: true, $referring_domain: true,
-    $current_url: true, $pathname: true, $host: true, page: true
+    $current_url: true, $pathname: true, $host: true, page: true,
+    element_type: true, click_category: true, target_page: true
   };
   window.posthog.init(PROJECT_TOKEN, {
     api_host: API_HOST,
     defaults: "2026-08-30",
     autocapture: false,
-    capture_pageview: false,
-    capture_pageleave: false,
+    capture_pageview: true,
+    capture_pageleave: true,
     disable_session_recording: true,
     disable_surveys: true,
     capture_exceptions: false,
@@ -48,9 +49,42 @@
     }
   });
 
-  window.posthog.capture("$pageview", {
-    $current_url: safeUrl, $pathname: pathname, $host: window.location.host
-  });
+  // Track navigation and generic clicks without recording text, fields, query strings,
+  // hashes, invite IDs, email addresses or personalized gift information.
+  var publicPages = {
+    "/": true, "/host": true, "/letter": true, "/pinata": true,
+    "/play": true, "/juegos": true, "/ideas": true, "/privacy": true,
+    "/q": true, "/tamalazo": true, "/trineo": true
+  };
+  document.addEventListener("click", function (ev) {
+    var element = ev.target && ev.target.closest && ev.target.closest("a[href], button");
+    if (!element) return;
+    var isLink = element.tagName.toLowerCase() === "a";
+    var category = "button";
+    var targetPage;
+    if (isLink) {
+      try {
+        var href = new URL(element.getAttribute("href"), window.location.href);
+        if (href.origin === window.location.origin) {
+          category = "internal_link";
+          if (publicPages[href.pathname]) targetPage = href.pathname;
+        } else if (href.protocol === "https:" || href.protocol === "http:") {
+          category = "external_link";
+        } else {
+          category = "other_link";
+        }
+      } catch (_) { category = "other_link"; }
+    } else if (element.closest("nav")) {
+      category = "navigation_button";
+    }
+    var properties = {
+      page: pathname,
+      element_type: isLink ? "link" : "button",
+      click_category: category
+    };
+    if (targetPage) properties.target_page = targetPage;
+    window.posthog.capture("ui_click", properties);
+  }, true);
 
   // Reuse existing, manually chosen Vercel events without forwarding personal data.
   var originalTrack = window.psTrack;
