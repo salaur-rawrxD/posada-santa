@@ -1,0 +1,87 @@
+name: Facebook Instant Games — Build / Stage
+
+on:
+  workflow_dispatch:
+    inputs:
+      upload_to_meta:
+        description: 'Stage the built ZIP in Meta Web Hosting (never publishes)'
+        required: true
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: facebook-instant-upload
+  cancel-in-progress: false
+
+jobs:
+  package:
+    name: Package La Posada
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out game source
+        uses: actions/checkout@v4
+      - name: Build Facebook ZIP
+        run: python3 scripts/facebook/build_instant.py
+      - name: Validate upload package
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          from zipfile import ZipFile
+          import json
+          path=Path("dist/la-posada-facebook.zip")
+          with ZipFile(path) as z:
+              assert z.testzip() is None
+              assert z.namelist() == ["index.html","fbapp-config.json"], z.namelist()
+              html=z.read("index.html").decode("utf-8")
+              cfg=json.loads(z.read("fbapp-config.json"))
+              assert "FBInstant.initializeAsync()" in html
+              assert "SB_KEY=" not in html, "Website Supabase key must not ship"
+              assert "posthog.js" not in html
+              assert cfg["instant_games"]["orientation"] == "LANDSCAPE"
+          print("ZIP sanity checks passed")
+          PY
+      - name: Save bundle as GitHub Actions artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: la-posada-facebook-instant
+          path: dist/la-posada-facebook.zip
+          retention-days: 30
+          if-no-files-found: error
+      - name: Check Meta upload credential
+        if: ${{ inputs.upload_to_meta }}
+        env:
+          META_UPLOAD_TOKEN: ${{ secrets.FACEBOOK_ASSET_UPLOAD_TOKEN }}
+        run: |
+          if [ -z "$META_UPLOAD_TOKEN" ]; then
+            echo "::error::Add repository secret FACEBOOK_ASSET_UPLOAD_TOKEN before requesting an upload."
+            exit 1
+          fi
+      - name: Upload ZIP to Meta as an unpublished staged asset
+        if: ${{ inputs.upload_to_meta }}
+        env:
+          META_UPLOAD_TOKEN: ${{ secrets.FACEBOOK_ASSET_UPLOAD_TOKEN }}
+          FB_APP_ID: '3530558340439821'
+        run: |
+          set -euo pipefail
+          # Matches Meta's archived Instant Games uploader: /{app-id}/assets,
+          # multipart 'asset' and 'type=BUNDLE'. No publishing step.
+          response=$(curl --silent --show-error --fail-with-body \
+            --request POST "https://graph-video.facebook.com/${FB_APP_ID}/assets" \
+            --form "type=BUNDLE" \
+            --form "comment=GitHub Actions staged build ${GITHUB_SHA}" \
+            --form "asset=@dist/la-posada-facebook.zip;type=application/zip" \
+            --form "access_token=${META_UPLOAD_TOKEN}")
+          META_RESPONSE="$response" python3 - <<'PY'
+          import json,os,sys
+          result=json.loads(os.environ["META_RESPONSE"])
+          if not result.get("success", False):
+              print("Meta upload did not confirm success (check the app's Web Hosting page).")
+              sys.exit(1)
+          print("Meta accepted the ZIP as a staged Instant Games asset. This is NOT published.")
+          PY
+      - name: Next step
+        if: ${{ inputs.upload_to_meta }}
+        run: echo "Review the staged build at https://developers.facebook.com/apps/3530558340439821/instant-games/hosting/"
