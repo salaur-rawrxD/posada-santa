@@ -113,7 +113,7 @@ $('joinForm').addEventListener('submit', ev => {
     await identity(); setRoom(await rooms.join(code, name)); say(t('joined'));
   });
 });
-function invite(): string { if (!room) throw new Error('No room'); return createRoomInviteUrl(room.code, location.origin); }
+function invite(): string { if (!room) throw new Error('No room'); return createRoomInviteUrl(room.code, location.origin, location.pathname.endsWith('.html') ? '/room.html' : '/room'); }
 $('shareBtn').addEventListener('click', () => { void action(async () => {
   const url = invite();
   if (navigator.share) {
