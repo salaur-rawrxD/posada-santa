@@ -6,7 +6,9 @@ This directory contains the build script for a **separate Facebook Instant Games
 
 ## Build and test the ZIP
 
-In GitHub, open **Actions → Facebook Instant Games — Build / Stage → Run workflow**.
+The package job runs automatically when `play.html` or the Facebook build scripts change on `main`. Automatic runs **only build and save the ZIP**; they never upload or publish to Meta.
+
+To run it on demand, in GitHub, open **Actions → Facebook Instant Games — Build / Stage → Run workflow**.
 
 - Select branch `main`.
 - Leave **Stage the built ZIP in Meta Web Hosting** set to **false**.
