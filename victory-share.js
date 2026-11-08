@@ -161,6 +161,25 @@
       setTimeout(function () { URL.revokeObjectURL(blobUrl); }, 30000);
       track("achievement_card_saved", game);
     });
+    // A real completed game result advances today's rotating challenge, if this is
+    // the featured game. No sign-in is required and other game records are untouched.
+    var daily = window.PosadaDaily;
+    if (daily && typeof daily.complete === "function") {
+      var newlyComplete = daily.complete(game, score);
+      var current = daily.today();
+      if (current.game === game) {
+        var notice = document.createElement("p");
+        notice.className = "ps-vsub";
+        notice.style.color = "#f5c66a";
+        var finished = daily.progress().complete;
+        notice.textContent = finished
+          ? (isEs() ? "✅ ¡Completaste el reto del día!" : "✅ Daily challenge completed!")
+          : (isEs() ? "🎄 Reto del día: " : "🎄 Today's goal: ") +
+            current.target.toLocaleString(isEs() ? "es-MX" : "en-US") +
+            (game === "tamalazo" ? " m²" : " pts");
+        box.appendChild(notice);
+      }
+    }
     box.appendChild(title); box.appendChild(points); box.appendChild(sub);
     box.appendChild(buttons); box.appendChild(status);
     parent.appendChild(box);
