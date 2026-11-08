@@ -2554,7 +2554,7 @@ function shareText(){ const g=Fam.group(), {rs,i}=myRank(), url=GAME_LINK+"#sb="
   if(!row)return initial;
   return (LANG==="es"?"🎯 ¡"+row.n+", te reto!":"🎯 "+row.n+", I challenge you!")+"\n"+initial;
 }
-function openShare(){ const g=Fam.group(); if(!g) return; const txt=shareText(), apple=/iPhone|iPad|Mac/i.test(navigator.userAgent);
+function openShare(){ const g=Fam.group(); if(!g) return; if(window.PosadaDuel)window.PosadaDuel.newShare(); const apple=/iPhone|iPad|Mac/i.test(navigator.userAgent);
   $("fsGroup").textContent=g.gn; $("fsTitle").textContent=ft("shareT"); $("fsSub").textContent=ft("shareP");
   $("fsMemberLabel").textContent=LANG==="es"?"¿A quién quieres retar?":"Who do you want to challenge?";
   const sel=$("fsMember");sel.replaceChildren();
@@ -2562,6 +2562,7 @@ function openShare(){ const g=Fam.group(); if(!g) return; const txt=shareText(),
   Fam.rows().filter(r=>!r.me).forEach(r=>{const option=document.createElement("option");option.value=r.n;option.textContent=r.n;sel.appendChild(option);});
   sel.onchange=()=>{const message=shareText();$("fsWa").href="https://wa.me/?text="+encodeURIComponent(message);$("fsIm").href="sms:"+(apple?"&":"?")+"body="+encodeURIComponent(message);};
 
+  const txt=shareText();
   $("fsWa").textContent=ft("wa"); $("fsWa").href="https://wa.me/?text="+encodeURIComponent(txt);
   $("fsIm").textContent=ft("im"); $("fsIm").href="sms:"+(apple?"&":"?")+"body="+encodeURIComponent(txt);
   ["fsWa","fsIm"].forEach(id=>{ $(id).onclick=()=>{ if(typeof psTrack==="function")psTrack("family_challenge_shared"); }; });
