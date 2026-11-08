@@ -1,0 +1,58 @@
+/* Friends Challenge Groups: separate from exchange groups; no email required.
+   Names and scores are public to anyone holding the unlisted invite URL.
+   The server's existing score RPC does not authenticate players; friendly play only. */
+(function(){
+"use strict";
+const SB="https://ktssnlyspwzhdhffpgqm.supabase.co";
+const KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt0c3NubHlzcHd6aGRoZmZwZ3FtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTM5MjYwMDgsImV4cCI6MjEwOTUwMjAwOH0.3lHaJYRYCyeqcdgS2EIfT1_6qr0B5CxNqYQNHkyevCk";
+const STORAGE="posada-friends-v1";
+const $=id=>document.getElementById(id);
+let lang="en",active=null;
+function L(en,es){return lang==="es"?es:en}
+function track(n){try{if(typeof window.psTrack==="function")window.psTrack(n)}catch(_){}}
+function read(){try{const d=JSON.parse(localStorage.getItem(STORAGE)||"{}");return d&&d.groups?d:{groups:{},current:null}}catch(_){return{groups:{},current:null}}}
+function save(d){try{localStorage.setItem(STORAGE,JSON.stringify(d))}catch(_){}}
+function validId(id){return /^fr_[a-z0-9]{24}$/.test(id||"")}
+function trimmed(s,max){return String(s||"").trim().replace(/\s+/g," ").slice(0,max)}
+function groupList(){return Object.values(read().groups).filter(g=>validId(g.id))}
+function inviteURL(g){let u=new URL("/friends",location.origin);u.hash="invite="+encodeURIComponent(g.id)+"&name="+encodeURIComponent(g.name);return u.href}
+function setCurrent(id){let d=read();if(!d.groups[id])return;d.current=id;save(d);active=id;render()}
+async function rpc(fn,args){const controller=new AbortController();const timer=setTimeout(()=>controller.abort(),10000);try{const r=await fetch(SB+"/rest/v1/rpc/"+fn,{method:"POST",headers:{"Content-Type":"application/json",apikey:KEY,Authorization:"Bearer "+KEY},body:JSON.stringify(args),signal:controller.signal});if(!r.ok)throw Error("service "+r.status);return await r.json()}finally{clearTimeout(timer)}}
+function randomId(){const n=new Uint8Array(12);crypto.getRandomValues(n);return "fr_"+Array.from(n,x=>x.toString(16).padStart(2,"0")).join("")}
+function playerRecord(name){const p=(()=>{try{return JSON.parse(localStorage.getItem("posada-family-v1")||"{}")}catch(_){return{}}})();return p&&p.players&&p.players[name]||null}
+function scoreFor(name){const p=playerRecord(name);return p?Object.entries(p.levels||{}).reduce((a,[n,v])=>a+(Number(v.best)||0),0):0}
+function ensureLocalPlayer(name){try{const d=JSON.parse(localStorage.getItem("posada-family-v1")||"{}");d.players=d.players||{};if(!d.players[name])d.players[name]={levels:{},since:Date.now()};d.current=name;localStorage.setItem("posada-family-v1",JSON.stringify(d))}catch(_){}}
+async function sync(g){if(!g)return;let d=read(),stored=d.groups[g.id];if(!stored)return;try{const sc=scoreFor(stored.player);if(sc>0)await rpc("submit_score",{p_gid:stored.id,p_player:stored.player,p_score:sc,p_stars:0,p_top:0});const rows=await rpc("get_board",{p_gid:stored.id});stored.rows=Array.isArray(rows)?rows:[];stored.updated=Date.now();d.groups[g.id]=stored;save(d);renderBoard(stored);$("boardStatus").textContent=L("Leaderboard updated","Tabla actualizada");}catch(e){$("boardStatus").textContent=L("Couldn't update scores. Try again.","No se pudieron actualizar los puntos. Intenta de nuevo.")}}
+function renderBoard(g){const box=$("leaderboard");if(!box)return;box.replaceChildren();const rows=(g.rows||[]).slice().sort((a,b)=>(Number(b.score)||0)-(Number(a.score)||0));if(!rows.length){const li=document.createElement("li");li.textContent=L("No scores yet. Finish a La Posada level to get on the board.","Todavía no hay puntos. Termina un nivel de La Posada para entrar a la tabla.");box.appendChild(li);return;}rows.forEach((r,i)=>{let li=document.createElement("li");const medal=document.createElement("span");medal.textContent=["🥇","🥈","🥉"][i]||String(i+1);const mid=document.createElement("span");let nm=document.createElement("b");nm.textContent=String(r.player||"Player").slice(0,18);const detail=document.createElement("small");detail.textContent=nm.textContent===g.player?L("You · ","Tú · ")+g.name:L("Friend","Amigo");mid.append(nm,detail);const points=document.createElement("strong");points.textContent=Number(r.score||0).toLocaleString();li.append(medal,mid,points);box.append(li)})}
+function render(){
+const d=read(),g=d.groups[active]||d.groups[d.current];const all=groupList();
+$("myPanel").hidden=!all.length;$("groupCards").replaceChildren();
+all.forEach(gr=>{const card=document.createElement("div");card.className="group-card";const name=document.createElement("h3");name.textContent=gr.name;const info=document.createElement("div");info.className="small";info.textContent=gr.player+" · "+L("Private friends challenge","Reto privado entre amigos");const b=document.createElement("button");b.className="btn";b.type="button";b.textContent=L("Open leaderboard","Ver tabla");b.addEventListener("click",()=>{setCurrent(gr.id);sync(gr)});card.append(name,info,b);$("groupCards").append(card)});
+$("boardPanel").hidden=!g;if(g){active=g.id;$("boardTitle").textContent="🏆 "+g.name;$("boardDescription").textContent=L("Playing as ","Jugando como ")+g.player+". "+L("Scores from La Posada · best total across levels.","Puntos de La Posada · total de récords por nivel.");$("playLink").href="/play#friends="+g.id;$("playLink").textContent=L("🎮 Play La Posada","🎮 Jugar La Posada");$("inviteBtn").textContent=L("Invite friends","Invitar amigos");$("refreshBtn").textContent=L("Refresh scores","Actualizar puntos");renderBoard(g)}}
+const words={
+en:{back:"← 🎮 Games",heading:"🏆 Play with friends",intro:"Create a small private group and compete in La Posada. No organizer account and no Secret Santa exchange needed.",joinTitle:"You've been invited!",joinName:"Your player name",joinBtn:"Join challenge group",createTitle:"Start a friends group",createDescription:"Pick a group name and your player name. Share the link with friends to compete.",groupName:"Group name",creatorName:"Your player name",createBtn:"Create group",myTitle:"My challenge groups",boardKicker:"PRIVATE FRIENDS LEADERBOARD",privacyNote:"Only people with the invitation link can discover this group. Links are not passwords. Use nicknames; scores aren't protected against tampering."},
+es:{back:"← 🎮 Juegos",heading:"🏆 Juega con amigos",intro:"Crea un grupo privado para competir en La Posada. Sin cuenta de organizador ni intercambio de regalos.",joinTitle:"¡Te invitaron!",joinName:"Tu nombre de jugador",joinBtn:"Unirme al grupo",createTitle:"Crea un grupo de amigos",createDescription:"Ponle nombre al grupo y elige tu jugador. Comparte la invitación para competir.",groupName:"Nombre del grupo",creatorName:"Tu nombre de jugador",createBtn:"Crear grupo",myTitle:"Mis grupos de retos",boardKicker:"TABLA PRIVADA ENTRE AMIGOS",privacyNote:"Solo quien tenga el enlace puede encontrar el grupo. El enlace no es contraseña. Usa apodos; los puntos no están protegidos contra alteraciones."}
+};
+function setLanguage(language){lang=language;document.documentElement.lang=lang;const w=words[lang];Object.keys(w).forEach(k=>{const map={back:"backLink",heading:"heading",intro:"intro",joinName:"joinNameLabel",groupName:"groupNameLabel",creatorName:"creatorNameLabel"};const el=$(map[k]||k);if(el)el.textContent=w[k]});document.querySelectorAll("[data-lang]").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.lang===lang)));const d=read(),g=d.groups[active]||d.groups[d.current];if(g)render()}
+async function create(){
+const name=trimmed($("groupName").value,48),player=trimmed($("creatorName").value,18);
+if(name.length<3||player.length<2){$("createStatus").textContent=L("Enter a group name and player name.","Escribe el nombre del grupo y tu nombre.");return}
+const b=$("createBtn");b.disabled=true;$("createStatus").textContent=L("Creating group…","Creando grupo…");
+try{const id=randomId(),owner=new Uint8Array(18);crypto.getRandomValues(owner);const secret=Array.from(owner,v=>v.toString(16).padStart(2,"0")).join("");
+const ok=await rpc("register_group",{p_gid:id,p_name:name,p_key:secret});if(ok!==true)throw Error("registration failed");const data=read();data.groups[id]={id,name,player,rows:[],created:Date.now()};data.current=id;save(data);active=id;ensureLocalPlayer(player);track("friends_group_created");$("createStatus").textContent=L("Group created! Invite your friends.","¡Grupo creado! Invita a tus amigos.");render();await sync(data.groups[id]);}catch(e){$("createStatus").textContent=L("Couldn't create the group. Please try again.","No pudimos crear el grupo. Intenta otra vez.")}finally{b.disabled=false}}
+async function join(id,name){
+const player=trimmed($("joinName").value,18);if(player.length<2){$("joinStatus").textContent=L("Enter your player name.","Escribe tu nombre de jugador.");return}
+const button=$("joinBtn");button.disabled=true;$("joinStatus").textContent=L("Joining…","Uniéndote…");
+try{const rows=await rpc("get_board",{p_gid:id});if(!Array.isArray(rows))throw Error("not a leaderboard");const data=read();const existing=data.groups[id];data.groups[id]={id,name:trimmed(name,48)||L("Friends Challenge","Reto de amigos"),player,rows,created:existing?.created||Date.now()};data.current=id;save(data);active=id;ensureLocalPlayer(player);track("friends_group_joined");$("joinStatus").textContent=L("You're in! Start playing.","¡Listo! Ya puedes jugar.");$("joinPanel").hidden=true;render();await sync(data.groups[id]);}catch(e){$("joinStatus").textContent=L("Couldn't join. Check the invitation link.","No se pudo entrar. Revisa el enlace.")}finally{button.disabled=false}}
+async function invite(){const g=read().groups[active];if(!g)return;const url=inviteURL(g),msg=L("🏆 Join my Posada Santa game group '","🏆 ¡Únete a mi grupo de juegos '")+g.name+L("'! Can you beat my La Posada score? ","' en Posada Santa! ¿Puedes superar mi puntaje en La Posada? ")+url;track("friends_invite_clicked");if(navigator.share){try{await navigator.share({title:"Posada Santa · "+g.name,text:msg,url});track("friends_invite_shared");return}catch(e){if(e.name==="AbortError")return}}try{await navigator.clipboard.writeText(msg);$("boardStatus").textContent=L("Invitation copied! Send it to your friends.","¡Invitación copiada! Mándala a tus amigos.");track("friends_invite_copied")}catch(_){$("boardStatus").textContent=url}}
+const fragment=new URLSearchParams(location.hash.replace(/^#/,""));const code=fragment.get("invite"),inviteName=fragment.get("name");
+const inviteId=validId(code)?code:null;
+const current=read();active=current.current&&current.groups[current.current]?current.current:null;
+try{lang=localStorage.getItem("posada-lang")==="es"?"es":localStorage.getItem("posada-lang")==="en"?"en":/^es\b/i.test(navigator.language)?"es":"en"}catch(_){lang="en"}
+document.querySelectorAll("[data-lang]").forEach(b=>b.addEventListener("click",()=>{setLanguage(b.dataset.lang);try{localStorage.setItem("posada-lang",lang)}catch(_){}}));
+$("createBtn").addEventListener("click",create);$("inviteBtn").addEventListener("click",invite);$("refreshBtn").addEventListener("click",()=>{const g=read().groups[active];if(g)sync(g)});
+if(inviteId){$("joinPanel").hidden=false;$("joinDescription").textContent=L("Join ","Únete a ")+(trimmed(inviteName,48)||L("this friends group","este grupo de amigos"))+". "+L("Play for the top score!","¡Compite por el mejor puntaje!");$("joinBtn").addEventListener("click",()=>join(inviteId,inviteName));if(!current.groups[inviteId]){$("newPanel").hidden=true;$("myPanel").hidden=true;}track("friends_invite_opened")}
+setLanguage(lang);render();
+if(active)sync(read().groups[active]);
+window.PosadaFriends={read:read,inviteURL:inviteURL};
+})();
