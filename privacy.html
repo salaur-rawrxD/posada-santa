@@ -24,6 +24,8 @@
 <meta name="apple-mobile-web-app-title" content="Posada Santa">
 <script id="va-init">window.va=window.va||function(){(window.vaq=window.vaq||[]).push(arguments)};window.va("beforeSend",function(e){try{var u=new URL(e.url);u.hash="";["client_reference_id","prefilled_email"].forEach(function(k){u.searchParams.delete(k)});e.url=u.toString()}catch(x){}return e});window.psTrack=function(n,d){try{window.va("event",{name:n,data:d||{}})}catch(x){}};document.addEventListener("click",function(ev){var a=ev.target&&ev.target.closest&&ev.target.closest("a[href]");if(!a)return;var h=a.href||"";if(/amazon\.com\//.test(h))psTrack("amazon_click",{page:location.pathname});else if(/buy\.stripe\.com\/bJebIUe4/.test(h))psTrack("tip_click",{page:location.pathname});else if(/wa\.me\//.test(h))psTrack("whatsapp_send",{page:location.pathname});else if(/^sms:/.test(h))psTrack("sms_send",{page:location.pathname})},true);</script>
 <script id="va-js" defer src="/_vercel/insights/script.js"></script>
+<script defer src="/posthog.js"></script>
+<script defer src="/posthog.js"></script>
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <style>
 :root{color-scheme:dark}
@@ -59,7 +61,7 @@ p,li{color:#d3d9ef}a{color:#f5c66a}small{color:#9aa6cf}
 <li><b>Alert emails (optional):</b> if someone adds an email in their letter or mailbox, we keep it only to tell them a secret question arrived, sent through Resend. It is never added to the letter, so the organizer never sees it. Deleted after 120 days.</li>
 </ul>
 <p>Our database is hosted by Supabase and the site by Vercel. Their servers log ordinary technical data like IP addresses for security.</p>
-<p><b>Visit counts:</b> we use Vercel Web Analytics, which doesn't use cookies, to count page visits and a few anonymous moments (like "a letter was sent" or "names were drawn"). Before anything is counted, we remove the private part of every link (everything after the #), so piñata codes, wishes, names and mailbox secrets never leave your browser.</p>
+<p><b>Visit counts:</b> we use Vercel Web Analytics and PostHog to count page visits and a few anonymous moments (like "a letter was sent" or "names were drawn"). Our PostHog setup disables automatic click/form collection, session recordings, and person profiles. It uses session-scoped browser storage. We send only selected event names and the page path, not names, letters, emails, phone numbers or other form values. We remove private link fragments and query parameters from URLs sent to PostHog; our Vercel Web Analytics setup also strips private fragments and selected query parameters. Both providers may process limited technical information needed to deliver analytics, such as IP addresses.</p>
 
 <h2>Messages</h2>
 <p>Invites, reminders, and piñata links are sent from your own phone through WhatsApp or text. We never send messages or see your contacts. If you use "Pick from contacts," the names and numbers you select go into your browser only.</p>
