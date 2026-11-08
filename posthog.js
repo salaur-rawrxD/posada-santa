@@ -5,7 +5,7 @@
 (function () {
   "use strict";
 
-  var PROJECT_TOKEN = "REPLACE_WITH_POSTHOG_PROJECT_TOKEN";
+  var PROJECT_TOKEN = "phc_mspcYg97PRRSVGZ6ihsgviSrrZXUXHdamaYi2i68yDw7";
   var API_HOST = "https://us.i.posthog.com";
 
   if (!PROJECT_TOKEN || PROJECT_TOKEN === "REPLACE_WITH_POSTHOG_PROJECT_TOKEN") return;
