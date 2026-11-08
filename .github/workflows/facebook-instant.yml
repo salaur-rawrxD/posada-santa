@@ -56,19 +56,56 @@ jobs:
           path: dist/la-posada-facebook.zip
           retention-days: 30
           if-no-files-found: error
-      - name: Check Meta upload credential
+      - name: Resolve Meta credential securely
         if: ${{ inputs.upload_to_meta }}
         env:
           META_UPLOAD_TOKEN: ${{ secrets.FACEBOOK_ASSET_UPLOAD_TOKEN }}
+          META_APP_SECRET: ${{ secrets.FACEBOOK_APP_SECRET }}
+          FB_APP_ID: '3530558340439821'
         run: |
-          if [ -z "$META_UPLOAD_TOKEN" ]; then
-            echo "::error::Add repository secret FACEBOOK_ASSET_UPLOAD_TOKEN before requesting an upload."
-            exit 1
-          fi
+          python3 - <<'PY'
+          import json
+          import os
+          import sys
+          import urllib.error
+          import urllib.parse
+          import urllib.request
+
+          token = os.environ.get("META_UPLOAD_TOKEN", "").strip()
+          if not token:
+              app_secret = os.environ.get("META_APP_SECRET", "").strip()
+              if not app_secret:
+                  print("::error::Add GitHub Actions secret FACEBOOK_APP_SECRET (or FACEBOOK_ASSET_UPLOAD_TOKEN).")
+                  sys.exit(1)
+              body = urllib.parse.urlencode({
+                  "client_id": os.environ["FB_APP_ID"],
+                  "client_secret": app_secret,
+                  "grant_type": "client_credentials"
+              }).encode()
+              try:
+                  req = urllib.request.Request(
+                      "https://graph.facebook.com/oauth/access_token",
+                      data=body, method="POST"
+                  )
+                  with urllib.request.urlopen(req, timeout=20) as response:
+                      result = json.load(response)
+                  token = str(result.get("access_token", ""))
+              except (urllib.error.HTTPError, urllib.error.URLError, TimeoutError, ValueError):
+                  print("::error::Meta app-token generation failed. Check App ID, App Secret, and Meta app settings.")
+                  sys.exit(1)
+              if not token:
+                  print("::error::Meta did not return an app access token.")
+                  sys.exit(1)
+              print("Generated a temporary app access token for this workflow run.")
+          else:
+              print("Using the configured Instant Games upload token.")
+          print("::add-mask::" + token)
+          with open(os.environ["GITHUB_ENV"], "a", encoding="utf-8") as env:
+              env.write("META_STAGE_TOKEN=" + token + "\n")
+          PY
       - name: Upload ZIP to Meta as an unpublished staged asset
         if: ${{ inputs.upload_to_meta }}
         env:
-          META_UPLOAD_TOKEN: ${{ secrets.FACEBOOK_ASSET_UPLOAD_TOKEN }}
           FB_APP_ID: '3530558340439821'
         run: |
           set -euo pipefail
@@ -79,7 +116,7 @@ jobs:
             --form "type=BUNDLE" \
             --form "comment=GitHub Actions staged build ${GITHUB_SHA}" \
             --form "asset=@dist/la-posada-facebook.zip;type=application/zip" \
-            --form "access_token=${META_UPLOAD_TOKEN}")
+            --form "access_token=${META_STAGE_TOKEN}")
           META_RESPONSE="$response" python3 - <<'PY'
           import json,os,sys
           result=json.loads(os.environ["META_RESPONSE"])
