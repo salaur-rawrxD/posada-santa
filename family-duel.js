@@ -149,9 +149,9 @@
       var d=all[k];
       if(!validate(d)||d.status!=="accepted"||d.completed||!groupFor(d)||norm(d.acceptedBy)!==norm(me))return;
       var beat=score>d.points;
-      d.completed=true;d.status=beat?"won":"attempted";d.result=score;d.completedAt=Date.now();
-      event("family_challenge_completed");
-      if(beat)event("family_challenge_won");
+      d.result=score;d.lastAttemptAt=Date.now();
+      if(beat){d.completed=true;d.status="won";d.completedAt=Date.now();event("family_challenge_completed");event("family_challenge_won");}
+      else {d.attempts=(d.attempts||0)+1;event("family_challenge_attempted");}
       var result=document.createElement("p");result.className="duel-invite";
       result.textContent=beat?
         (es()?"🏆 ¡Ganaste el reto con "+score+" puntos!":"🏆 Challenge won with "+score+" points!") :
@@ -171,7 +171,7 @@
     if(originalPick)pick=function(){var ret=originalPick.apply(this,arguments);drawInvite();return ret;};
     drawInvite();
   }
-  window.PosadaDuel={link:link,refresh:drawInvite};
+  window.PosadaDuel={link:link,refresh:drawInvite,newShare:newShare};
   receive();
   wrapGame();
 })();
