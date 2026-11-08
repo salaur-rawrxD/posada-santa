@@ -2506,7 +2506,6 @@ const GAME_LINK=ORIGIN+"/play";
 /* incoming: sb (board snapshot) and me (who's holding the phone) */
 (function(){ const raw=String(window.__H0||location.hash||""); const m=raw.match(/[#&]sb=(S[A-Za-z0-9_-]{8,})/); const meM=raw.match(/[#&]me=([^&]+)/);
   const o=m&&Fam.unseal(m[1]); if(o) Fam.merge(o);
-  if(o&&/[#&]fc=1(?:&|$)/.test(raw)){ window.__familyChallengePending=true; if(typeof window.psTrack==="function")window.psTrack("family_challenge_opened"); }
   const fm=raw.match(/[#&]fam=([A-Za-z0-9_-]{4,40})/); if(!o&&fm) Fam.setCur(fm[1]);
   if(!o){ const gg=Fam.group(); if(gg&&gg.me) window.__famMe=gg.me; }
   let me=""; try{ me=meM?decodeURIComponent(meM[1]).trim().replace(/\s+/g," ").slice(0,18):""; }catch(e){}
@@ -2588,7 +2587,6 @@ const _fam_renderBoard=renderBoard; renderBoard=function(){ const g=Fam.group(),
     li.innerHTML=`<span class="rk">${medal[i]||i+1}</span><span class="nm"><b>${esc(r.n)}</b><small>${r.lv||0}/5 ${esc(t("lvls").toLowerCase())} · ${r.st||0}★</small></span><span class="pts">${fmtN(r.s)}</span>`; box.appendChild(li); });
   const c=$("famChallenge"); c.textContent=ft("challenge"); c.hidden=!rs.some(r=>r.me); };
 const _fam_levelDone=levelDone; levelDone=function(){ const before=myRank(); _fam_levelDone(); const g=Fam.group(), tell=$("famTell");
-  if(window.__familyChallengePending){ window.__familyChallengePending=false; if(typeof psTrack==="function")psTrack("family_challenge_completed"); }
   if(!g||!Board.current()){ tell.hidden=true; return; } Fam.link(Board.current());
   const after=myRank(); let passed=null;
   if(after.i>=0){ const prevS=before.i>=0?before.rs[before.i].s:0, nowS=after.rs[after.i].s; passed=before.rs.filter(r=>!r.me&&r.s>=prevS&&r.s<nowS).sort((a,b)=>b.s-a.s)[0]||null; }
