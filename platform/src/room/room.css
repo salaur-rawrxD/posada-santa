@@ -12,3 +12,5 @@ form .primary{margin-top:18px;width:100%}.actions{margin-top:14px}.pill{border:1
 [hidden]{display:none!important}@media(max-width:640px){.grid{grid-template-columns:1fr}.panel{padding:18px}.roomtop{align-items:start}}
 
 #launchBtn{margin-top:12px;width:100%}.game-panel{margin-top:12px}.game-bar{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:12px;flex-wrap:wrap}#gameFrame{display:block;width:100%;height:min(78dvh,900px);min-height:520px;border:1px solid #ffffff55;border-radius:16px;background:#16224a}.game-panel .hint{font-size:13px}@media(max-width:640px){#gameFrame{height:76dvh;min-height:410px;border-radius:10px}}
+
+.score-detail{display:block;font-size:12px;color:#cbd4f2;margin-top:4px}.score-name{display:block}.score-total{font-variant-numeric:tabular-nums;font-size:20px}.scores li{align-items:center}.scores li>div:first-child{min-width:0}
