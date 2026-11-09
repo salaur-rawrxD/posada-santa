@@ -9,7 +9,7 @@
     "test": "node --experimental-strip-types --test test/*.test.ts",
     "typecheck": "tsc --noEmit",
     "build": "vite build",
-    "build:room": "vite build --config vite.room.config.ts"
+    "build:room": "vite build --config vite.room.config.ts && node scripts/build_room_games.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.49.0"

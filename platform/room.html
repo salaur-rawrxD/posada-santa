@@ -11,7 +11,7 @@
 </head>
 <body>
   <main class="shell">
-    <header class="top"><a class="back" href="/juegos">← Posada Santa</a><div class="lang"><button type="button" data-lang="es" aria-pressed="true">ES</button><button type="button" data-lang="en" aria-pressed="false">EN</button></div></header>
+    <header class="top"><a class="back" href="https://posadaxmas.com/juegos">← Posada Santa</a><div class="lang"><button type="button" data-lang="es" aria-pressed="true">ES</button><button type="button" data-lang="en" aria-pressed="false">EN</button></div></header>
     <p class="eyebrow" data-i18n="eyebrow">JUEGA EN FAMILIA</p>
     <h1 data-i18n="title">Tu sala de juegos 🎮</h1>
     <p class="lead" data-i18n="lead">Crea una sala, comparte un enlace y reúne a tus amigos. Sin cuenta obligatoria.</p>
@@ -47,11 +47,13 @@
         <div class="actions"><button id="selectBtn" type="button" class="secondary" data-i18n="selectGame">Elegir juego</button><button id="startBtn" type="button" class="primary" data-i18n="start">Iniciar ronda</button><button id="finishBtn" type="button" class="secondary" data-i18n="finish">Terminar ronda</button></div>
       </div>
       <div id="selectedGame" class="selected"></div>
+      <button id="launchBtn" class="primary" type="button" hidden data-i18n="launch">Jugar ahora ▶</button>
       <h3 data-i18n="scoreboard">Marcador de la sala</h3>
       <ol id="scores" class="scores"></ol>
-      <p class="hint" data-i18n="scoreNote">Vista previa: los juegos todavía no envían puntuaciones a esta sala. Las puntuaciones futuras serán no verificadas.</p>
+      <p class="hint" data-i18n="scoreNote">Las partidas de La Posada y Tamalazo enviarán su mejor puntuación no verificada a esta sala.</p>
       <button id="leaveBtn" type="button" class="leave" data-i18n="leave">Salir de la sala</button>
     </section>
+    <section id="gamePanel" hidden class="game-panel"><div class="game-bar"><button type="button" id="returnBtn" class="secondary" data-i18n="return">← Volver a la sala</button><strong id="gameTitle"></strong></div><iframe id="gameFrame" title="Juego de Posada Santa" allow="autoplay" referrerpolicy="same-origin"></iframe><p class="hint" data-i18n="playingHint">Completa una partida. Tus puntos se guardan automáticamente en el marcador de la sala.</p></section>
     <footer data-i18n="privacy">Los enlaces de sala son invitaciones, no contraseñas. Usa apodos, no información privada.</footer>
   </main>
 </body>
