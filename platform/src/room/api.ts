@@ -1,10 +1,12 @@
 import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 import type { GameId, GameRoom, ScoreResult } from '../index.ts';
+import type { TournamentRound } from './tournament.ts';
 
 export interface RoomSnapshot extends GameRoom {
   hostPlayerId: string;
   expiresAt: string;
   scores: readonly ScoreResult[];
+  rounds: readonly TournamentRound[];
 }
 
 let client: SupabaseClient | null = null;

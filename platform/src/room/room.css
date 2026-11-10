@@ -14,3 +14,5 @@ form .primary{margin-top:18px;width:100%}.actions{margin-top:14px}.pill{border:1
 #launchBtn{margin-top:12px;width:100%}.game-panel{margin-top:12px}.game-bar{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:12px;flex-wrap:wrap}#gameFrame{display:block;width:100%;height:min(78dvh,900px);min-height:520px;border:1px solid #ffffff55;border-radius:16px;background:#16224a}.game-panel .hint{font-size:13px}@media(max-width:640px){#gameFrame{height:76dvh;min-height:410px;border-radius:10px}}
 
 .score-detail{display:block;font-size:12px;color:#cbd4f2;margin-top:4px}.score-name{display:block}.score-total{font-variant-numeric:tabular-nums;font-size:20px}.scores li{align-items:center}.scores li>div:first-child{min-width:0}
+
+.round-history{display:grid;gap:12px}.round-card{background:#ffffff0c;border:1px solid #ffffff35;border-radius:14px;padding:14px}.round-card h4{margin:0 0 8px}.round-card ol{padding-left:24px;margin:0}.round-card li{padding:4px 0}.round-card small{color:#cbd4f2}.score-detail{font-size:13px}.round-meta{color:var(--gold);font-size:13px;font-weight:700}

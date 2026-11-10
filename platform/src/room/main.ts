@@ -1,13 +1,13 @@
 import { GAMES, createRoomInviteUrl, normalizePlayerName, normalizeRoomCode, parseRoomInviteUrl } from '../index.ts';
 import { ensureGuest, rooms, type RoomSnapshot } from './api.ts';
-import { familyStandings } from './scoreboard.ts';
+import { tournamentStandings, rankRound } from './tournament.ts';
 import './room.css';
 
 type Lang = 'es' | 'en';
 const $ = <T extends HTMLElement = HTMLElement>(id: string) => document.getElementById(id) as T;
 const translations = {
-  es: { eyebrow:'JUEGA EN FAMILIA',title:'Tu sala de juegos 🎮',lead:'Crea una sala, comparte un enlace y reúne a tus amigos. Sin cuenta obligatoria.',createTitle:'Crear una sala',joinTitle:'Unirse a una sala',name:'Tu apodo',code:'Código de invitación',create:'Crear sala',join:'Entrar a la sala',room:'SALA PRIVADA',shareHint:'Comparte el enlace con tu familia. Máximo 12 jugadores.',share:'Compartir invitación',copy:'Copiar enlace',players:'Jugadores',chooseGame:'Elige un juego',selectGame:'Elegir juego',start:'Iniciar ronda',finish:'Terminar ronda',nextGame:'Siguiente juego →',totalsNote:'Totales provisionales: los juegos usan escalas de puntos distintas.',scoreboard:'Marcador de la sala',scoreNote:'Vista previa: los juegos todavía no envían puntuaciones a esta sala. Las puntuaciones futuras serán no verificadas.',leave:'Salir de la sala',privacy:'Los enlaces de sala son invitaciones, no contraseñas. Usa apodos, no información privada.',lobby:'Esperando jugadores',playing:'Jugando',finished:'Terminada',host:'Anfitrión',guest:'Jugador',noScores:'Todavía no hay puntos.',selected:'Juego seleccionado',waiting:'El anfitrión todavía no eligió un juego.',copied:'¡Enlace copiado!',created:'¡Sala creada!',joined:'¡Entraste a la sala!',invalidName:'Escribe un apodo de 2 a 18 caracteres.',invalidCode:'Código de sala inválido.',closed:'La sala se cerró o expiró.',error:'No se pudo completar la acción.',shareText:'¡Únete a mi sala de juegos!',launch:'Jugar ahora ▶',return:'← Volver a la sala',playingHint:'Completa una partida. Tus puntos se guardan automáticamente en el marcador de la sala.',saving:'Guardando puntuación...',saved:'¡Puntuación guardada!',scoreFailed:'No se pudo guardar la puntuación. Vuelve a intentarlo.',leaveConfirm:'¿Salir de la sala? Si eres anfitrión, cerrarás la sala para todos.' },
-  en: { eyebrow:'PLAY TOGETHER',title:'Your game room 🎮',lead:'Create a room, share a link and bring your friends together. No mandatory account.',createTitle:'Create a room',joinTitle:'Join a room',name:'Your nickname',code:'Invite code',create:'Create room',join:'Join room',room:'PRIVATE ROOM',shareHint:'Share the link with family. Up to 12 players.',share:'Share invitation',copy:'Copy link',players:'Players',chooseGame:'Choose a game',selectGame:'Select game',start:'Start round',finish:'Finish round',nextGame:'Next game →',totalsNote:'Preview totals: games use different point scales.',scoreboard:'Room scoreboard',scoreNote:'Preview: games do not send scores to this room yet. Future scores will be unverified.',leave:'Leave room',privacy:'Room links are invitations, not passwords. Use nicknames, not private information.',lobby:'Waiting for players',playing:'Playing',finished:'Finished',host:'Host',guest:'Player',noScores:'No scores yet.',selected:'Selected game',waiting:'The host has not selected a game yet.',copied:'Link copied!',created:'Room created!',joined:'You joined the room!',invalidName:'Enter a nickname between 2 and 18 characters.',invalidCode:'Invalid room code.',closed:'The room closed or expired.',error:'Could not complete the action.',shareText:'Join my game room!',launch:'Play now ▶',return:'← Back to room',playingHint:'Finish a game. Your points are saved automatically to your room scoreboard.',saving:'Saving score...',saved:'Score saved!',scoreFailed:'Could not save your score. Try again.',leaveConfirm:'Leave this room? Hosts close the room for everyone.' },
+  es: { eyebrow:'JUEGA EN FAMILIA',title:'Tu sala de juegos 🎮',lead:'Crea una sala, comparte un enlace y reúne a tus amigos. Sin cuenta obligatoria.',createTitle:'Crear una sala',joinTitle:'Unirse a una sala',name:'Tu apodo',code:'Código de invitación',create:'Crear sala',join:'Entrar a la sala',room:'SALA PRIVADA',shareHint:'Comparte el enlace con tu familia. Máximo 12 jugadores.',share:'Compartir invitación',copy:'Copiar enlace',players:'Jugadores',chooseGame:'Elige un juego',selectGame:'Elegir juego',start:'Iniciar ronda',finish:'Terminar ronda',nextGame:'Siguiente juego →',totalsNote:'Puntos por posición: 1.º 10 · 2.º 7 · 3.º 5 · 4.º 3 · 5.º 2 · 6.º+ 1. Los empates comparten puntos.',history:'Historial de rondas',round:'Ronda',inProgress:'En curso',noHistory:'Termina una ronda para ver los resultados.',tournamentPoints:'pts de torneo',wins:'victorias',scoreboard:'Marcador de la sala',scoreNote:'Los puntos enviados por los juegos no están verificados. Los resultados son solo para diversión familiar.',leave:'Salir de la sala',privacy:'Los enlaces de sala son invitaciones, no contraseñas. Usa apodos, no información privada.',lobby:'Esperando jugadores',playing:'Jugando',finished:'Terminada',host:'Anfitrión',guest:'Jugador',noScores:'Todavía no hay puntos.',selected:'Juego seleccionado',waiting:'El anfitrión todavía no eligió un juego.',copied:'¡Enlace copiado!',created:'¡Sala creada!',joined:'¡Entraste a la sala!',invalidName:'Escribe un apodo de 2 a 18 caracteres.',invalidCode:'Código de sala inválido.',closed:'La sala se cerró o expiró.',error:'No se pudo completar la acción.',shareText:'¡Únete a mi sala de juegos!',launch:'Jugar ahora ▶',return:'← Volver a la sala',playingHint:'Completa una partida. Tus puntos se guardan automáticamente en el marcador de la sala.',saving:'Guardando puntuación...',saved:'¡Puntuación guardada!',scoreFailed:'No se pudo guardar la puntuación. Vuelve a intentarlo.',leaveConfirm:'¿Salir de la sala? Si eres anfitrión, cerrarás la sala para todos.' },
+  en: { eyebrow:'PLAY TOGETHER',title:'Your game room 🎮',lead:'Create a room, share a link and bring your friends together. No mandatory account.',createTitle:'Create a room',joinTitle:'Join a room',name:'Your nickname',code:'Invite code',create:'Create room',join:'Join room',room:'PRIVATE ROOM',shareHint:'Share the link with family. Up to 12 players.',share:'Share invitation',copy:'Copy link',players:'Players',chooseGame:'Choose a game',selectGame:'Select game',start:'Start round',finish:'Finish round',nextGame:'Next game →',totalsNote:'Placement points: 1st 10 · 2nd 7 · 3rd 5 · 4th 3 · 5th 2 · 6th+ 1. Ties share points.',history:'Round history',round:'Round',inProgress:'In progress',noHistory:'Finish a round to see results.',tournamentPoints:'tournament pts',wins:'wins',scoreboard:'Room scoreboard',scoreNote:'Game-submitted scores are unverified. Rankings are for friendly family play only.',leave:'Leave room',privacy:'Room links are invitations, not passwords. Use nicknames, not private information.',lobby:'Waiting for players',playing:'Playing',finished:'Finished',host:'Host',guest:'Player',noScores:'No scores yet.',selected:'Selected game',waiting:'The host has not selected a game yet.',copied:'Link copied!',created:'Room created!',joined:'You joined the room!',invalidName:'Enter a nickname between 2 and 18 characters.',invalidCode:'Invalid room code.',closed:'The room closed or expired.',error:'Could not complete the action.',shareText:'Join my game room!',launch:'Play now ▶',return:'← Back to room',playingHint:'Finish a game. Your points are saved automatically to your room scoreboard.',saving:'Saving score...',saved:'Score saved!',scoreFailed:'Could not save your score. Try again.',leaveConfirm:'Leave this room? Hosts close the room for everyone.' },
 };
 let lang: Lang = localStorage.getItem('posada-room-lang') === 'en' ? 'en' : 'es';
 let room: RoomSnapshot | null = null;
@@ -57,21 +57,42 @@ function render() {
     li.append(name, role); players.append(li);
   });
   const scores = $('scores'); scores.replaceChildren();
-  const standings = familyStandings(room.players, room.scores);
-  standings.forEach((standing, index) => {
-    const li = document.createElement('li');
-    const info = document.createElement('div');
-    const name = document.createElement('strong'); name.className = 'score-name';
-    name.textContent = (index+1) + '. ' + standing.displayName;
-    const detail = document.createElement('small'); detail.className = 'score-detail';
-    const labels = Object.entries(standing.perGame).map(([gameId, points]) =>
-      (GAMES.find(g => g.id === gameId)?.title[lang] || gameId) + ': ' + points.toLocaleString()
-    );
-    detail.textContent = labels.length ? labels.join(' · ') : t('noScores');
-    const total = document.createElement('strong'); total.className = 'score-total';
-    total.textContent = standing.totalPoints.toLocaleString();
-    info.append(name, detail); li.append(info, total); scores.append(li);
+  const standings = tournamentStandings(room.players, room.rounds || []);
+  standings.forEach((standing,index) => {
+    const li=document.createElement('li');
+    const info=document.createElement('div');
+    const name=document.createElement('strong'); name.className='score-name';
+    name.textContent=(index+1)+'. '+standing.displayName;
+    const detail=document.createElement('small'); detail.className='score-detail';
+    detail.textContent=standing.roundsPlayed+' '+t('round').toLowerCase()+' · '+standing.wins+' '+t('wins');
+    const total=document.createElement('strong'); total.className='score-total';
+    total.textContent=standing.tournamentPoints+' '+t('tournamentPoints');
+    info.append(name,detail); li.append(info,total); scores.append(li);
   });
+  const history=$('roundHistory'); history.replaceChildren();
+  const completed=(room.rounds || []).filter(r=>!!r.finishedAt).slice().reverse();
+  if (!completed.length) {
+    const p=document.createElement('p'); p.className='hint'; p.textContent=t('noHistory'); history.append(p);
+  }
+  for (const round of completed) {
+    const card=document.createElement('article'); card.className='round-card';
+    const heading=document.createElement('h4');
+    heading.textContent=t('round')+' '+round.number+' · '+(GAMES.find(g=>g.id===round.gameId)?.title[lang]||round.gameId);
+    const results=rankRound(round);
+    if (!results.length) {
+      const p=document.createElement('small'); p.textContent=t('noScores'); card.append(heading,p);
+    } else {
+      const ol=document.createElement('ol');
+      for (const result of results) {
+        const item=document.createElement('li');
+        const name=room.players.find(p=>p.id===result.playerId)?.displayName || result.displayName;
+        item.textContent=result.place+'. '+name+' — '+result.points.toLocaleString()+' ('+result.tournamentPoints+' '+t('tournamentPoints')+')';
+        ol.append(item);
+      }
+      card.append(heading,ol);
+    }
+    history.append(card);
+  }
 }
 function setRoom(next: RoomSnapshot | null) {
   room = next;
