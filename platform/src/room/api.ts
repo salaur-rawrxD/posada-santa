@@ -48,6 +48,8 @@ export const rooms = {
   setStatus: (id: string, status: 'playing' | 'finished') => rpc<RoomSnapshot>('set_game_room_status', { p_room_id: id, p_status: status }),
   leave: (id: string) => rpc<boolean>('leave_game_room', { p_room_id: id }),
   nextGame: (id: string) => rpc<RoomSnapshot>('reset_game_room_for_next_game', { p_room_id: id }),
+  completeTournament: (id: string) => rpc<RoomSnapshot>('complete_game_room_tournament', { p_room_id: id }),
+  restartTournament: (id: string) => rpc<RoomSnapshot>('restart_game_room_tournament', { p_room_id: id }),
   // Not called until existing games emit shared score events.
   submitScore: (id: string, game: GameId, points: number) =>
     rpc<RoomSnapshot>('submit_game_room_score', { p_room_id: id, p_game_id: game, p_points: points }),

@@ -53,3 +53,27 @@ export function tournamentStandings(players: readonly RoomPlayer[], rounds: read
   return [...totals.values()].sort((a,b) =>
     b.tournamentPoints-a.tournamentPoints || b.wins-a.wins || a.displayName.localeCompare(b.displayName));
 }
+
+/** Tied leaders share the title. A win breaks equal tournament point totals. */
+export function tournamentChampions(standings: readonly TournamentStanding[]): TournamentStanding[] {
+  if (!standings.length || standings.every(s => s.roundsPlayed === 0)) return [];
+  const sorted = [...standings].sort((a,b) =>
+    b.tournamentPoints-a.tournamentPoints || b.wins-a.wins || a.displayName.localeCompare(b.displayName));
+  const leader=sorted[0];
+  return leader ? sorted.filter(s=>s.roundsPlayed>0 && s.tournamentPoints===leader.tournamentPoints && s.wins===leader.wins) : [];
+}
+
+/** Share only final standings; never include room codes, IDs, or invite URLs. */
+export function tournamentShareText(
+  standings: readonly TournamentStanding[],
+  language: 'es' | 'en',
+): string {
+  const champions=tournamentChampions(standings);
+  if (!champions.length) return '';
+  const title=language==='es' ? '🏆 Posada Santa · Torneo familiar' : '🏆 Posada Santa · Family tournament';
+  const heading=language==='es' ? 'Campeón' : 'Champion';
+  const points=language==='es' ? 'pts' : 'pts';
+  const winners=champions.map(s=>s.displayName).join(' & ');
+  const rows=standings.map((s,i)=>`${i+1}. ${s.displayName} — ${s.tournamentPoints} ${points}`);
+  return [title,`${heading}: ${winners} 🎉`,'',...rows].join('\n');
+}

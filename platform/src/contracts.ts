@@ -1,7 +1,7 @@
 import type { GameId } from './catalog.ts';
 
 /** Future platform contracts; no database or live room service is wired up yet. */
-export type RoomStatus = 'lobby' | 'playing' | 'finished';
+export type RoomStatus = 'lobby' | 'playing' | 'finished' | 'complete';
 export type PlayerRole = 'host' | 'guest';
 
 export interface RoomPlayer {

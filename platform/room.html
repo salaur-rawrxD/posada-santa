@@ -38,13 +38,23 @@
       <div class="roomtop"><div><p class="eyebrow" data-i18n="room">SALA PRIVADA</p><h2 id="roomCode"></h2></div><span id="roomStatus" class="pill"></span></div>
       <p class="hint" data-i18n="shareHint">Comparte el enlace con tu familia. Máximo 12 jugadores.</p>
       <div class="actions"><button type="button" id="shareBtn" class="primary" data-i18n="share">Compartir invitación</button><button type="button" id="copyBtn" class="secondary" data-i18n="copy">Copiar enlace</button></div>
+      <section id="championPanel" class="champion-panel" hidden aria-live="polite">
+        <p class="champion-icon" aria-hidden="true">🏆 🎉</p>
+        <h3 data-i18n="championTitle">¡Tenemos campeones!</h3>
+        <p id="championNames" class="champion-names"></p>
+        <p data-i18n="championSubtitle" class="hint">¡Gracias por jugar en familia!</p>
+        <div class="actions">
+          <button type="button" id="shareResultsBtn" class="primary" data-i18n="shareResults">Compartir resultados</button>
+          <button type="button" id="restartTournamentBtn" class="secondary" data-i18n="restartTournament" hidden>Jugar otro torneo</button>
+        </div>
+      </section>
       <h3 data-i18n="players">Jugadores</h3>
       <ul id="players" class="players"></ul>
       <div id="hostControls" hidden>
         <h3 data-i18n="chooseGame">Elige un juego</h3>
         <label for="gameSelect" class="sr-only" data-i18n="chooseGame">Elige un juego</label>
         <select id="gameSelect"></select>
-        <div class="actions"><button id="selectBtn" type="button" class="secondary" data-i18n="selectGame">Elegir juego</button><button id="startBtn" type="button" class="primary" data-i18n="start">Iniciar ronda</button><button id="finishBtn" type="button" class="secondary" data-i18n="finish">Terminar ronda</button><button id="nextGameBtn" type="button" class="primary" data-i18n="nextGame" hidden>Siguiente juego →</button></div>
+        <div class="actions"><button id="selectBtn" type="button" class="secondary" data-i18n="selectGame">Elegir juego</button><button id="startBtn" type="button" class="primary" data-i18n="start">Iniciar ronda</button><button id="finishBtn" type="button" class="secondary" data-i18n="finish">Terminar ronda</button><button id="nextGameBtn" type="button" class="primary" data-i18n="nextGame" hidden>Siguiente juego →</button><button id="completeTournamentBtn" type="button" class="secondary" data-i18n="completeTournament" hidden>Finalizar torneo 🏆</button></div>
       </div>
       <div id="selectedGame" class="selected"></div>
       <button id="launchBtn" class="primary" type="button" hidden data-i18n="launch">Jugar ahora ▶</button>
