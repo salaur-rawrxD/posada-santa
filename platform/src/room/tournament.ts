@@ -36,7 +36,7 @@ export function rankRound(round: TournamentRound): RankedResult[] {
   return sorted.map((score,index) => {
     if (lastPoints !== score.points) place=index+1;
     lastPoints=score.points;
-    return {...score,place,tournamentPoints:AWARDS[Math.min(place-1,AWARDS.length-1)]};
+    return {...score,place,tournamentPoints:AWARDS[Math.min(place-1,AWARDS.length-1)] ?? 1};
   });
 }
 export function tournamentStandings(players: readonly RoomPlayer[], rounds: readonly TournamentRound[]): TournamentStanding[] {
