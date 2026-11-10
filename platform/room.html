@@ -45,6 +45,7 @@
         <p data-i18n="championSubtitle" class="hint">¡Gracias por jugar en familia!</p>
         <div class="actions">
           <button type="button" id="shareResultsBtn" class="primary" data-i18n="shareResults">Compartir resultados</button>
+          <button type="button" id="saveCardBtn" class="secondary" data-i18n="saveCard">Guardar tarjeta PNG</button>
           <button type="button" id="restartTournamentBtn" class="secondary" data-i18n="restartTournament" hidden>Jugar otro torneo</button>
         </div>
       </section>
@@ -57,6 +58,11 @@
         <div class="actions"><button id="selectBtn" type="button" class="secondary" data-i18n="selectGame">Elegir juego</button><button id="startBtn" type="button" class="primary" data-i18n="start">Iniciar ronda</button><button id="finishBtn" type="button" class="secondary" data-i18n="finish">Terminar ronda</button><button id="nextGameBtn" type="button" class="primary" data-i18n="nextGame" hidden>Siguiente juego →</button><button id="completeTournamentBtn" type="button" class="secondary" data-i18n="completeTournament" hidden>Finalizar torneo 🏆</button></div>
       </div>
       <div id="selectedGame" class="selected"></div>
+      <div id="roundReadiness" class="round-readiness" hidden aria-live="polite">
+        <strong data-i18n="scoreReadiness">Puntuaciones recibidas</strong>
+        <span id="roundReadinessCount"></span>
+        <p id="roundReadinessPending" class="hint"></p>
+      </div>
       <button id="launchBtn" class="primary" type="button" hidden data-i18n="launch">Jugar ahora ▶</button>
       <h3 data-i18n="scoreboard">Marcador de la sala</h3>
       <ol id="scores" class="scores"></ol>

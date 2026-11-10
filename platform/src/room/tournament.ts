@@ -54,6 +54,16 @@ export function tournamentStandings(players: readonly RoomPlayer[], rounds: read
     b.tournamentPoints-a.tournamentPoints || b.wins-a.wins || a.displayName.localeCompare(b.displayName));
 }
 
+export function roundReadiness(players: readonly RoomPlayer[], round: TournamentRound | undefined) {
+  const submitted = new Set((round?.scores || []).filter(s =>
+    Number.isSafeInteger(s.points) && s.points >= 0).map(s => s.playerId));
+  return {
+    submitted: players.filter(p => submitted.has(p.id)).length,
+    total: players.length,
+    pendingNames: players.filter(p => !submitted.has(p.id)).map(p => p.displayName),
+  };
+}
+
 /** Tied leaders share the title. A win breaks equal tournament point totals. */
 export function tournamentChampions(standings: readonly TournamentStanding[]): TournamentStanding[] {
   if (!standings.length || standings.every(s => s.roundsPlayed === 0)) return [];
