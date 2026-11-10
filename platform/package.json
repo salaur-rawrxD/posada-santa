@@ -1,0 +1,21 @@
+{
+  "name": "@posada/platform-core",
+  "version": "0.2.0",
+  "private": true,
+  "type": "module",
+  "description": "Shared game catalog and social room client for Posada Santa",
+  "scripts": {
+    "dev": "vite",
+    "test": "node --experimental-strip-types --test test/*.test.ts",
+    "typecheck": "tsc --noEmit",
+    "build": "vite build",
+    "build:room": "vite build --config vite.room.config.ts && node scripts/build_room_games.mjs"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.49.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.8.3",
+    "vite": "^6.3.0"
+  }
+}
