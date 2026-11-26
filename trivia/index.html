@@ -23,8 +23,9 @@ button{font-family:inherit;color:inherit}
 /* top */
 .top{position:sticky;top:0;z-index:5;background:rgba(19,35,27,.82);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
 .top .wrap{display:flex;align-items:center;gap:1rem;height:64px}
-.brand{font-family:Fraunces,Georgia,serif;font-weight:800;font-size:1.45rem;white-space:nowrap}
+.brand{background:none;border:none;cursor:pointer;color:var(--cream);transition:transform .2s;font-family:Fraunces,Georgia,serif;font-weight:800;font-size:1.45rem;white-space:nowrap}
 .brand span{color:var(--gold)}
+.brand:hover{transform:scale(1.05)}
 .scores{display:flex;gap:.5rem;flex:1;justify-content:center;flex-wrap:wrap}
 .chip{display:flex;align-items:center;gap:.5rem;padding:.28rem .85rem .28rem .3rem;border-radius:999px;background:var(--card);border:2px solid transparent;font-weight:800;transition:transform .25s,border-color .25s,box-shadow .25s}
 .chip .dot{width:28px;height:28px;border-radius:50%;display:grid;place-items:center;font-size:.9rem}
@@ -148,7 +149,7 @@ kbd{background:var(--card);border:1px solid var(--line);border-radius:5px;paddin
 <canvas id="confetti"></canvas>
 
 <div class="top"><div class="wrap">
-  <div class="brand">🎄 Movie <span>Trivia</span></div>
+  <button class="brand" id="homeBtn" title="Back to the movies">🎄 Movie <span>Trivia</span></button>
   <div class="scores" id="scores"></div>
   <button class="tbtn" id="teamsBtn">Teams & Scores</button>
   <button class="tbtn" id="endBtn">Finish 🏆</button>
@@ -414,6 +415,7 @@ $("surpriseBtn").onclick = () => {
 };
 $("revealBtn").onclick = reveal;
 $("skipBtn").onclick = skip;
+$("homeBtn").onclick = () => { $("finish").classList.add("hidden"); if (current) skip(); else show("board"); };
 $("doneBtn").onclick = award;
 document.addEventListener("keydown", e => {
   if (e.target.tagName === "INPUT" || !$("setup").classList.contains("hidden")) return;
