@@ -14,7 +14,10 @@ html,body{height:100%}
 body{background:radial-gradient(ellipse at 50% -10%,#24493a 0%,var(--bg) 60%) fixed;color:var(--cream);font-family:Nunito,system-ui,sans-serif;min-height:100vh;overflow-x:hidden}
 button{font-family:inherit;color:inherit}
 .hidden{display:none!important}
-.snow{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}
+.snow{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden;transition:opacity .6s}
+body.q-mode .snow{opacity:.45}
+body.q-mode .snow i{width:2.5px!important;height:2.5px!important;filter:none!important;box-shadow:none}
+#qview{position:relative;z-index:1}
 .snow i{position:absolute;top:-20px;border-radius:50%;background:#fff;box-shadow:0 0 6px rgba(255,255,255,.6);animation:snowfall linear infinite}
 @keyframes snowfall{0%{transform:translate(0,-20px)}50%{transform:translate(var(--sway),50vh)}100%{transform:translate(0,105vh)}}
 .wrap{position:relative;z-index:1;max-width:1500px;margin:0 auto;padding:0 2rem}
@@ -456,6 +459,7 @@ function skip(){
 function show(v){
   $("board").classList.toggle("hidden", v!=="board");
   $("qview").classList.toggle("hidden", v!=="qview");
+  document.body.classList.toggle("q-mode", v==="qview");
   if (v==="board") renderBoard();
   window.scrollTo({top:0});
 }
