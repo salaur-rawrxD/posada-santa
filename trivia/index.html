@@ -166,6 +166,12 @@ kbd{background:var(--card);border:1px solid var(--line);border-radius:5px;paddin
 .queue span{flex:none;padding:.2rem .7rem;border-radius:99px;font-weight:800;font-size:.85rem;color:#1b1206;opacity:.45}
 .queue span.now{opacity:1;box-shadow:0 0 0 3px #fff}
 .queue span.past{opacity:.25;text-decoration:line-through}
+.overall{margin-top:1rem;background:#0003;border:1px solid var(--line);border-radius:16px;padding:.7rem 1rem;text-align:center;font-weight:800;color:var(--muted);font-size:.95rem}
+.overall b{color:var(--cream)}
+.overall:empty{display:none}
+.fresh{text-align:center;margin-top:.9rem}
+.roundtag{display:inline-block;background:var(--red);color:#fff;font-weight:900;font-size:.85rem;padding:.2rem .7rem;border-radius:99px;margin-bottom:.45rem;letter-spacing:.02em}
+.qleft{color:var(--muted);font-weight:700}
 </style>
 </head>
 <body>
@@ -241,14 +247,16 @@ kbd{background:var(--card);border:1px solid var(--line);border-radius:5px;paddin
 
 <!-- Finish -->
 <div class="overlay hidden" id="finish"><div class="panel">
-  <h2>🏆 Final Standings</h2>
+  <h2 id="finTitle">🏆 Round 1 Results</h2>
   <div class="podium" id="podium"></div>
   <div class="rest" id="rest"></div>
+  <div class="overall" id="overall"></div>
   <div class="row2">
     <button class="btn ghost" id="keepBtn">Keep playing</button>
     <button class="btn ghost" id="podWheel">🎡 Spin the wheel</button>
-    <button class="btn go" id="newBtn" style="margin-top:0">New game</button>
   </div>
+  <button class="btn go" id="nextRoundBtn">▶ Start Round 2</button>
+  <div class="fresh"><button class="link" id="newBtn">Start a brand-new game</button></div>
 </div></div>
 
 <script>
@@ -336,7 +344,7 @@ const byId = Object.fromEntries(MOVIES.map(m => [m.id, m]));
 let state = load() || fresh();
 let current = null, revealed = false;
 
-function fresh(teams){ return { started:false, used:{}, turn:0, teams: teams || [mk(0,"Team 1"), mk(1,"Team 2")] }; }
+function fresh(teams){ return { started:false, round:1, used:{}, turn:0, teams: teams || [mk(0,"Team 1"), mk(1,"Team 2")] }; }
 function mk(i, n){ return { n, p:0, c:i % COLORS.length }; }
 function load(){ try { return JSON.parse(localStorage.getItem(KEY)); } catch(e){ return null; } }
 function save(){ try { localStorage.setItem(KEY, JSON.stringify(state)); } catch(e){} }
@@ -361,7 +369,7 @@ function renderScores(bump){
 /* ---------- Board ---------- */
 function renderBoard(){
   const t = team();
-  $("turnline").innerHTML = `${tag(t)}'s turn`;
+  $("turnline").innerHTML = `<span class="roundtag">Round ${state.round||1}</span><br>${tag(t)}'s turn`;
   const usedN = total - MOVIES.reduce((a,m)=>a+left(m),0);
   $("subline").textContent = usedN === total ? "Every question has been played. Hit Finish to crown the winner!" : "Tap a movie to get a random question — or let fate decide.";
   $("prog").style.width = (usedN/total*100)+"%";
@@ -492,17 +500,33 @@ $("muteBtn").onclick = () => { Sfx.setMuted(!Sfx.muted); muteLabel(); }; muteLab
 
 /* ---------- Finish ---------- */
 $("endBtn").onclick = () => {
-  const r = [...state.teams].sort((a,b)=>b.p-a.p);
+  const rnd = state.round || 1, r = [...state.teams].sort((a,b)=>b.p-a.p);
   const order = [r[1], r[0], r[2]], h = [150, 210, 110], medal = ["🥈","🥇","🥉"];
+  $("finTitle").textContent = `🏆 Round ${rnd} Results`;
   $("podium").innerHTML = order.map((t,k)=> t ? `<div class="pod"><div class="nm">${medal[k]} ${esc(t.n)}</div>
     <div class="blk" style="height:${h[k]}px;background:${COLORS[t.c]}">${t.p}<small>points</small></div></div>` : "").join("");
   $("rest").innerHTML = r.slice(3).map((t,i)=>`${i+4}. ${esc(t.n)} — ${t.p}`).join(" · ");
+  $("overall").innerHTML = rnd > 1 ? "Overall after " + rnd + " rounds: " + [...state.teams].sort((a,b)=>(b.total||0)+b.p-(a.total||0)-a.p)
+    .map(t=>`<b>${ICONS[t.c]} ${esc(t.n)} ${(t.total||0)+t.p}</b>`).join(" · ") : "";
+  const leftQ = MOVIES.reduce((a,m)=>a+left(m),0);
+  $("nextRoundBtn").textContent = leftQ ? `▶ Start Round ${rnd+1}  (${leftQ} new questions left)` : "No questions left — start a brand-new game below";
+  $("nextRoundBtn").disabled = !leftQ;
   $("finish").classList.remove("hidden"); Sfx.podium();
   if (r[0] && r[0].p > 0) { confetti(COLORS[r[0].c], 260); setTimeout(()=>confetti("#f2c14e",200),400); }
 };
+$("nextRoundBtn").onclick = () => {
+  state.teams.forEach(t => { t.total = (t.total||0) + t.p; t.p = 0; });
+  state.round = (state.round||1) + 1;
+  save(); $("finish").classList.add("hidden"); current = null; show("board"); renderScores();
+  Sfx.start(); toast(`🎄 Round ${state.round} — fresh questions!`);
+};
 $("keepBtn").onclick = () => $("finish").classList.add("hidden");
+let newArmed = null;
 $("newBtn").onclick = () => {
-  state = fresh(state.teams.map(t => ({...t, p:0}))); save();
+  const b = $("newBtn");
+  if (!newArmed) { b.textContent = "Tap again — this brings back every question and clears all scores"; newArmed = setTimeout(()=>{ newArmed=null; b.textContent="Start a brand-new game"; }, 3500); return; }
+  clearTimeout(newArmed); newArmed = null; b.textContent = "Start a brand-new game";
+  state = fresh(state.teams.map(t => ({n:t.n, c:t.c, p:0}))); save();
   $("finish").classList.add("hidden"); current = null; show("board"); openSetup();
 };
 
