@@ -142,6 +142,27 @@ kbd{background:var(--card);border:1px solid var(--line);border-radius:5px;paddin
 .toast{position:fixed;left:50%;top:80px;transform:translateX(-50%);z-index:25;background:var(--gold);color:#2a1d00;font-weight:900;font-size:1.25rem;padding:.75rem 1.6rem;border-radius:999px;box-shadow:0 10px 30px rgba(0,0,0,.5);animation:toast 1.9s forwards}
 @keyframes toast{0%{opacity:0;transform:translate(-50%,-12px) scale(.9)}12%,80%{opacity:1;transform:translate(-50%,0) scale(1)}100%{opacity:0}}
 @media (max-width:700px){.wrap{padding:0 1rem}.top .wrap{flex-wrap:wrap;height:auto;padding-top:.6rem;padding-bottom:.6rem}.scores{order:3;flex-basis:100%;justify-content:flex-start}.grid{grid-template-columns:repeat(2,1fr)}#qview{height:auto;min-height:calc(100dvh - 64px)}}
+
+/* wheel */
+.wpanel{width:min(720px,100%);text-align:center}
+.wheelbox{position:relative;width:min(48vh,440px,80vw);aspect-ratio:1;margin:1rem auto .6rem}
+.wheelbox svg{width:100%;height:100%;display:block;filter:drop-shadow(0 14px 30px rgba(0,0,0,.5))}
+.pointer{position:absolute;left:50%;top:-14px;transform:translateX(-50%);width:0;height:0;border-left:18px solid transparent;border-right:18px solid transparent;border-top:34px solid var(--gold);z-index:2;filter:drop-shadow(0 3px 4px rgba(0,0,0,.5))}
+.pointer.wiggle{animation:wig .12s}
+@keyframes wig{50%{transform:translateX(-50%) rotate(-14deg)}}
+.hub{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:26%;aspect-ratio:1;border-radius:50%;border:5px solid var(--cream);background:var(--red);color:#fff;
+  font:900 clamp(1rem,2.6vh,1.4rem) Nunito,sans-serif;cursor:pointer;box-shadow:0 6px 0 #7d1d18,0 10px 30px rgba(0,0,0,.5);transition:transform .15s}
+.hub:hover:not(:disabled){transform:translate(-50%,-50%) scale(1.07)}
+.hub:disabled{cursor:default;background:#7d1d18}
+.wres{min-height:3.4rem;font-family:Fraunces,Georgia,serif;font-weight:800;font-size:clamp(1.4rem,3.6vh,2.2rem);color:var(--gold)}
+.wres span{display:inline-block;animation:pop .5s cubic-bezier(.2,1.6,.4,1)}
+@keyframes pop{from{transform:scale(.4);opacity:0}}
+.kid{display:flex;gap:.5rem;align-items:center;justify-content:center;color:var(--muted);font-weight:800;font-size:.9rem;cursor:pointer;margin-top:.4rem}
+.kid input{width:20px;height:20px;accent-color:var(--gold)}
+.queue{display:flex;gap:.4rem;justify-content:center;flex-wrap:wrap;margin-top:.5rem}
+.queue span{flex:none;padding:.2rem .7rem;border-radius:99px;font-weight:800;font-size:.85rem;color:#1b1206;opacity:.45}
+.queue span.now{opacity:1;box-shadow:0 0 0 3px #fff}
+.queue span.past{opacity:.25;text-decoration:line-through}
 </style>
 </head>
 <body>
@@ -153,6 +174,7 @@ kbd{background:var(--card);border:1px solid var(--line);border-radius:5px;paddin
   <div class="scores" id="scores"></div>
   <button class="tbtn" id="muteBtn" title="Sound on/off">🔊</button>
   <button class="tbtn" id="teamsBtn">Teams & Scores</button>
+  <button class="tbtn" id="wheelBtn" title="Spin the drink wheel">🎡 Wheel</button>
   <button class="tbtn" id="endBtn">Finish 🏆</button>
 </div></div>
 
@@ -203,6 +225,17 @@ kbd{background:var(--card);border:1px solid var(--line);border-radius:5px;paddin
   <button class="btn go" id="startBtn">Let's play!</button>
 </div></div>
 
+<!-- Wheel -->
+<div class="overlay hidden" id="wheelOv"><div class="panel wpanel">
+  <h2>🎡 Wheel of Misfortune</h2>
+  <p class="lead" id="wheelWho"></p>
+  <div class="queue" id="wheelQueue"></div>
+  <div class="wheelbox"><div class="pointer" id="pointer"></div><svg id="wheel" viewBox="-120 -120 240 240"></svg><button class="hub" id="spinBtn">SPIN</button></div>
+  <div class="wres" id="wres"></div>
+  <label class="kid"><input type="checkbox" id="kidSafe"> 🧃 No-alcohol spin (swaps the shot for pickle juice)</label>
+  <div class="row2"><button class="btn go" id="wheelClose" style="margin-top:0">Done</button></div>
+</div></div>
+
 <!-- Finish -->
 <div class="overlay hidden" id="finish"><div class="panel">
   <h2>🏆 Final Standings</h2>
@@ -210,6 +243,7 @@ kbd{background:var(--card);border:1px solid var(--line);border-radius:5px;paddin
   <div class="rest" id="rest"></div>
   <div class="row2">
     <button class="btn ghost" id="keepBtn">Keep playing</button>
+    <button class="btn ghost" id="podWheel">🎡 Spin the wheel</button>
     <button class="btn go" id="newBtn" style="margin-top:0">New game</button>
   </div>
 </div></div>
@@ -276,6 +310,10 @@ const Sfx = (() => {
       const mel = [[N.E5,1],[N.E5,1],[N.E5,2],[N.E5,1],[N.E5,1],[N.E5,2],[N.E5,1],[N.G5,1],[N.C5,1.5],[N.D5,.5],[N.E5,3]];
       let x = 0; mel.forEach(([f,l]) => { bell(f, t+x*q, .2, Math.max(.35,l*q*1.6)); x += l; });
       for (let i=0;i<16;i+=2) jingle(t+i*q, 3, .07); },
+    wclick(i){ if (!on()) return; const t = ctx.currentTime; noise(t, .03, {vol:.25, type:"highpass", f:3000}); tone(1400+(i%2)*200, t, .04, {vol:.08, type:"square"}); },
+    wheelLand(good){ if (!on()) return; const t = ctx.currentTime; tone(110, t, .5, {vol:.35, to:55}); noise(t, .6, {vol:.2, type:"lowpass", f:600});
+      if (good) { [N.C5,N.E5,N.G5,N.C6].forEach((f,i)=>tone(f, t+.15+i*.08, .25, {vol:.14, type:"square"})); jingle(t+.4, 8, .12); }
+      else setTimeout(()=>this.nobody(), 250); },
     swoosh(){ if (!on()) return; noise(ctx.currentTime, .25, {vol:.12, f:3000, to:500, q:.9}); },
     blip(){ if (!on()) return; tone(N.C6, ctx.currentTime, .1, {vol:.15, type:"triangle"}); },
     podium(){ if (!on()) return; const t = ctx.currentTime; this.drumroll(1.1);
@@ -464,6 +502,80 @@ $("newBtn").onclick = () => {
   $("finish").classList.add("hidden"); current = null; show("board"); openSetup();
 };
 
+
+/* ---------- Wheel of Misfortune ---------- */
+const WHEEL = [
+  {e:"🥃", n:"Tequila / Vodka Shot", c:"#c8352e", good:true, kid:{e:"🥒", n:"Pickle Juice"}},
+  {e:"🫒", n:"Olive Juice", c:"#2f7a4f"},
+  {e:"🌽", n:"Corn Juice", c:"#e0a526"},
+  {e:"🧅", n:"Onion Juice", c:"#8a4fb0"},
+  {e:"🥚", n:"Raw Egg", c:"#d9cfb8", dark:true},
+  {e:"🥄", n:"Scoop of Mayo", c:"#4a7fc0"},
+  {e:"🌶️", n:"Hot Sauce Scoop", c:"#e05a1f"},
+];
+let wAngle = 0, wSpinning = false, wQueue = [], wPos = 0;
+const wItem = i => ($("kidSafe").checked && WHEEL[i].kid) ? {...WHEEL[i], ...WHEEL[i].kid, good:false} : WHEEL[i];
+function drawWheel(){
+  const n = WHEEL.length, seg = 360/n, R = 112, rad = d => (d-90)*Math.PI/180;
+  let h = `<circle r="118" fill="#f2c14e"/><circle r="114" fill="#13231b"/>`;
+  for (let i=0;i<n;i++){
+    const it = wItem(i), a0 = i*seg, a1 = a0+seg, m = a0+seg/2;
+    const p = (a,r) => `${(Math.cos(rad(a))*r).toFixed(2)} ${(Math.sin(rad(a))*r).toFixed(2)}`;
+    h += `<path d="M0 0 L${p(a0,R)} A${R} ${R} 0 0 1 ${p(a1,R)}Z" fill="${it.c}" stroke="#fbf3e4" stroke-width="1.5"/>`;
+    const words = it.n.split(" "), mid = Math.ceil(words.length/2), lines = it.n.length > 11 ? [words.slice(0,mid).join(" "), words.slice(mid).join(" ")] : [it.n];
+    const fill = it.dark ? "#1b1206" : "#fff";
+    h += `<g transform="rotate(${m-90})"><text x="96" y="7" text-anchor="middle" font-size="19" transform="rotate(90 96 0)">${it.e}</text>
+      ${lines.map((l,k)=>`<text x="63" y="${(k-(lines.length-1)/2)*9.5+3}" text-anchor="middle" font-family="Nunito,sans-serif" font-weight="900" font-size="8.6" fill="${fill}">${esc(l)}</text>`).join("")}</g>`;
+  }
+  for (let i=0;i<n*2;i++){ const a = i*seg/2; h += `<circle cx="${(Math.cos(rad(a))*116).toFixed(1)}" cy="${(Math.sin(rad(a))*116).toFixed(1)}" r="2.6" fill="#fff8d0"/>`; }
+  $("wheel").innerHTML = h;
+  $("wheel").style.transform = `rotate(${wAngle}deg)`;
+}
+function openWheel(){
+  const min = Math.min(...state.teams.map(t=>t.p));
+  wQueue = state.teams.filter(t=>t.p===min); wPos = 0;
+  $("finish").classList.add("hidden");
+  $("wres").innerHTML = ""; drawWheel(); renderWheelQueue();
+  $("wheelOv").classList.remove("hidden"); Sfx.swoosh();
+}
+function renderWheelQueue(){
+  const t = wQueue[wPos];
+  $("wheelWho").innerHTML = t ? `${wQueue.length>1?"Tied for last — everyone spins! ":"Lowest score spins! "}Up now: ${tag(t)}` : "Everyone has spun. Bottoms up! 🥴";
+  $("wheelQueue").innerHTML = wQueue.length>1 ? wQueue.map((q,i)=>`<span class="${i===wPos?"now":i<wPos?"past":""}" style="background:${COLORS[q.c]}">${ICONS[q.c]} ${esc(q.n)}</span>`).join("") : "";
+  $("spinBtn").disabled = !t;
+}
+function spinWheel(){
+  if (wSpinning || !wQueue[wPos]) return;
+  wSpinning = true; $("spinBtn").disabled = true; $("wres").innerHTML = "";
+  const n = WHEEL.length, seg = 360/n, pick = Math.floor(Math.random()*n);
+  const jitter = (Math.random()-.5)*seg*.7;
+  const start = wAngle, base = start - (((start % 360)+360)%360);
+  const end = base + 360*(5+Math.floor(Math.random()*3)) + (360 - (pick+.5)*seg - jitter);
+  const dur = 5200 + Math.random()*1200, t0 = performance.now();
+  let lastSeg = null;
+  const ease = x => 1 - Math.pow(1-x, 4);
+  const frame = now => {
+    const x = Math.min(1, (now-t0)/dur); wAngle = start + (end-start)*ease(x);
+    $("wheel").style.transform = `rotate(${wAngle}deg)`;
+    const under = Math.floor(((((-wAngle) % 360)+360)%360)/seg);
+    if (under !== lastSeg) { if (lastSeg !== null) { Sfx.wclick(under); const p=$("pointer"); p.classList.remove("wiggle"); void p.offsetWidth; p.classList.add("wiggle"); } lastSeg = under; }
+    if (x < 1) requestAnimationFrame(frame);
+    else {
+      wSpinning = false;
+      const it = wItem(pick), t = wQueue[wPos];
+      $("wres").innerHTML = `<span>${ICONS[t.c]} ${esc(t.n)}: ${it.e} ${esc(it.n)}!</span>`;
+      Sfx.wheelLand(!!it.good); confetti(it.c, 120);
+      wPos++; setTimeout(renderWheelQueue, 400);
+    }
+  };
+  requestAnimationFrame(frame);
+}
+$("spinBtn").onclick = spinWheel;
+$("wheelClose").onclick = () => { if (wSpinning) return; $("wheelOv").classList.add("hidden"); Sfx.swoosh(); };
+$("kidSafe").onchange = () => { drawWheel(); Sfx.blip(); };
+$("wheelBtn").onclick = openWheel;
+$("podWheel").onclick = openWheel;
+
 /* ---------- Fun bits ---------- */
 function toast(msg){ const d=document.createElement("div"); d.className="toast"; d.textContent=msg; document.body.appendChild(d); setTimeout(()=>d.remove(),1900); }
 const cv=$("confetti"), cx=cv.getContext("2d"); let parts=[], raf=null;
@@ -502,6 +614,7 @@ $("homeBtn").onclick = () => { $("finish").classList.add("hidden"); if (current)
 $("doneBtn").onclick = award;
 document.addEventListener("keydown", e => {
   if (e.target.tagName === "INPUT" || !$("setup").classList.contains("hidden")) return;
+  if (!$("wheelOv").classList.contains("hidden")) { if (e.code === "Space") { e.preventDefault(); spinWheel(); } else if (e.key === "Escape") $("wheelClose").onclick(); return; }
   if (!current) return;
   if (e.code === "Space") { e.preventDefault(); reveal(); }
   else if (e.key === "Escape") skip();
